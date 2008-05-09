@@ -134,7 +134,8 @@ int main ()
 	cout << "Noise++ (2D): " << pipeline2D.getElement(noiseID)->getValue (1.2, 0.2, cache) << std::endl;
 	cout << "Noise++ (3D): " << pipeline3D.getElement(noiseID3D)->getValue (1.2, 0.2, 0, cache3D) << std::endl;
 
-	// calculates some square roots to bring the CPU(s) to maximum frequency
+	// calculates some square roots to bring the CPU(s) to maximum frequency - i know, not really professional solution
+	// (you can skip this step but at least on my PC I get more accurate benchmark results with it)
 	cout << "prepare for generating " << MILLION_POINTS << " million points ... ";
 	cout.flush ();
 
