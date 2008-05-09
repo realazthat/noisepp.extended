@@ -120,10 +120,12 @@ int main ()
 	noisepp::ElementID noiseID3D = noiseppPerlin3D.addToPipe (pipeline3D);
 
 	// create threaded pipelines and fill them with modules
+#if NOISEPP_ENABLE_THREADS
 	noisepp::ThreadedPipeline2D pipeline2D_mt(THREAD_COUNT);
 	noisepp::ElementID noiseID2D_mt = noiseppPerlin2D.addToPipe (pipeline2D_mt);
 	noisepp::ThreadedPipeline3D pipeline3D_mt(THREAD_COUNT);
 	noisepp::ElementID noiseID3D_mt = noiseppPerlin3D.addToPipe (pipeline3D_mt);
+#endif
 
 	// creates the cache
 	noisepp::Cache *cache = pipeline2D.createCache();
@@ -182,8 +184,10 @@ int main ()
 	// get the pointers to the pipeline elements
 	noisepp::PipelineElement2D *element = pipeline2D.getElement(noiseID);
 	noisepp::PipelineElement3D *element3D = pipeline3D.getElement(noiseID3D);
+#if NOISEPP_ENABLE_THREADS
 	noisepp::PipelineElement2D *element2D_mt = pipeline2D.getElement(noiseID2D_mt);
 	noisepp::PipelineElement3D *element3D_mt = pipeline3D.getElement(noiseID3D_mt);
+#endif
 
 	// generate using the default 3D pipeline
 	cout << "generating using Pipeline3D ... ";
@@ -245,6 +249,7 @@ int main ()
 	if (calcMeanDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
 		cout << "WARNING: different result!" << endl;
 
+#if NOISEPP_ENABLE_THREADS
 	// generate using the threaded 3D pipeline
 	cout << "generating using ThreadedPipeline3D ... ";
 	cout.flush ();
@@ -294,6 +299,7 @@ int main ()
 	// check for difference
 	if (calcMeanDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
 		cout << "WARNING: different result!" << endl;
+#endif
 
 	delete[] libnoise_results;
 	delete[] noisepp_results;
@@ -301,6 +307,11 @@ int main ()
 	// frees the cache
 	pipeline2D.freeCache(cache);
 	pipeline3D.freeCache(cache3D);
+
+#ifdef WIN32
+	cout << "Press any key ..." << endl;
+	cin.get();
+#endif
 
 	return 0;
 }
