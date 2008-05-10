@@ -1,6 +1,6 @@
 CXX=g++
-CXXFLAGS=-Wall -O3 -ffast-math -funroll-loops -I../../noisepp/core
-LDFLAGS=-lnoise -lrt -lboost_thread
+CXXFLAGS=-Wall -O3 -ffast-math -funroll-loops -I../../noisepp/core -I../../noisepp/threadpp -pthread
+LDFLAGS=-lnoise -lrt -pthread
 
 OBJS = main.o
 

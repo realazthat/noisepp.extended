@@ -49,9 +49,9 @@ namespace noisepp
 	class ThreadedPipeline : public Pipeline<Element>
 	{
 		private:
-			boost::thread_group mThreads;
-			boost::mutex mMutex;
-			boost::condition mCond, mMainCond;
+			threadpp::ThreadGroup mThreads;
+			threadpp::Mutex mMutex;
+			threadpp::Condition mCond, mMainCond;
 
 			bool mThreadsDone;
 			unsigned mWorkingThreads;
@@ -59,34 +59,36 @@ namespace noisepp
 			void threadFunction ()
 			{
 				Cache *cache = NULL;
-				boost::mutex::scoped_lock lk (mMutex);
+				mMutex.lock ();
 				while (!mThreadsDone)
 				{
 					if (Pipeline<Element>::mJobs.empty())
-						mCond.wait(lk);
+						mCond.wait(mMutex);
 					if (!Pipeline<Element>::mJobs.empty())
 					{
 						PipelineJob *job = Pipeline<Element>::mJobs.front ();
 						Pipeline<Element>::mJobs.pop ();
 						++mWorkingThreads;
-						lk.unlock ();
+						mMutex.unlock ();
 						if (!cache)
 							cache = Pipeline<Element>::createCache();
 						job->execute(cache);
-						lk.lock ();
+						mMutex.lock ();
 						--mWorkingThreads;
 						mJobsDone.push (job);
-						mMainCond.notify_one ();
+						mMainCond.notifyOne ();
 					}
 				}
+				mMutex.unlock ();
 				if (cache)
 				{
 					Pipeline<Element>::freeCache (cache);
 				}
 			}
-			static void threadEntry (ThreadedPipeline<Element> *pipe)
+			static void *threadEntry (void *pipe)
 			{
-				pipe->threadFunction ();
+				(static_cast<ThreadedPipeline<Element>*>(pipe))->threadFunction ();
+				return NULL;
 			}
 
 		public:
@@ -97,19 +99,19 @@ namespace noisepp
 				assert (n > 0);
 				for (size_t i=0;i<n;++i)
 				{
-					mThreads.create_thread (boost::bind(&threadEntry, this));
+					mThreads.createThread (threadEntry, this);
 				}
 			}
 			/// executes the jobs in queue
 			/// WARNING: Don't change the pipeline after calling this function
 			virtual void executeJobs ()
 			{
-				mCond.notify_all();
-				boost::mutex::scoped_lock lk (mMutex);
+				mCond.notifyAll();
+				mMutex.lock ();
 				while (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0)
 				{
 					if (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0)
-						mMainCond.wait(lk);
+						mMainCond.wait(mMutex);
 					while (!mJobsDone.empty())
 					{
 						PipelineJob *job = mJobsDone.front ();
@@ -118,12 +120,13 @@ namespace noisepp
 						delete job;
 					}
 				}
+				mMutex.unlock ();
 			}
 			virtual ~ThreadedPipeline ()
 			{
 				mThreadsDone = true;
-				mCond.notify_all();
-				mThreads.join_all ();
+				mCond.notifyAll();
+				mThreads.join ();
 			}
 	};
 
