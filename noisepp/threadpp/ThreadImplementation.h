@@ -35,7 +35,7 @@ namespace threadpp
 			pthread_t mThread;
 #elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
 			HANDLE mThreadHandle;
-			LPDWORD mThreadId;
+			DWORD mThreadId;
 #endif
 		public:
 			THREADPP_INLINE Thread (void *(*start_routine)(void *), void *arg=NULL) : mJoinable(true)

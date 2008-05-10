@@ -71,11 +71,11 @@ namespace threadpp
 #elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
 				unsigned signals = 0;
 				int res = 0;
-				res = WaitForSingleObject(mMutex), INFINITE);
+				res = WaitForSingleObject(mMutex, INFINITE);
 				assert(res == WAIT_OBJECT_0);
-				if (m_waiting != 0) // the m_gate is already closed
+				if (mWaiting != 0) // the m_gate is already closed
 				{
-					if (m_blocked == 0)
+					if (mBlocked == 0)
 					{
 						res = ReleaseMutex(mMutex);
 						assert(res);
@@ -198,7 +198,7 @@ namespace threadpp
 					{
 						if (mBlocked != 0)
 						{
-							res = ReleaseSemaphore(mGgate, 1, 0); // open mGate
+							res = ReleaseSemaphore(mGate, 1, 0); // open mGate
 							assert(res);
 							was_waiting = 0;
 						}
