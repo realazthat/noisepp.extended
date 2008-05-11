@@ -278,7 +278,7 @@ int main ()
 
 #if NOISEPP_ENABLE_THREADS
 	// generate using the threaded 3D pipeline
-	cout << "generating using ThreadedPipeline3D " << endl;
+	cout << "generating using ThreadedPipeline3D ";
 	cout.flush ();
 	double noiseppStart3D_mt = Timer_getSeconds();
 	for (int i=0;i<MILLION_POINTS;++i)
@@ -303,7 +303,7 @@ int main ()
 		cout << "WARNING: different result!" << endl;
 
 	// generate using the threaded 2D pipeline
-	cout << "generating using ThreadedPipeline2D " << endl;
+	cout << "generating using ThreadedPipeline2D ";
 	cout.flush ();
 	double noiseppStart2D_mt = Timer_getSeconds();
 	for (int i=0;i<MILLION_POINTS;++i)
