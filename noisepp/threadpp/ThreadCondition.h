@@ -180,14 +180,15 @@ namespace threadpp
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
 				pthread_cond_wait (&mCondition, &mutex.mMutex.mMutex);
 #elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
-				mutex.unlock ();
-
 				int res = 0;
 				res = WaitForSingleObject(mGate, INFINITE);
 				assert(res == WAIT_OBJECT_0);
 				++mBlocked;
 				res = ReleaseSemaphore(mGate, 1, 0);
 				assert(res);
+
+				mutex.unlock ();
+
 				res = WaitForSingleObject(mQueue, INFINITE);
 				assert(res == WAIT_OBJECT_0);
 
