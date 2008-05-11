@@ -27,6 +27,7 @@
 
 namespace threadpp
 {
+	/// Thread object.
 	class Thread
 	{
 		private:
@@ -38,6 +39,7 @@ namespace threadpp
 			DWORD mThreadId;
 #endif
 		public:
+			/// Creates a new thread that executes the specified routine.
 			THREADPP_INLINE Thread (void *(*start_routine)(void *), void *arg=NULL) : mJoinable(true)
 			{
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
@@ -57,6 +59,7 @@ namespace threadpp
 #endif
 				}
 			}
+			/// Wait for thread to exit.
 			THREADPP_INLINE void join ()
 			{
 				assert (mJoinable);
@@ -69,6 +72,7 @@ namespace threadpp
 				mJoinable = false;
 			}
 	};
+	/// Thread group
 	class ThreadGroup
 	{
 		private:
@@ -76,11 +80,13 @@ namespace threadpp
 			ThreadVector mThreads;
 
 		public:
+			/// Creates a new thread.
 			THREADPP_INLINE void createThread (void *(*start_routine)(void *), void *arg=NULL)
 			{
 				Thread *thread = new Thread (start_routine, arg);
 				mThreads.push_back (thread);
 			}
+			/// Join all threads.
 			THREADPP_INLINE void join ()
 			{
 				ThreadVector::iterator itEnd = mThreads.end ();
@@ -89,6 +95,7 @@ namespace threadpp
 					(*it)->join ();
 				}
 			}
+			/// Delete all threads.
 			THREADPP_INLINE void clear ()
 			{
 				ThreadVector::iterator itEnd = mThreads.end ();

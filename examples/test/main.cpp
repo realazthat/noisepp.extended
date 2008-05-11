@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <time.h>
 
 #ifdef WIN32
@@ -37,10 +38,11 @@ class LineJob2D : public noisepp::PipelineJob
 		int n;
 		double xDelta;
 		double *buffer;
+		bool mProgress;
 
 	public:
-		LineJob2D (noisepp::Pipeline2D *pipe, noisepp::PipelineElement2D *element, double x, double y, int n, double xDelta, double *buffer) :
-			mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), buffer(buffer)
+		LineJob2D (noisepp::Pipeline2D *pipe, noisepp::PipelineElement2D *element, double x, double y, int n, double xDelta, double *buffer, bool progress) :
+			mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), buffer(buffer), mProgress(progress)
 		{}
 		void execute (noisepp::Cache *cache)
 		{
@@ -52,6 +54,14 @@ class LineJob2D : public noisepp::PipelineJob
 				buffer[i] = mElement->getValue(x, y, cache);
 				// move on
 				x += xDelta;
+			}
+		}
+		void finish ()
+		{
+			if (mProgress)
+			{
+				cout << ".";
+				cout.flush ();
 			}
 		}
 };
@@ -66,10 +76,11 @@ class LineJob3D : public noisepp::PipelineJob
 		int n;
 		double xDelta;
 		double *buffer;
+		bool mProgress;
 
 	public:
-		LineJob3D (noisepp::Pipeline3D *pipe, noisepp::PipelineElement3D *element, double x, double y, double z, int n, double xDelta, double *buffer) :
-			mPipe(pipe), mElement(element), x(x), y(y), z(z), n(n), xDelta(xDelta), buffer(buffer)
+		LineJob3D (noisepp::Pipeline3D *pipe, noisepp::PipelineElement3D *element, double x, double y, double z, int n, double xDelta, double *buffer, bool progress) :
+			mPipe(pipe), mElement(element), x(x), y(y), z(z), n(n), xDelta(xDelta), buffer(buffer), mProgress(progress)
 		{}
 		void execute (noisepp::Cache *cache)
 		{
@@ -83,17 +94,27 @@ class LineJob3D : public noisepp::PipelineJob
 				x += xDelta;
 			}
 		}
+		void finish ()
+		{
+			if (mProgress)
+			{
+				cout << ".";
+				cout.flush ();
+			}
+		}
 };
 
-/// calculates the mean difference between the two arrays specified
-double calcMeanDifference (double *left, double *right, int n)
+/// calculates the maximum difference between the two arrays specified
+double calcMaxDifference (double *left, double *right, int n)
 {
 	double dif = 0;
 	for (int i=0;i<n;++i)
 	{
-		dif += fabs(left[i]-right[i]);
+		const double d = fabs(left[i]-right[i]);
+		if (d > dif)
+			dif = d;
 	}
-	return dif / double(n);
+	return dif;
 }
 
 int main ()
@@ -156,11 +177,13 @@ int main ()
 	// generate the points with libnoise
 	double seconds;
 	double mpix = MILLION_POINTS;
-	cout << "generating using libnoise ... ";
+	cout << "generating using libnoise ";
 	cout.flush ();
 	double lnoiseStart = Timer_getSeconds();
 	for (int i=0;i<MILLION_POINTS;++i)
 	{
+		cout << ".";
+		cout.flush ();
 		double *res = libnoise_results;
 		y = 0;
 		for (int yy=0;yy<1000;++yy)
@@ -174,7 +197,7 @@ int main ()
 			y += ydelta;
 		}
 	}
-	cout << "done" << endl;
+	cout << " done" << endl;
 	// calculate stats
 	seconds = Timer_getSeconds()-lnoiseStart;
 	double libnoiseTime = seconds * 100.0;
@@ -190,11 +213,13 @@ int main ()
 #endif
 
 	// generate using the default 3D pipeline
-	cout << "generating using Pipeline3D ... ";
+	cout << "generating using Pipeline3D ";
 	cout.flush ();
 	double noiseppStart3D = Timer_getSeconds();
 	for (int i=0;i<MILLION_POINTS;++i)
 	{
+		cout << ".";
+		cout.flush ();
 		double *res = noisepp_results;
 		y = 0;
 		for (int yy=0;yy<1000;++yy)
@@ -212,20 +237,22 @@ int main ()
 			y += ydelta;
 		}
 	}
-	cout << "done" << endl;
+	cout << " done" << endl;
 	// calculate stats
 	seconds = Timer_getSeconds()-noiseppStart3D;
 	cout << "time: " << seconds << " sec" << endl;
 	cout << mpix / seconds << " million pixels per second (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)" << endl;
-	if (calcMeanDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+	if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
 		cout << "WARNING: different result!" << endl;
 
 	// generate using the default 2D pipeline
-	cout << "generating using Pipeline2D ... ";
+	cout << "generating using Pipeline2D ";
 	cout.flush ();
 	double noiseppStart2D = Timer_getSeconds();
 	for (int i=0;i<MILLION_POINTS;++i)
 	{
+		cout << ".";
+		cout.flush ();
 		double *res = noisepp_results;
 		y = 0;
 		for (int yy=0;yy<1000;++yy)
@@ -240,18 +267,18 @@ int main ()
 			y += ydelta;
 		}
 	}
-	cout << "done" << endl;
+	cout << " done" << endl;
 	// calculate stats
 	seconds = Timer_getSeconds()-noiseppStart2D;
 	cout << "time: " << seconds << " sec" << endl;
 	cout << mpix / seconds << " million pixels per second (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)" << endl;
 	// check for difference
-	if (calcMeanDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+	if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
 		cout << "WARNING: different result!" << endl;
 
 #if NOISEPP_ENABLE_THREADS
 	// generate using the threaded 3D pipeline
-	cout << "generating using ThreadedPipeline3D ... ";
+	cout << "generating using ThreadedPipeline3D " << endl;
 	cout.flush ();
 	double noiseppStart3D_mt = Timer_getSeconds();
 	for (int i=0;i<MILLION_POINTS;++i)
@@ -260,23 +287,23 @@ int main ()
 		y = 0;
 		for (int yy=0;yy<1000;++yy)
 		{
-			pipeline3D_mt.addJob (new LineJob3D(&pipeline3D_mt, element3D_mt, 0, y, 0, 1000, xdelta, res));
+			pipeline3D_mt.addJob (new LineJob3D(&pipeline3D_mt, element3D_mt, 0, y, 0, 1000, xdelta, res, (yy==0)));
 			res += 1000;
 			y += ydelta;
 		}
 		pipeline3D_mt.executeJobs ();
 	}
-	cout << "done" << endl;
+	cout << " done" << endl;
 	// calculate stats
 	seconds = Timer_getSeconds()-noiseppStart3D_mt;
 	cout << "time: " << seconds << " sec" << endl;
 	cout << mpix / seconds << " million pixels per second (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)" << endl;
 	// check for difference
-	if (calcMeanDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+	if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
 		cout << "WARNING: different result!" << endl;
 
 	// generate using the threaded 2D pipeline
-	cout << "generating using ThreadedPipeline2D ... ";
+	cout << "generating using ThreadedPipeline2D " << endl;
 	cout.flush ();
 	double noiseppStart2D_mt = Timer_getSeconds();
 	for (int i=0;i<MILLION_POINTS;++i)
@@ -285,19 +312,19 @@ int main ()
 		y = 0;
 		for (int yy=0;yy<1000;++yy)
 		{
-			pipeline2D_mt.addJob (new LineJob2D(&pipeline2D_mt, element2D_mt, 0, y, 1000, xdelta, res));
+			pipeline2D_mt.addJob (new LineJob2D(&pipeline2D_mt, element2D_mt, 0, y, 1000, xdelta, res, (yy==0)));
 			res += 1000;
 			y += ydelta;
 		}
 		pipeline2D_mt.executeJobs ();
 	}
-	cout << "done" << endl;
+	cout << " done" << endl;
 	// calculate stats
 	seconds = Timer_getSeconds()-noiseppStart2D_mt;
 	cout << "time: " << seconds << " sec" << endl;
 	cout << mpix / seconds << " million pixels per second (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)" << endl;
 	// check for difference
-	if (calcMeanDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+	if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
 		cout << "WARNING: different result!" << endl;
 #endif
 

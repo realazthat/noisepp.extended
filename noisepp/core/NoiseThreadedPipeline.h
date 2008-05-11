@@ -59,27 +59,27 @@ namespace noisepp
 			void threadFunction ()
 			{
 				Cache *cache = NULL;
-				mMutex.lock ();
+				threadpp::Mutex::Lock lk(mMutex);
 				while (!mThreadsDone)
 				{
 					if (Pipeline<Element>::mJobs.empty())
-						mCond.wait(mMutex);
+						mCond.wait(lk);
 					if (!Pipeline<Element>::mJobs.empty())
 					{
 						PipelineJob *job = Pipeline<Element>::mJobs.front ();
 						Pipeline<Element>::mJobs.pop ();
 						++mWorkingThreads;
-						mMutex.unlock ();
+						lk.unlock ();
 						if (!cache)
 							cache = Pipeline<Element>::createCache();
 						job->execute(cache);
-						mMutex.lock ();
+						lk.lock ();
 						--mWorkingThreads;
 						mJobsDone.push (job);
 						mMainCond.notifyOne ();
 					}
 				}
-				mMutex.unlock ();
+				lk.unlock ();
 				if (cache)
 				{
 					Pipeline<Element>::freeCache (cache);
@@ -107,11 +107,11 @@ namespace noisepp
 			virtual void executeJobs ()
 			{
 				mCond.notifyAll();
-				mMutex.lock ();
+				threadpp::Mutex::Lock lk(mMutex);
 				while (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0)
 				{
 					if (!Pipeline<Element>::mJobs.empty() || mWorkingThreads > 0)
-						mMainCond.wait(mMutex);
+						mMainCond.wait(lk);
 					while (!mJobsDone.empty())
 					{
 						PipelineJob *job = mJobsDone.front ();
@@ -120,7 +120,6 @@ namespace noisepp
 						delete job;
 					}
 				}
-				mMutex.unlock ();
 			}
 			virtual ~ThreadedPipeline ()
 			{

@@ -27,6 +27,7 @@
 
 namespace threadpp
 {
+	/// Condition class.
 	class Condition
 	{
 		private:
@@ -41,6 +42,7 @@ namespace threadpp
 			unsigned mWaiting;
 #endif
 		public:
+			/// Constructor.
 			THREADPP_INLINE Condition ()
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
 			 : mGone(0), mBlocked(0), mWaiting(0)
@@ -54,6 +56,7 @@ namespace threadpp
 				mMutex = CreateMutex(0, 0, 0);
 #endif
 			}
+			/// Destructor.
 			THREADPP_INLINE ~Condition ()
 			{
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
@@ -64,6 +67,7 @@ namespace threadpp
 				CloseHandle (mMutex);
 #endif
 			}
+			/// Notify one waiting thread.
 			THREADPP_INLINE void notifyOne ()
 			{
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
@@ -115,6 +119,7 @@ namespace threadpp
 				}
 #endif
 			}
+			/// Notify all waiting threads.
 			THREADPP_INLINE void notifyAll ()
 			{
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
@@ -169,10 +174,11 @@ namespace threadpp
 				}
 #endif
 			}
-			THREADPP_INLINE void wait (Mutex &mutex)
+			/// Wait for a signal.
+			THREADPP_INLINE void wait (Mutex::Lock &mutex)
 			{
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
-				pthread_cond_wait (&mCondition, &mutex.mMutex);
+				pthread_cond_wait (&mCondition, &mutex.mMutex.mMutex);
 #elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
 				mutex.unlock ();
 

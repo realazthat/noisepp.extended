@@ -27,6 +27,7 @@
 
 namespace threadpp
 {
+	/// A mutual exclusion object
 	class Mutex
 	{
 		friend class Condition;
@@ -36,23 +37,6 @@ namespace threadpp
 #elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
 			CRITICAL_SECTION mMutex;
 #endif
-		public:
-			THREADPP_INLINE Mutex ()
-			{
-#if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
-				pthread_mutex_init(&mMutex, NULL);
-#elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
-				InitializeCriticalSection (&mMutex);
-#endif
-			}
-			THREADPP_INLINE ~Mutex ()
-			{
-#if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
-				pthread_mutex_destroy(&mMutex);
-#elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
-				DeleteCriticalSection (&mMutex);
-#endif
-			}
 			THREADPP_INLINE void lock ()
 			{
 #if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
@@ -67,6 +51,63 @@ namespace threadpp
 				pthread_mutex_unlock(&mMutex);
 #elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
 				LeaveCriticalSection (&mMutex);
+#endif
+			}
+		public:
+			class Lock
+			{
+				friend class Condition;
+				private:
+					Mutex &mMutex;
+					bool mLocked;
+
+				public:
+					/// Scoped lock object.
+					/// @param mutex The mutex.
+					/// @param doLock If set to true the mutex is locked after creating.
+					THREADPP_INLINE Lock (Mutex &mutex, bool doLock=true) : mMutex(mutex), mLocked(false)
+					{
+						if (doLock)
+							lock ();
+					}
+					/// Locks the mutex.
+					THREADPP_INLINE void lock ()
+					{
+						assert (!mLocked);
+						mMutex.lock ();
+						mLocked = true;
+					}
+					/// Unlocks the mutex.
+					THREADPP_INLINE void unlock ()
+					{
+						assert (mLocked);
+						mMutex.unlock ();
+						mLocked = false;
+					}
+					/// Destructor. If mutex is locked it is unlocked here.
+					THREADPP_INLINE ~Lock ()
+					{
+						if (mLocked)
+							unlock ();
+					}
+			};
+
+			/// Constructor.
+			THREADPP_INLINE Mutex ()
+			{
+#if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
+				pthread_mutex_init(&mMutex, NULL);
+#elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
+				InitializeCriticalSection (&mMutex);
+#endif
+			}
+			/// Destructor.
+			THREADPP_INLINE ~Mutex ()
+			{
+#if THREADPP_PLATFORM == THREADPP_PLATFORM_UNIX
+				pthread_mutex_destroy(&mMutex);
+#elif THREADPP_PLATFORM == THREADPP_PLATFORM_WINDOWS
+				DeleteCriticalSection (&mMutex);
 #endif
 			}
 	};
