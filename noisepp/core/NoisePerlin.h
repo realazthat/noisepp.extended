@@ -115,7 +115,7 @@ namespace noisepp
 				mPersistence = v;
 			}
 			/// Returns the noise persistence.
-			Real getPeristence () const
+			Real getPersistence () const
 			{
 				return mPersistence;
 			}
