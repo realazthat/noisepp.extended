@@ -40,12 +40,12 @@ void editorCanvas::OnPaint(wxPaintEvent& event)
 
 	if (!mModule.IsEmpty())
 	{
-		wxCoord width = 200;
+		wxCoord width = 202;
 		wxCoord height = 203;
 		wxCoord titleHeight = 20;
 
 		dc.DrawRectangle((w-width)/2, (h-(height+titleHeight))/2, width, (height+titleHeight));
-		wxCoord tLine = (h-(height+titleHeight))/2+titleHeight;
+		wxCoord tLine = (h-(height+titleHeight))/2+titleHeight+1;
 		dc.DrawLine ((w-width)/2, tLine, (w-width)/2+width, tLine);
 
 		wxCoord text_width, text_height;

@@ -211,6 +211,7 @@ void editorFrame::newDoc ()
 	mModuleProps->Clear();
 	mModuleList->Clear();
 	EditorModuleManager::getInstance().clearModules ();
+	updateModuleSelection ();
 	setChanged (false);
 }
 
