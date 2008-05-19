@@ -114,7 +114,7 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	modulePage->SetSizer (vbox);
 
 	spl1->SplitVertically (leftWin, mCanvas);
-	spl1->SetSashPosition (250);
+	spl1->SetSashPosition (300);
 
 	SetMenuBar(mbar);
 	SetMinSize(wxSize(1024,768));
@@ -225,7 +225,8 @@ bool editorFrame::loadDoc ()
 	if (root->ValueStr() != "Document")
 		return false;
 
-	EditorModuleManager::getInstance().readDoc (root);
+	if (!EditorModuleManager::getInstance().readDoc (root))
+		return false;
 	wxArrayString modules;
 	EditorModuleManager::getInstance().fillModuleArray(modules);
 	mModuleList->Append (modules);
@@ -391,6 +392,10 @@ void editorFrame::OnModuleGen(wxCommandEvent& event)
 		if (module)
 		{
 			assert (module->validate(mModuleProps));
+			for (int i=0;i<module->getNumberOfSourceModules();++i)
+			{
+				module->getSourceModule(i)->generate (0, 0, 1, 1, 200, 200, getNumberOfCores());
+			}
 			module->generate (0, 0, 1, 1, 200, 200, getNumberOfCores());
 			mCanvas->Refresh ();
 		}

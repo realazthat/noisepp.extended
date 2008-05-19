@@ -62,6 +62,7 @@ class EditorModuleManager
 
 		void fillFactoryArray (wxArrayString &arr);
 		void fillModuleArray (wxArrayString &arr);
+		int fillModuleArrayWithException (wxArrayString &arr, EditorModule *exception, const wxString &defaultValue = wxEmptyString);
 
 		void writeToDoc (TiXmlElement *root);
 		bool readDoc (TiXmlElement *root);

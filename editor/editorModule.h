@@ -25,10 +25,14 @@
 #include <wx/bitmap.h>
 #include <xml/tinyxml.h>
 
+class EditorModuleManager;
+
 class EditorModule
 {
+	friend class EditorModuleManager;
+
 	public:
-		EditorModule();
+		EditorModule(int sourceModules=0);
 		virtual const std::string &getFactoryName () const = 0;
 		virtual noisepp::Module2D &get2DModule () = 0;
 		virtual noisepp::Module3D &get3DModule () = 0;
@@ -48,8 +52,30 @@ class EditorModule
 		{
 			return mBitmap;
 		}
+
+		int getNumberOfSourceModules () const
+		{
+			return mSourceModuleCount;
+		}
+
+		const wxString &getSourceModuleName (int i) const
+		{
+			assert (i < mSourceModuleCount);
+			return mSourceModules[i];
+		}
+
+		EditorModule *getSourceModule (int i) const;
 	protected:
 		bool setValid (wxPropertyGrid *pg, const char *name, bool valid);
+		void appendQualityProperty (wxPropertyGrid *pg, int quality=noisepp::NOISE_QUALITY_STD);
+		void appendSourceModuleProperty (wxPropertyGrid *pg, const wxString &name, const wxString &defaultValue = wxEmptyString);
+		bool validateSourceModules ();
+
+		void writeSourceModules (TiXmlElement *element);
+		bool readSourceModules (TiXmlElement *element);
+
+		wxString *mSourceModules;
+		int mSourceModuleCount;
 	private:
 		int mWidth, mHeight;
 		wxImage *mImage;

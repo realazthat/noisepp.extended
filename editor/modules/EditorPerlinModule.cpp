@@ -26,18 +26,7 @@ void EditorPerlinModule::fillPropertyGrid (wxPropertyGrid *pg)
 	pg->Append( wxFloatProperty(wxT("Persistence"), wxPG_LABEL, mModule3D.getPersistence()) );
 	pg->Append( wxIntProperty(wxT("Octaves"), wxPG_LABEL, mModule3D.getOctaveCount()) );
 	pg->Append( wxIntProperty(wxT("Seed"), wxPG_LABEL, mModule3D.getSeed()) );
-
-	wxArrayString qualityArr;
-	qualityArr.Add(wxT("Low"));
-	qualityArr.Add(wxT("Default"));
-	qualityArr.Add(wxT("High"));
-
-	wxArrayInt arrIds;
-	arrIds.Add(noisepp::NOISE_QUALITY_LOW);
-	arrIds.Add(noisepp::NOISE_QUALITY_STD);
-	arrIds.Add(noisepp::NOISE_QUALITY_HIGH);
-
-	pg->Append( wxEnumProperty(wxT("Quality"), wxPG_LABEL, qualityArr, arrIds, mModule3D.getQuality()) );
+	appendQualityProperty (pg, mModule3D.getQuality());
 }
 
 void EditorPerlinModule::writeProperties (TiXmlElement *element)

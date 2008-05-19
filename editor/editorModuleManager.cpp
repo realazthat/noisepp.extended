@@ -18,10 +18,14 @@
 #include <cassert>
 #include "editorModuleManager.h"
 #include "modules/EditorPerlinModule.h"
+#include "modules/EditorTurbulenceModule.h"
+#include "modules/EditorSelectModule.h"
 
 EditorModuleManager::EditorModuleManager()
 {
 	registerFactory(new EditorModuleFactory<EditorPerlinModule>);
+	registerFactory(new EditorModuleFactory<EditorTurbulenceModule>);
+	registerFactory(new EditorModuleFactory<EditorSelectModule>);
 }
 
 EditorModuleManager::~EditorModuleManager()
@@ -92,6 +96,22 @@ void EditorModuleManager::fillModuleArray (wxArrayString &arr)
 	}
 }
 
+int EditorModuleManager::fillModuleArrayWithException (wxArrayString &arr, EditorModule *exception, const wxString &defaultValue)
+{
+	int id = 0;
+	for (ModuleMap::iterator it=mModules.begin();it!=mModules.end();++it)
+	{
+		if (it->second != exception)
+		{
+			wxString name(it->first.c_str(), wxConvUTF8);
+			if (name == defaultValue)
+				id = arr.GetCount();
+			arr.Add(name);
+		}
+	}
+	return id;
+}
+
 void EditorModuleManager::removeModule (const std::string &name)
 {
 	ModuleMap::iterator it=mModules.find(name);
@@ -104,6 +124,8 @@ void EditorModuleManager::removeModule (const std::string &name)
 
 bool EditorModuleManager::renameModule (const std::string &oldName, const std::string &newName)
 {
+	assert (!oldName.empty());
+	assert (!newName.empty());
 	ModuleMap::iterator it=mModules.find(oldName);
 	if (it == mModules.end())
 		return false;
@@ -113,6 +135,17 @@ bool EditorModuleManager::renameModule (const std::string &oldName, const std::s
 
 	EditorModule *module = it->second;
 	mModules.erase (it);
+	for (it=mModules.begin();it!=mModules.end();++it)
+	{
+		assert (it->second);
+		for (int i=0;i<it->second->getNumberOfSourceModules();++i)
+		{
+			if (std::string(it->second->getSourceModuleName(i).mb_str()) == oldName)
+			{
+				it->second->mSourceModules[i] = wxString(newName.c_str(), wxConvUTF8);
+			}
+		}
+	}
 	mModules.insert (std::make_pair(newName, module));
 	return true;
 }

@@ -16,8 +16,10 @@
 //
 
 #include <cstdlib>
+#include <sstream>
 #include <wx/wx.h>
 #include "editorModule.h"
+#include "editorModuleManager.h"
 
 class LineJob2D : public noisepp::PipelineJob
 {
@@ -48,13 +50,22 @@ class LineJob2D : public noisepp::PipelineJob
 		}
 };
 
-EditorModule::EditorModule() : mWidth(0), mHeight(0), mImage(NULL), mBitmap(NULL)
+EditorModule::EditorModule(int sourceModules) : mSourceModules(NULL), mSourceModuleCount(sourceModules), mWidth(0), mHeight(0), mImage(NULL), mBitmap(NULL)
 {
+	if (mSourceModuleCount > 0)
+	{
+		mSourceModules = new wxString[mSourceModuleCount];
+	}
 }
 
 EditorModule::~EditorModule()
 {
 	freeImage ();
+	if (mSourceModules)
+	{
+		delete[] mSourceModules;
+		mSourceModules = NULL;
+	}
 }
 
 void EditorModule::freeImage ()
@@ -73,13 +84,18 @@ void EditorModule::freeImage ()
 
 bool EditorModule::setValid (wxPropertyGrid *pg, const char *name, bool valid)
 {
+	if (pg == NULL)
+		return valid;
 	if (valid)
 	{
 		pg->SetPropertyColour(wxString(name, wxConvUTF8), *wxWHITE);
 		pg->SetPropertyColourToDefault(wxString(name, wxConvUTF8));
 	}
 	else
+	{
 		pg->SetPropertyColour(wxString(name, wxConvUTF8), *wxRED);
+		pg->SetPropertyBackgroundColour(wxString(name, wxConvUTF8), *wxRED);
+	}
 	return valid;
 }
 
@@ -129,4 +145,65 @@ void EditorModule::generate (double x, double y, double width, double height, in
 
 	delete[] buffer;
 	delete pipeline2D;
+}
+
+void EditorModule::appendQualityProperty (wxPropertyGrid *pg, int quality)
+{
+	wxArrayString qualityArr;
+	qualityArr.Add(wxT("Low"));
+	qualityArr.Add(wxT("Default"));
+	qualityArr.Add(wxT("High"));
+
+	wxArrayInt arrIds;
+	arrIds.Add(noisepp::NOISE_QUALITY_LOW);
+	arrIds.Add(noisepp::NOISE_QUALITY_STD);
+	arrIds.Add(noisepp::NOISE_QUALITY_HIGH);
+
+	pg->Append( wxEnumProperty(wxT("Quality"), wxPG_LABEL, qualityArr, arrIds, quality) );
+}
+
+EditorModule *EditorModule::getSourceModule (int i) const
+{
+	assert (i < mSourceModuleCount);
+	return EditorModuleManager::getInstance().getModule (mSourceModules[i]);
+}
+
+void EditorModule::appendSourceModuleProperty (wxPropertyGrid *pg, const wxString &name, const wxString &defaultValue)
+{
+	wxArrayString moduleArr;
+	moduleArr.Add(wxT("(Please choose)"));
+	int id = EditorModuleManager::getInstance().fillModuleArrayWithException(moduleArr, this, defaultValue);
+	pg->Append( wxEnumProperty(name, wxPG_LABEL, moduleArr, id) );
+}
+
+void EditorModule::writeSourceModules (TiXmlElement *element)
+{
+	TiXmlElement *prop;
+
+	for (int i=0;i<mSourceModuleCount;++i)
+	{
+		std::ostringstream s;
+		s << "Module" << i;
+		prop = new TiXmlElement (s.str());
+		prop->SetAttribute ("value", mSourceModules[i].mb_str());
+		element->LinkEndChild (prop);
+	}
+}
+
+bool EditorModule::readSourceModules (TiXmlElement *element)
+{
+	TiXmlElement *prop;
+	const char *name;
+
+	for (int i=0;i<mSourceModuleCount;++i)
+	{
+		std::ostringstream s;
+		s << "Module" << i;
+		prop = element->FirstChildElement (s.str());
+		if (prop == NULL || (name = prop->Attribute ("value")) == NULL)
+			return false;
+		mSourceModules[i] = wxString(name, wxConvUTF8);
+	}
+
+	return true;
 }

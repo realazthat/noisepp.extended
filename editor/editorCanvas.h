@@ -31,6 +31,7 @@ class editorCanvas : public wxScrolledWindow
 	private:
 		wxString mModule;
 		void OnPaint(wxPaintEvent& event);
+		void drawModule(wxPaintDC &dc, int center_x, int center_y, wxCoord w, wxCoord h, const wxString &name, wxBitmap *bitmap);
 };
 
 #endif // EDITORCANVAS_H
