@@ -20,12 +20,14 @@
 #include "modules/EditorPerlinModule.h"
 #include "modules/EditorTurbulenceModule.h"
 #include "modules/EditorSelectModule.h"
+#include "modules/EditorBillowModule.h"
 
 EditorModuleManager::EditorModuleManager()
 {
 	registerFactory(new EditorModuleFactory<EditorPerlinModule>);
 	registerFactory(new EditorModuleFactory<EditorTurbulenceModule>);
 	registerFactory(new EditorModuleFactory<EditorSelectModule>);
+	registerFactory(new EditorModuleFactory<EditorBillowModule>);
 }
 
 EditorModuleManager::~EditorModuleManager()

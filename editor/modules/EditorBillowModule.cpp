@@ -15,11 +15,15 @@
 // along with the Noise++ Editor.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "EditorPerlinModule.h"
+#include "EditorBillowModule.h"
 
-std::string EditorPerlinModule::FACTORY_NAME = "Perlin";
+std::string EditorBillowModule::FACTORY_NAME = "Billow";
 
-void EditorPerlinModule::fillPropertyGrid (wxPropertyGrid *pg)
+EditorBillowModule::EditorBillowModule() : EditorModule(0)
+{
+}
+
+void EditorBillowModule::fillPropertyGrid (wxPropertyGrid *pg)
 {
 	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule3D.getFrequency()) );
 	pg->Append( wxFloatProperty(wxT("Lacunarity"), wxPG_LABEL, mModule3D.getLacunarity()) );
@@ -29,7 +33,57 @@ void EditorPerlinModule::fillPropertyGrid (wxPropertyGrid *pg)
 	appendQualityProperty (pg, mModule3D.getQuality());
 }
 
-void EditorPerlinModule::writeProperties (TiXmlElement *element)
+void EditorBillowModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
+{
+	if (name == _("Frequency"))
+	{
+		double val = pg->GetPropertyValueAsDouble (name);
+		mModule3D.setFrequency (val);
+		mModule2D.setFrequency (val);
+	}
+	else if (name == _("Lacunarity"))
+	{
+		double val = pg->GetPropertyValueAsDouble (name);
+		mModule3D.setLacunarity (val);
+		mModule2D.setLacunarity (val);
+	}
+	else if (name == _("Persistence"))
+	{
+		double val = pg->GetPropertyValueAsDouble (name);
+		mModule3D.setPersistence (val);
+		mModule2D.setPersistence (val);
+	}
+	else if (name == _("Octaves"))
+	{
+		int val = pg->GetPropertyValueAsInt (name);
+		mModule3D.setOctaveCount (val);
+		mModule2D.setOctaveCount (val);
+	}
+	else if (name == _("Seed"))
+	{
+		int val = pg->GetPropertyValueAsInt (name);
+		mModule3D.setSeed (val);
+		mModule2D.setSeed (val);
+	}
+	else if (name == _("Quality"))
+	{
+		int val = pg->GetPropertyValueAsInt (name);
+		mModule3D.setQuality (val);
+		mModule2D.setQuality (val);
+	}
+}
+
+bool EditorBillowModule::validate (wxPropertyGrid *pg)
+{
+	bool valid = true;
+	valid = setValid (pg, "Octaves", mModule3D.getOctaveCount() > 0 && mModule3D.getOctaveCount() <= 30) && valid;
+	valid = setValid (pg, "Frequency", mModule3D.getFrequency() > 0) && valid;
+	valid = setValid (pg, "Lacunarity", mModule3D.getLacunarity() > 0) && valid;
+	valid = setValid (pg, "Persistence", mModule3D.getPersistence() > 0) && valid;
+	return valid;
+}
+
+void EditorBillowModule::writeProperties (TiXmlElement *element)
 {
 	TiXmlElement *prop;
 
@@ -58,7 +112,7 @@ void EditorPerlinModule::writeProperties (TiXmlElement *element)
 	element->LinkEndChild (prop);
 }
 
-bool EditorPerlinModule::readProperties (TiXmlElement *element)
+bool EditorBillowModule::readProperties (TiXmlElement *element)
 {
 	double dval;
 	int ival;
@@ -101,54 +155,4 @@ bool EditorPerlinModule::readProperties (TiXmlElement *element)
 	mModule2D.setQuality (ival);
 
 	return true;
-}
-
-void EditorPerlinModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
-{
-	if (name == _("Frequency"))
-	{
-		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setFrequency (val);
-		mModule2D.setFrequency (val);
-	}
-	else if (name == _("Lacunarity"))
-	{
-		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setLacunarity (val);
-		mModule2D.setLacunarity (val);
-	}
-	else if (name == _("Persistence"))
-	{
-		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setPersistence (val);
-		mModule2D.setPersistence (val);
-	}
-	else if (name == _("Octaves"))
-	{
-		int val = pg->GetPropertyValueAsInt (name);
-		mModule3D.setOctaveCount (val);
-		mModule2D.setOctaveCount (val);
-	}
-	else if (name == _("Seed"))
-	{
-		int val = pg->GetPropertyValueAsInt (name);
-		mModule3D.setSeed (val);
-		mModule2D.setSeed (val);
-	}
-	else if (name == _("Quality"))
-	{
-		int val = pg->GetPropertyValueAsInt (name);
-		mModule3D.setQuality (val);
-		mModule2D.setQuality (val);
-	}
-}
-
-bool EditorPerlinModule::validate (wxPropertyGrid *pg)
-{
-	bool valid = true;
-	valid = setValid (pg, "Octaves", mModule3D.getOctaveCount() > 0 && mModule3D.getOctaveCount()) && valid;
-	valid = setValid (pg, "Frequency", mModule3D.getFrequency() > 0) && valid;
-	valid = setValid (pg, "Lacunarity", mModule3D.getLacunarity() > 0) && valid;
-	valid = setValid (pg, "Persistence", mModule3D.getPersistence() > 0) && valid;
-	return valid;
 }
