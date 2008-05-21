@@ -72,7 +72,7 @@ namespace noisepp
 
 		public:
 			/// Constructor.
-			ConstantModule() : Module(0)
+			ConstantModule() : Module(0), mValue(0.0)
 			{
 			}
 			/// Sets the constant value.

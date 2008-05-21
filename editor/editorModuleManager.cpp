@@ -32,6 +32,14 @@
 #include "modules/EditorTerraceModule.h"
 #include "modules/EditorTranslatePointModule.h"
 #include "modules/EditorVoronoiModule.h"
+#include "modules/EditorAbsoluteModule.h"
+#include "modules/EditorAdditionModule.h"
+#include "modules/EditorBlendModule.h"
+#include "modules/EditorInvertModule.h"
+#include "modules/EditorMaximumModule.h"
+#include "modules/EditorMinimumModule.h"
+#include "modules/EditorMultiplyModule.h"
+#include "modules/EditorPowerModule.h"
 
 EditorModuleManager::EditorModuleManager()
 {
@@ -50,6 +58,14 @@ EditorModuleManager::EditorModuleManager()
 	//registerFactory(new EditorModuleFactory<EditorTerraceModule>);
 	registerFactory(new EditorModuleFactory<EditorTranslatePointModule>);
 	registerFactory(new EditorModuleFactory<EditorVoronoiModule>);
+	registerFactory(new EditorModuleFactory<EditorAbsoluteModule>);
+	registerFactory(new EditorModuleFactory<EditorAdditionModule>);
+	registerFactory(new EditorModuleFactory<EditorBlendModule>);
+	registerFactory(new EditorModuleFactory<EditorInvertModule>);
+	registerFactory(new EditorModuleFactory<EditorMaximumModule>);
+	registerFactory(new EditorModuleFactory<EditorMinimumModule>);
+	registerFactory(new EditorModuleFactory<EditorMultiplyModule>);
+	registerFactory(new EditorModuleFactory<EditorPowerModule>);
 }
 
 EditorModuleManager::~EditorModuleManager()

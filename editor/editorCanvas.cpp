@@ -122,6 +122,32 @@ void editorCanvas::OnPaint(wxPaintEvent& event)
 			}
 			else if (module->getNumberOfSourceModules() == 2)
 			{
+				drawModule (dc, w/2, h/2+(image_height+titleHeight)/2+10, image_width, image_height, mModule, bitmap);
+				EditorModule *smodule0 = module->getSourceModule(0);
+				wxBitmap *sbitmap0 = NULL;
+				wxString sname0 = _("Source 1");
+				if (smodule0)
+				{
+					sname0 += wxT(": ") + module->getSourceModuleName(0);
+					sbitmap0 = smodule0->getBitmap();
+				}
+				drawModule (dc, w/2-image_width/2-image_width/3, h/2-((image_height+titleHeight)/2+10), image_width, image_height, sname0, sbitmap0);
+				dc.DrawLine (w/2, h/2-(10-2)-image_height/2, w/2, h/2+10);
+				dc.DrawLine (w/2-image_width/3, h/2-(10-2)-image_height/2, w/2+image_width/3, h/2-(10-2)-image_height/2);
+
+				EditorModule *smodule1 = module->getSourceModule(1);
+				wxBitmap *sbitmap1 = NULL;
+				wxString sname1 = _("Source 2");
+				if (smodule1)
+				{
+					sname1 += wxT(": ") + module->getSourceModuleName(1);
+					sbitmap1 = smodule1->getBitmap();
+				}
+				drawModule (dc, w/2+image_width/2+image_width/3, h/2-((image_height+titleHeight)/2+10), image_width, image_height, sname1, sbitmap1);
+
+				wxPoint arrowPoints[] = { wxPoint(w/2-5, h/2), wxPoint(w/2+5, h/2), wxPoint(w/2, h/2+8) };
+				dc.DrawPolygon (3, arrowPoints);
+				dc.SetBrush (*wxBLACK_BRUSH);
 			}
 			else if (module->getNumberOfSourceModules() == 3)
 			{
