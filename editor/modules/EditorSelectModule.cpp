@@ -25,9 +25,11 @@ EditorSelectModule::EditorSelectModule() : EditorModule(3)
 
 void EditorSelectModule::fillPropertyGrid (wxPropertyGrid *pg)
 {
+	pg->Append( wxPropertyCategory(wxT("Source modules")) );
 	appendSourceModuleProperty (pg, wxT("Source module 1"), mSourceModules[0]);
 	appendSourceModuleProperty (pg, wxT("Source module 2"), mSourceModules[1]);
 	appendSourceModuleProperty (pg, wxT("Control module"), mSourceModules[2]);
+	pg->Append( wxPropertyCategory(wxT("Parameters")) );
 	pg->Append( wxFloatProperty(wxT("Lower bound"), wxPG_LABEL, mModule3D.getLowerBound()) );
 	pg->Append( wxFloatProperty(wxT("Upper bound"), wxPG_LABEL, mModule3D.getUpperBound()) );
 	pg->Append( wxFloatProperty(wxT("Edge falloff"), wxPG_LABEL, mModule3D.getEdgeFalloff()) );

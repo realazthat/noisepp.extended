@@ -21,9 +21,11 @@ std::string EditorPerlinModule::FACTORY_NAME = "Perlin";
 
 void EditorPerlinModule::fillPropertyGrid (wxPropertyGrid *pg)
 {
+	pg->Append( wxPropertyCategory(wxT("Parameters")) );
 	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule3D.getFrequency()) );
 	pg->Append( wxFloatProperty(wxT("Lacunarity"), wxPG_LABEL, mModule3D.getLacunarity()) );
 	pg->Append( wxFloatProperty(wxT("Persistence"), wxPG_LABEL, mModule3D.getPersistence()) );
+	pg->Append( wxFloatProperty(wxT("Scale"), wxPG_LABEL, mModule3D.getScale()) );
 	pg->Append( wxIntProperty(wxT("Octaves"), wxPG_LABEL, mModule3D.getOctaveCount()) );
 	pg->Append( wxIntProperty(wxT("Seed"), wxPG_LABEL, mModule3D.getSeed()) );
 	appendQualityProperty (pg, mModule3D.getQuality());
@@ -43,6 +45,10 @@ void EditorPerlinModule::writeProperties (TiXmlElement *element)
 
 	prop = new TiXmlElement ("Persistence");
 	prop->SetDoubleAttribute ("value", mModule3D.getPersistence());
+	element->LinkEndChild (prop);
+
+	prop = new TiXmlElement ("Scale");
+	prop->SetDoubleAttribute ("value", mModule3D.getScale());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("Seed");
@@ -100,6 +106,15 @@ bool EditorPerlinModule::readProperties (TiXmlElement *element)
 	mModule3D.setQuality (ival);
 	mModule2D.setQuality (ival);
 
+	prop = element->FirstChildElement ("Scale");
+	if (prop != NULL)
+	{
+		if (prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
+			return false;
+		mModule3D.setScale (dval);
+		mModule2D.setScale (dval);
+	}
+
 	return true;
 }
 
@@ -122,6 +137,12 @@ void EditorPerlinModule::onPropertyChange (wxPropertyGrid *pg, const wxString &n
 		double val = pg->GetPropertyValueAsDouble (name);
 		mModule3D.setPersistence (val);
 		mModule2D.setPersistence (val);
+	}
+	else if (name == _("Scale"))
+	{
+		double val = pg->GetPropertyValueAsDouble (name);
+		mModule3D.setScale (val);
+		mModule2D.setScale (val);
 	}
 	else if (name == _("Octaves"))
 	{
@@ -146,7 +167,7 @@ void EditorPerlinModule::onPropertyChange (wxPropertyGrid *pg, const wxString &n
 bool EditorPerlinModule::validate (wxPropertyGrid *pg)
 {
 	bool valid = true;
-	valid = setValid (pg, "Octaves", mModule3D.getOctaveCount() > 0 && mModule3D.getOctaveCount()) && valid;
+	valid = setValid (pg, "Octaves", mModule3D.getOctaveCount() > 0 && mModule3D.getOctaveCount() <= 30) && valid;
 	valid = setValid (pg, "Frequency", mModule3D.getFrequency() > 0) && valid;
 	valid = setValid (pg, "Lacunarity", mModule3D.getLacunarity() > 0) && valid;
 	valid = setValid (pg, "Persistence", mModule3D.getPersistence() > 0) && valid;

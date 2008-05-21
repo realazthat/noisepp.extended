@@ -15,27 +15,29 @@
 // along with the Noise++ Editor.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "EditorBillowModule.h"
+#include "EditorRidgedMultiModule.h"
 
-std::string EditorBillowModule::FACTORY_NAME = "Billow";
+std::string EditorRidgedMultiModule::FACTORY_NAME = "RidgedMulti";
 
-EditorBillowModule::EditorBillowModule() : EditorModule(0)
+EditorRidgedMultiModule::EditorRidgedMultiModule() : EditorModule(0)
 {
 }
 
-void EditorBillowModule::fillPropertyGrid (wxPropertyGrid *pg)
+void EditorRidgedMultiModule::fillPropertyGrid (wxPropertyGrid *pg)
 {
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
 	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule3D.getFrequency()) );
 	pg->Append( wxFloatProperty(wxT("Lacunarity"), wxPG_LABEL, mModule3D.getLacunarity()) );
-	pg->Append( wxFloatProperty(wxT("Persistence"), wxPG_LABEL, mModule3D.getPersistence()) );
+	pg->Append( wxFloatProperty(wxT("Exponent"), wxPG_LABEL, mModule3D.getExponent()) );
+	pg->Append( wxFloatProperty(wxT("Offset"), wxPG_LABEL, mModule3D.getOffset()) );
+	pg->Append( wxFloatProperty(wxT("Gain"), wxPG_LABEL, mModule3D.getGain()) );
 	pg->Append( wxFloatProperty(wxT("Scale"), wxPG_LABEL, mModule3D.getScale()) );
 	pg->Append( wxIntProperty(wxT("Octaves"), wxPG_LABEL, mModule3D.getOctaveCount()) );
 	pg->Append( wxIntProperty(wxT("Seed"), wxPG_LABEL, mModule3D.getSeed()) );
 	appendQualityProperty (pg, mModule3D.getQuality());
 }
 
-void EditorBillowModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
+void EditorRidgedMultiModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
 {
 	if (name == _("Frequency"))
 	{
@@ -49,11 +51,23 @@ void EditorBillowModule::onPropertyChange (wxPropertyGrid *pg, const wxString &n
 		mModule3D.setLacunarity (val);
 		mModule2D.setLacunarity (val);
 	}
-	else if (name == _("Persistence"))
+	else if (name == _("Exponent"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setPersistence (val);
-		mModule2D.setPersistence (val);
+		mModule3D.setExponent (val);
+		mModule2D.setExponent (val);
+	}
+	else if (name == _("Offset"))
+	{
+		double val = pg->GetPropertyValueAsDouble (name);
+		mModule3D.setOffset (val);
+		mModule2D.setOffset (val);
+	}
+	else if (name == _("Gain"))
+	{
+		double val = pg->GetPropertyValueAsDouble (name);
+		mModule3D.setGain (val);
+		mModule2D.setGain (val);
 	}
 	else if (name == _("Scale"))
 	{
@@ -81,17 +95,16 @@ void EditorBillowModule::onPropertyChange (wxPropertyGrid *pg, const wxString &n
 	}
 }
 
-bool EditorBillowModule::validate (wxPropertyGrid *pg)
+bool EditorRidgedMultiModule::validate (wxPropertyGrid *pg)
 {
 	bool valid = true;
 	valid = setValid (pg, "Octaves", mModule3D.getOctaveCount() > 0 && mModule3D.getOctaveCount() <= 30) && valid;
 	valid = setValid (pg, "Frequency", mModule3D.getFrequency() > 0) && valid;
 	valid = setValid (pg, "Lacunarity", mModule3D.getLacunarity() > 0) && valid;
-	valid = setValid (pg, "Persistence", mModule3D.getPersistence() > 0) && valid;
 	return valid;
 }
 
-void EditorBillowModule::writeProperties (TiXmlElement *element)
+void EditorRidgedMultiModule::writeProperties (TiXmlElement *element)
 {
 	TiXmlElement *prop;
 
@@ -103,8 +116,16 @@ void EditorBillowModule::writeProperties (TiXmlElement *element)
 	prop->SetDoubleAttribute ("value", mModule3D.getLacunarity());
 	element->LinkEndChild (prop);
 
-	prop = new TiXmlElement ("Persistence");
-	prop->SetDoubleAttribute ("value", mModule3D.getPersistence());
+	prop = new TiXmlElement ("Exponent");
+	prop->SetDoubleAttribute ("value", mModule3D.getExponent());
+	element->LinkEndChild (prop);
+
+	prop = new TiXmlElement ("Offset");
+	prop->SetDoubleAttribute ("value", mModule3D.getOffset());
+	element->LinkEndChild (prop);
+
+	prop = new TiXmlElement ("Gain");
+	prop->SetDoubleAttribute ("value", mModule3D.getGain());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("Scale");
@@ -124,7 +145,7 @@ void EditorBillowModule::writeProperties (TiXmlElement *element)
 	element->LinkEndChild (prop);
 }
 
-bool EditorBillowModule::readProperties (TiXmlElement *element)
+bool EditorRidgedMultiModule::readProperties (TiXmlElement *element)
 {
 	double dval;
 	int ival;
@@ -142,11 +163,23 @@ bool EditorBillowModule::readProperties (TiXmlElement *element)
 	mModule3D.setLacunarity (dval);
 	mModule2D.setLacunarity (dval);
 
-	prop = element->FirstChildElement ("Persistence");
+	prop = element->FirstChildElement ("Exponent");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setPersistence (dval);
-	mModule2D.setPersistence (dval);
+	mModule3D.setExponent (dval);
+	mModule2D.setExponent (dval);
+
+	prop = element->FirstChildElement ("Offset");
+	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
+		return false;
+	mModule3D.setOffset (dval);
+	mModule2D.setOffset (dval);
+
+	prop = element->FirstChildElement ("Gain");
+	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
+		return false;
+	mModule3D.setGain (dval);
+	mModule2D.setGain (dval);
 
 	prop = element->FirstChildElement ("Seed");
 	if (prop == NULL || prop->QueryIntAttribute ("value", &ival) != TIXML_SUCCESS)

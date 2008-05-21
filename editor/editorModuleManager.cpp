@@ -21,6 +21,12 @@
 #include "modules/EditorTurbulenceModule.h"
 #include "modules/EditorSelectModule.h"
 #include "modules/EditorBillowModule.h"
+#include "modules/EditorCheckerboardModule.h"
+#include "modules/EditorClampModule.h"
+#include "modules/EditorConstantModule.h"
+#include "modules/EditorCurveModule.h"
+#include "modules/EditorExponentModule.h"
+#include "modules/EditorRidgedMultiModule.h"
 
 EditorModuleManager::EditorModuleManager()
 {
@@ -28,6 +34,12 @@ EditorModuleManager::EditorModuleManager()
 	registerFactory(new EditorModuleFactory<EditorTurbulenceModule>);
 	registerFactory(new EditorModuleFactory<EditorSelectModule>);
 	registerFactory(new EditorModuleFactory<EditorBillowModule>);
+	registerFactory(new EditorModuleFactory<EditorCheckerboardModule>);
+	registerFactory(new EditorModuleFactory<EditorClampModule>);
+	registerFactory(new EditorModuleFactory<EditorConstantModule>);
+	//registerFactory(new EditorModuleFactory<EditorCurveModule>);
+	registerFactory(new EditorModuleFactory<EditorExponentModule>);
+	registerFactory(new EditorModuleFactory<EditorRidgedMultiModule>);
 }
 
 EditorModuleManager::~EditorModuleManager()

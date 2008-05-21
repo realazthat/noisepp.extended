@@ -48,6 +48,34 @@ void editorCanvas::drawModule(wxPaintDC &dc, int center_x, int center_y, wxCoord
 
 	if (bitmap)
 	{
+		/*wxCoord xo = center_x-w/2;
+		wxCoord yo = tLine+1;
+
+		EditorModule *module = EditorModuleManager::getInstance().getModule(name);
+		if (module)
+		{
+			noisepp::Pipeline2D pipeline;
+			noisepp::ElementID id = module->get2DModule().addToPipe (pipeline);
+			noisepp::PipelineElement2D *element = pipeline.getElement(id);
+			noisepp::Cache *cache = pipeline.createCache ();
+			int y, lasty;
+			for (int n=0;n<w;++n)
+			{
+				double d = (element->getValue((double)n/(double)(w-1), 0, cache) + 1.0) * 0.5 * (h-1);
+				if (d < 0.0)
+					d = 0.0;
+				if (d > (h-1))
+					d = h-1;
+				lasty = y;
+				y = (int)d;
+				if (n > 0)
+				{
+					dc.DrawLine(xo+n-1, yo+lasty, xo+n, yo+y);
+				}
+			}
+			pipeline.freeCache (cache);
+		}*/
+
 		assert (bitmap->GetWidth() == w);
 		assert (bitmap->GetHeight() == h);
 		dc.DrawBitmap (*bitmap, center_x-w/2, tLine+1, false);

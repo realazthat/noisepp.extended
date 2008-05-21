@@ -25,7 +25,9 @@ EditorTurbulenceModule::EditorTurbulenceModule() : EditorModule(1)
 
 void EditorTurbulenceModule::fillPropertyGrid (wxPropertyGrid *pg)
 {
+	pg->Append( wxPropertyCategory(wxT("Source modules")) );
 	appendSourceModuleProperty (pg, wxT("Source module"), mSourceModules[0]);
+	pg->Append( wxPropertyCategory(wxT("Parameters")) );
 	pg->Append( wxFloatProperty(wxT("Power"), wxPG_LABEL, mModule3D.getPower()) );
 	pg->Append( wxFloatProperty(wxT("Roughness"), wxPG_LABEL, mModule3D.getRoughness()) );
 	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule3D.getFrequency()) );
