@@ -28,8 +28,8 @@ void EditorScaleBiasModule::fillPropertyGrid (wxPropertyGrid *pg)
 	pg->Append( wxPropertyCategory(wxT("Source modules")) );
 	appendSourceModuleProperty (pg, wxT("Source module"), mSourceModules[0]);
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Scale"), wxPG_LABEL, mModule3D.getScale()) );
-	pg->Append( wxFloatProperty(wxT("Bias"), wxPG_LABEL, mModule3D.getBias()) );
+	pg->Append( wxFloatProperty(wxT("Scale"), wxPG_LABEL, mModule.getScale()) );
+	pg->Append( wxFloatProperty(wxT("Bias"), wxPG_LABEL, mModule.getBias()) );
 }
 
 void EditorScaleBiasModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -42,14 +42,12 @@ void EditorScaleBiasModule::onPropertyChange (wxPropertyGrid *pg, const wxString
 	else if (name == _("Scale"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setScale (val);
-		mModule2D.setScale (val);
+		mModule.setScale (val);
 	}
 	else if (name == _("Bias"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setBias (val);
-		mModule2D.setBias (val);
+		mModule.setBias (val);
 	}
 }
 
@@ -61,8 +59,7 @@ bool EditorScaleBiasModule::validate (wxPropertyGrid *pg)
 	module = getSourceModule(0);
 	if (module)
 	{
-		mModule2D.setSourceModule(0, module->get2DModule());
-		mModule3D.setSourceModule(0, module->get3DModule());
+		mModule.setSourceModule(0, module->getModule());
 	}
 	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
 
@@ -76,11 +73,11 @@ void EditorScaleBiasModule::writeProperties (TiXmlElement *element)
 	writeSourceModules (element);
 
 	prop = new TiXmlElement ("Scale");
-	prop->SetDoubleAttribute ("value", mModule3D.getScale());
+	prop->SetDoubleAttribute ("value", mModule.getScale());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("Bias");
-	prop->SetDoubleAttribute ("value", mModule3D.getBias());
+	prop->SetDoubleAttribute ("value", mModule.getBias());
 	element->LinkEndChild (prop);
 }
 
@@ -95,14 +92,12 @@ bool EditorScaleBiasModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("Scale");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setScale (dval);
-	mModule2D.setScale (dval);
+	mModule.setScale (dval);
 
 	prop = element->FirstChildElement ("Bias");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setBias (dval);
-	mModule2D.setBias (dval);
+	mModule.setBias (dval);
 
 	return true;
 }

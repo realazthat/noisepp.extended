@@ -109,20 +109,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D minimum module.
+	/** Minimum module.
 		Returns the minimum of the two source modules.
 	*/
-	class MinimumModule1D : public DualSourceModule<Pipeline1D, MinimumElement1D>
-	{ };
-	/** 2D minimum module.
-		Returns the minimum of the two source modules.
-	*/
-	class MinimumModule2D : public DualSourceModule<Pipeline2D, MinimumElement2D>
-	{ };
-	/** 3D minimum module.
-		Returns the minimum of the two source modules.
-	*/
-	class MinimumModule3D : public DualSourceModule<Pipeline3D, MinimumElement3D>
+	class MinimumModule : public DualSourceModule<MinimumElement1D, MinimumElement2D, MinimumElement3D>
 	{ };
 };
 

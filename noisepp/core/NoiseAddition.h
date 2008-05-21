@@ -100,20 +100,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module for adding the values of two modules together.
+	/** Module for adding the values of two modules together.
 		Adds the values of the two source modules together.
 	*/
-	class AdditionModule1D : public DualSourceModule<Pipeline1D, AdditionElement1D>
-	{ };
-	/** 2D module for adding the values of two modules together.
-		Adds the values of the two source modules together.
-	*/
-	class AdditionModule2D : public DualSourceModule<Pipeline2D, AdditionElement2D>
-	{ };
-	/** 3D module for adding the values of two modules together.
-		Adds the values of the two source modules together.
-	*/
-	class AdditionModule3D : public DualSourceModule<Pipeline3D, AdditionElement3D>
+	class AdditionModule : public DualSourceModule<AdditionElement1D, AdditionElement2D, AdditionElement3D>
 	{ };
 };
 

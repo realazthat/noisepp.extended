@@ -54,38 +54,6 @@ namespace noisepp
 
 	};
 
-	/** 1D transform module for scaling.
-		Transforms the source module by scaling the coordinates.
-	*/
-	class ScalePointModule1D : public Module1D
-	{
-		private:
-			Real mScaleX;
-
-		public:
-			/// Constructor.
-			ScalePointModule1D() : Module1D(1), mScaleX(1.0)
-			{
-			}
-			/// Sets the scaling applied to the x coordinate.
-			void setScaleX (Real v)
-			{
-				mScaleX = v;
-			}
-			/// Returns the scaling applied to the x coordinate.
-			Real getScaleX () const
-			{
-				return mScaleX;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				assert (getSourceModule (0));
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScalePointElement1D(pipe, first, mScaleX));
-			}
-	};
-
 	class ScalePointElement2D : public PipelineElement2D
 	{
 		private:
@@ -105,49 +73,6 @@ namespace noisepp
 				return getElementValue (mElementPtr, mElement, x*mScaleX, y*mScaleY, cache);
 			}
 
-	};
-
-	/** 2D transform module for scaling.
-		Transforms the source module by scaling the coordinates.
-	*/
-	class ScalePointModule2D : public Module2D
-	{
-		private:
-			Real mScaleX;
-			Real mScaleY;
-
-		public:
-			/// Constructor.
-			ScalePointModule2D() : Module2D(1), mScaleX(1.0), mScaleY(1.0)
-			{
-			}
-			/// Sets the scaling applied to the x coordinate.
-			void setScaleX (Real v)
-			{
-				mScaleX = v;
-			}
-			/// Returns the scaling applied to the x coordinate.
-			Real getScaleX () const
-			{
-				return mScaleX;
-			}
-			/// Sets the scaling applied to the y coordinate.
-			void setScaleY (Real v)
-			{
-				mScaleY = v;
-			}
-			/// Returns the scaling applied to the y coordinate.
-			Real getScaleY () const
-			{
-				return mScaleY;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				assert (getSourceModule (0));
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new ScalePointElement2D(pipe, first, mScaleX, mScaleY));
-			}
 	};
 
 	class ScalePointElement3D : public PipelineElement3D
@@ -172,10 +97,10 @@ namespace noisepp
 
 	};
 
-	/** 3D transform module for scaling.
+	/** Transform module for scaling.
 		Transforms the source module by scaling the coordinates.
 	*/
-	class ScalePointModule3D : public Module3D
+	class ScalePointModule : public Module
 	{
 		private:
 			Real mScaleX;
@@ -184,7 +109,7 @@ namespace noisepp
 
 		public:
 			/// Constructor.
-			ScalePointModule3D() : Module3D(1), mScaleX(1.0), mScaleY(1.0), mScaleZ(1.0)
+			ScalePointModule() : Module(1), mScaleX(1.0), mScaleY(1.0), mScaleZ(1.0)
 			{
 			}
 			/// Sets the scaling applied to the x coordinate.
@@ -216,6 +141,20 @@ namespace noisepp
 			Real getScaleZ () const
 			{
 				return mScaleZ;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ScalePointElement1D(pipe, first, mScaleX));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ScalePointElement2D(pipe, first, mScaleX, mScaleY));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const

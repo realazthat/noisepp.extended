@@ -26,10 +26,10 @@ EditorVoronoiModule::EditorVoronoiModule() : EditorModule(0)
 void EditorVoronoiModule::fillPropertyGrid (wxPropertyGrid *pg)
 {
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule3D.getFrequency()) );
-	pg->Append( wxFloatProperty(wxT("Displacement"), wxPG_LABEL, mModule3D.getDisplacement()) );
-	pg->Append( wxIntProperty(wxT("Seed"), wxPG_LABEL, mModule3D.getSeed()) );
-	pg->Append( wxBoolProperty(wxT("Enable distance"), wxPG_LABEL, mModule3D.isDistanceEnabled()) );
+	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule.getFrequency()) );
+	pg->Append( wxFloatProperty(wxT("Displacement"), wxPG_LABEL, mModule.getDisplacement()) );
+	pg->Append( wxIntProperty(wxT("Seed"), wxPG_LABEL, mModule.getSeed()) );
+	pg->Append( wxBoolProperty(wxT("Enable distance"), wxPG_LABEL, mModule.isDistanceEnabled()) );
 }
 
 void EditorVoronoiModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -37,33 +37,29 @@ void EditorVoronoiModule::onPropertyChange (wxPropertyGrid *pg, const wxString &
 	if (name == _("Frequency"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setFrequency (val);
-		mModule2D.setFrequency (val);
+		mModule.setFrequency (val);
 	}
 	else if (name == _("Displacement"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setDisplacement (val);
-		mModule2D.setDisplacement (val);
+		mModule.setDisplacement (val);
 	}
 	else if (name == _("Seed"))
 	{
 		int val = pg->GetPropertyValueAsInt (name);
-		mModule3D.setSeed (val);
-		mModule2D.setSeed (val);
+		mModule.setSeed (val);
 	}
 	else if (name == _("Enable distance"))
 	{
 		bool val = pg->GetPropertyValueAsBool (name);
-		mModule3D.setEnableDistance (val);
-		mModule2D.setEnableDistance (val);
+		mModule.setEnableDistance (val);
 	}
 }
 
 bool EditorVoronoiModule::validate (wxPropertyGrid *pg)
 {
 	bool valid = true;
-	valid = setValid (pg, "Frequency", mModule3D.getFrequency() > 0) && valid;
+	valid = setValid (pg, "Frequency", mModule.getFrequency() > 0) && valid;
 	return valid;
 }
 
@@ -72,19 +68,19 @@ void EditorVoronoiModule::writeProperties (TiXmlElement *element)
 	TiXmlElement *prop;
 
 	prop = new TiXmlElement ("Frequency");
-	prop->SetDoubleAttribute ("value", mModule3D.getFrequency());
+	prop->SetDoubleAttribute ("value", mModule.getFrequency());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("Displacement");
-	prop->SetDoubleAttribute ("value", mModule3D.getDisplacement());
+	prop->SetDoubleAttribute ("value", mModule.getDisplacement());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("Seed");
-	prop->SetAttribute ("value", mModule3D.getSeed());
+	prop->SetAttribute ("value", mModule.getSeed());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("EnableDistance");
-	prop->SetAttribute ("value", mModule3D.isDistanceEnabled());
+	prop->SetAttribute ("value", mModule.isDistanceEnabled());
 	element->LinkEndChild (prop);
 }
 
@@ -97,26 +93,22 @@ bool EditorVoronoiModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("Frequency");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setFrequency (dval);
-	mModule2D.setFrequency (dval);
+	mModule.setFrequency (dval);
 
 	prop = element->FirstChildElement ("Displacement");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setDisplacement (dval);
-	mModule2D.setDisplacement (dval);
+	mModule.setDisplacement (dval);
 
 	prop = element->FirstChildElement ("Seed");
 	if (prop == NULL || prop->QueryIntAttribute ("value", &ival) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setSeed (ival);
-	mModule2D.setSeed (ival);
+	mModule.setSeed (ival);
 
 	prop = element->FirstChildElement ("EnableDistance");
 	if (prop == NULL || prop->QueryIntAttribute ("value", &ival) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setEnableDistance (ival != 0);
-	mModule2D.setEnableDistance (ival != 0);
+	mModule.setEnableDistance (ival != 0);
 
 	return true;
 }

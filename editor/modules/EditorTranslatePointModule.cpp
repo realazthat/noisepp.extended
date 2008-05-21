@@ -28,9 +28,9 @@ void EditorTranslatePointModule::fillPropertyGrid (wxPropertyGrid *pg)
 	pg->Append( wxPropertyCategory(wxT("Source modules")) );
 	appendSourceModuleProperty (pg, wxT("Source module"), mSourceModules[0]);
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Translate X"), wxPG_LABEL, mModule3D.getTranslationX()) );
-	pg->Append( wxFloatProperty(wxT("Translate Y"), wxPG_LABEL, mModule3D.getTranslationY()) );
-	pg->Append( wxFloatProperty(wxT("Translate Z"), wxPG_LABEL, mModule3D.getTranslationZ()) );
+	pg->Append( wxFloatProperty(wxT("Translate X"), wxPG_LABEL, mModule.getTranslationX()) );
+	pg->Append( wxFloatProperty(wxT("Translate Y"), wxPG_LABEL, mModule.getTranslationY()) );
+	pg->Append( wxFloatProperty(wxT("Translate Z"), wxPG_LABEL, mModule.getTranslationZ()) );
 }
 
 void EditorTranslatePointModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -43,19 +43,17 @@ void EditorTranslatePointModule::onPropertyChange (wxPropertyGrid *pg, const wxS
 	else if (name == _("Translate X"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setTranslationX (val);
-		mModule2D.setTranslationX (val);
+		mModule.setTranslationX (val);
 	}
 	else if (name == _("Translate Y"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setTranslationY (val);
-		mModule2D.setTranslationY (val);
+		mModule.setTranslationY (val);
 	}
 	else if (name == _("Translate Z"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setTranslationZ (val);
+		mModule.setTranslationZ (val);
 	}
 }
 
@@ -67,8 +65,7 @@ bool EditorTranslatePointModule::validate (wxPropertyGrid *pg)
 	module = getSourceModule(0);
 	if (module)
 	{
-		mModule2D.setSourceModule(0, module->get2DModule());
-		mModule3D.setSourceModule(0, module->get3DModule());
+		mModule.setSourceModule(0, module->getModule());
 	}
 	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
 
@@ -82,15 +79,15 @@ void EditorTranslatePointModule::writeProperties (TiXmlElement *element)
 	writeSourceModules (element);
 
 	prop = new TiXmlElement ("TranslateX");
-	prop->SetDoubleAttribute ("value", mModule3D.getTranslationX());
+	prop->SetDoubleAttribute ("value", mModule.getTranslationX());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("TranslateY");
-	prop->SetDoubleAttribute ("value", mModule3D.getTranslationY());
+	prop->SetDoubleAttribute ("value", mModule.getTranslationY());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("TranslateZ");
-	prop->SetDoubleAttribute ("value", mModule3D.getTranslationZ());
+	prop->SetDoubleAttribute ("value", mModule.getTranslationZ());
 	element->LinkEndChild (prop);
 }
 
@@ -105,19 +102,17 @@ bool EditorTranslatePointModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("TranslateX");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setTranslationX (dval);
-	mModule2D.setTranslationX (dval);
+	mModule.setTranslationX (dval);
 
 	prop = element->FirstChildElement ("TranslateY");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setTranslationY (dval);
-	mModule2D.setTranslationY (dval);
+	mModule.setTranslationY (dval);
 
 	prop = element->FirstChildElement ("TranslateZ");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setTranslationZ (dval);
+	mModule.setTranslationZ (dval);
 
 	return true;
 }

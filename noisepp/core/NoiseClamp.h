@@ -34,47 +34,6 @@
 
 namespace noisepp
 {
-	/// Clamp module base class.
-	template <class Pipeline, class Element>
-	class ClampModuleBase : public Module<Pipeline>
-	{
-		private:
-			Real mLowerBound, mUpperBound;
-
-		public:
-			/// Constructor.
-			ClampModuleBase() : Module<Pipeline>(1), mLowerBound(-1.0), mUpperBound(1.0)
-			{
-			}
-			/// Sets the lower bound
-			void setLowerBound (Real v)
-			{
-				mLowerBound = v;
-			}
-			/// Returns the lower bound
-			Real getLowerBound () const
-			{
-				return mLowerBound;
-			}
-			/// Sets the upper bound
-			void setUpperBound (Real v)
-			{
-				mUpperBound = v;
-			}
-			/// Returns the upper bound
-			Real getUpperBound () const
-			{
-				return mUpperBound;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline *pipe) const
-			{
-				assert (Module<Pipeline>::getSourceModule (0));
-				ElementID first = Module<Pipeline>::getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new Element(pipe, first, mLowerBound, mUpperBound));
-			}
-	};
-
 	class ClampElement1D : public PipelineElement1D
 	{
 		private:
@@ -147,21 +106,61 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module clamping the value of the source module.
+	/** Module clamping the value of the source module.
 		Clamps the value of the source module between the specified lower and upper bound.
 	*/
-	class ClampModule1D : public ClampModuleBase<Pipeline1D, ClampElement1D>
-	{ };
-	/** 2D module clamping the value of the source module.
-		Clamps the value of the source module between the specified lower and upper bound.
-	*/
-	class ClampModule2D : public ClampModuleBase<Pipeline2D, ClampElement2D>
-	{ };
-	/** 3D module clamping the value of the source module.
-		Clamps the value of the source module between the specified lower and upper bound.
-	*/
-	class ClampModule3D : public ClampModuleBase<Pipeline3D, ClampElement3D>
-	{ };
+	class ClampModule : public Module
+	{
+		private:
+			Real mLowerBound, mUpperBound;
+
+		public:
+			/// Constructor.
+			ClampModule() : Module(1), mLowerBound(-1.0), mUpperBound(1.0)
+			{
+			}
+			/// Sets the lower bound
+			void setLowerBound (Real v)
+			{
+				mLowerBound = v;
+			}
+			/// Returns the lower bound
+			Real getLowerBound () const
+			{
+				return mLowerBound;
+			}
+			/// Sets the upper bound
+			void setUpperBound (Real v)
+			{
+				mUpperBound = v;
+			}
+			/// Returns the upper bound
+			Real getUpperBound () const
+			{
+				return mUpperBound;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ClampElement1D(pipe, first, mLowerBound, mUpperBound));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ClampElement2D(pipe, first, mLowerBound, mUpperBound));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline3D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ClampElement3D(pipe, first, mLowerBound, mUpperBound));
+			}
+	};
 };
 
 #endif

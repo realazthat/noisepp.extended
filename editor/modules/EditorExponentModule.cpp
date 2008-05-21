@@ -28,7 +28,7 @@ void EditorExponentModule::fillPropertyGrid (wxPropertyGrid *pg)
 	pg->Append( wxPropertyCategory(wxT("Source modules")) );
 	appendSourceModuleProperty (pg, wxT("Source module"), mSourceModules[0]);
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Exponent"), wxPG_LABEL, mModule3D.getExponent()) );
+	pg->Append( wxFloatProperty(wxT("Exponent"), wxPG_LABEL, mModule.getExponent()) );
 }
 
 void EditorExponentModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -41,8 +41,7 @@ void EditorExponentModule::onPropertyChange (wxPropertyGrid *pg, const wxString 
 	else if (name == _("Exponent"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setExponent (val);
-		mModule2D.setExponent (val);
+		mModule.setExponent (val);
 	}
 }
 
@@ -54,8 +53,7 @@ bool EditorExponentModule::validate (wxPropertyGrid *pg)
 	module = getSourceModule(0);
 	if (module)
 	{
-		mModule2D.setSourceModule(0, module->get2DModule());
-		mModule3D.setSourceModule(0, module->get3DModule());
+		mModule.setSourceModule(0, module->getModule());
 	}
 	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
 
@@ -69,7 +67,7 @@ void EditorExponentModule::writeProperties (TiXmlElement *element)
 	writeSourceModules (element);
 
 	prop = new TiXmlElement ("Exponent");
-	prop->SetDoubleAttribute ("value", mModule3D.getExponent());
+	prop->SetDoubleAttribute ("value", mModule.getExponent());
 	element->LinkEndChild (prop);
 }
 
@@ -84,8 +82,7 @@ bool EditorExponentModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("Exponent");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setExponent (dval);
-	mModule2D.setExponent (dval);
+	mModule.setExponent (dval);
 
 	return true;
 }

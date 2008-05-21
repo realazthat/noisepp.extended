@@ -131,21 +131,20 @@ int main ()
 	noise::module::Perlin libnoisePerlin;
 
 	// the Noise++ modules
-	noisepp::PerlinModule2D noiseppPerlin2D;
-	noisepp::PerlinModule3D noiseppPerlin3D;
+	noisepp::PerlinModule noiseppPerlin;
 
 	// create default pipelines and fill them with our modules
 	noisepp::Pipeline2D pipeline2D;
-	noisepp::ElementID noiseID = noiseppPerlin2D.addToPipe (pipeline2D);
+	noisepp::ElementID noiseID = noiseppPerlin.addToPipe (pipeline2D);
 	noisepp::Pipeline3D pipeline3D;
-	noisepp::ElementID noiseID3D = noiseppPerlin3D.addToPipe (pipeline3D);
+	noisepp::ElementID noiseID3D = noiseppPerlin.addToPipe (pipeline3D);
 
 	// create threaded pipelines and fill them with modules
 #if NOISEPP_ENABLE_THREADS
 	noisepp::ThreadedPipeline2D pipeline2D_mt(THREAD_COUNT);
-	noisepp::ElementID noiseID2D_mt = noiseppPerlin2D.addToPipe (pipeline2D_mt);
+	noisepp::ElementID noiseID2D_mt = noiseppPerlin.addToPipe (pipeline2D_mt);
 	noisepp::ThreadedPipeline3D pipeline3D_mt(THREAD_COUNT);
-	noisepp::ElementID noiseID3D_mt = noiseppPerlin3D.addToPipe (pipeline3D_mt);
+	noisepp::ElementID noiseID3D_mt = noiseppPerlin.addToPipe (pipeline3D_mt);
 #endif
 
 	// creates the cache

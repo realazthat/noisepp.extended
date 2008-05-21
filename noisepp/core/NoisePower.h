@@ -100,20 +100,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D power module.
+	/** Power module.
 		Returns the power of the two source modules.
 	*/
-	class PowerModule1D : public DualSourceModule<Pipeline1D, PowerElement1D>
-	{ };
-	/** 2D power module.
-		Returns the power of the two source modules.
-	*/
-	class PowerModule2D : public DualSourceModule<Pipeline2D, PowerElement2D>
-	{ };
-	/** 3D power module.
-		Returns the power of the two source modules.
-	*/
-	class PowerModule3D : public DualSourceModule<Pipeline3D, PowerElement3D>
+	class PowerModule : public DualSourceModule<PowerElement1D, PowerElement2D, PowerElement3D>
 	{ };
 };
 

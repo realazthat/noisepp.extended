@@ -28,8 +28,8 @@ void EditorClampModule::fillPropertyGrid (wxPropertyGrid *pg)
 	pg->Append( wxPropertyCategory(wxT("Source modules")) );
 	appendSourceModuleProperty (pg, wxT("Source module"), mSourceModules[0]);
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Lower bound"), wxPG_LABEL, mModule3D.getLowerBound()) );
-	pg->Append( wxFloatProperty(wxT("Upper bound"), wxPG_LABEL, mModule3D.getUpperBound()) );
+	pg->Append( wxFloatProperty(wxT("Lower bound"), wxPG_LABEL, mModule.getLowerBound()) );
+	pg->Append( wxFloatProperty(wxT("Upper bound"), wxPG_LABEL, mModule.getUpperBound()) );
 }
 
 void EditorClampModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -42,14 +42,12 @@ void EditorClampModule::onPropertyChange (wxPropertyGrid *pg, const wxString &na
 	else if (name == _("Lower bound"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setLowerBound (val);
-		mModule2D.setLowerBound (val);
+		mModule.setLowerBound (val);
 	}
 	else if (name == _("Upper bound"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setUpperBound (val);
-		mModule2D.setUpperBound (val);
+		mModule.setUpperBound (val);
 	}
 }
 
@@ -61,13 +59,12 @@ bool EditorClampModule::validate (wxPropertyGrid *pg)
 	module = getSourceModule(0);
 	if (module)
 	{
-		mModule2D.setSourceModule(0, module->get2DModule());
-		mModule3D.setSourceModule(0, module->get3DModule());
+		mModule.setSourceModule(0, module->getModule());
 	}
 	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
 
-	valid = setValid (pg, "Lower bound", mModule3D.getUpperBound() > mModule3D.getLowerBound()) && valid;
-	valid = setValid (pg, "Upper bound", mModule3D.getLowerBound() < mModule3D.getUpperBound()) && valid;
+	valid = setValid (pg, "Lower bound", mModule.getUpperBound() > mModule.getLowerBound()) && valid;
+	valid = setValid (pg, "Upper bound", mModule.getLowerBound() < mModule.getUpperBound()) && valid;
 
 	return valid;
 }
@@ -79,11 +76,11 @@ void EditorClampModule::writeProperties (TiXmlElement *element)
 	writeSourceModules (element);
 
 	prop = new TiXmlElement ("LowerBound");
-	prop->SetDoubleAttribute ("value", mModule3D.getLowerBound());
+	prop->SetDoubleAttribute ("value", mModule.getLowerBound());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("UpperBound");
-	prop->SetDoubleAttribute ("value", mModule3D.getUpperBound());
+	prop->SetDoubleAttribute ("value", mModule.getUpperBound());
 	element->LinkEndChild (prop);
 }
 
@@ -98,14 +95,12 @@ bool EditorClampModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("LowerBound");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setLowerBound (dval);
-	mModule2D.setLowerBound (dval);
+	mModule.setLowerBound (dval);
 
 	prop = element->FirstChildElement ("UpperBound");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setUpperBound (dval);
-	mModule2D.setUpperBound (dval);
+	mModule.setUpperBound (dval);
 
 	return true;
 }

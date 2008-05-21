@@ -36,8 +36,229 @@
 
 namespace noisepp
 {
-	/// Ridged-multifractal noise module base.
-	class RidgedMultiModuleBase
+	class RidgedMultiElement1D : public PipelineElement1D
+	{
+		private:
+			struct Octave
+			{
+				int seed;
+				Real scale;
+				Real spectralWeight;
+			};
+			Octave *mOctaves;
+			size_t mOctaveCount;
+			int mQuality;
+			Real mOffset;
+			Real mGain;
+			Real mScale;
+
+			NOISEPP_INLINE Real calculateGradient (Real x, int seed) const
+			{
+				if (mQuality == NOISE_QUALITY_STD)
+					return Generator1D::calcGradientCoherentNoiseStd (x, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_HIGH)
+					return Generator1D::calcGradientCoherentNoiseHigh (x, seed, mScale);
+				else
+					return Generator1D::calcGradientCoherentNoiseLow (x, seed, mScale);
+			}
+		public:
+			RidgedMultiElement1D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
+			{
+				mOctaves = new Octave[mOctaveCount];
+				int seed;
+				Real scale = frequency;
+				for (size_t o=0;o<mOctaveCount;++o)
+				{
+					seed = (mainSeed + int(o)) & 0x7fffffff;
+					mOctaves[o].spectralWeight = pow(scale, -exponent);
+					mOctaves[o].scale = scale;
+					mOctaves[o].seed = seed;
+
+					scale *= lacunarity;
+				}
+			}
+			virtual ~RidgedMultiElement1D ()
+			{
+				delete mOctaves;
+				mOctaves = NULL;
+			}
+			virtual Real getValue (Real x, Cache *cache) const
+			{
+				Real value = 0.0;
+				Real signal = 0.0;
+				Real weight = 1.0;
+
+				for (size_t o=0;o<mOctaveCount;++o)
+				{
+					const Real nx = Math::MakeInt32Range (x * mOctaves[o].scale);
+					signal = calculateGradient(nx, mOctaves[o].seed);
+					signal = mOffset - std::fabs(signal);
+					signal *= signal;
+					signal *= weight;
+					weight = signal * mGain;
+					if (weight > Real(1.0))
+						weight = Real(1.0);
+					if (weight < Real(-1.0))
+						weight = Real(-1.0);
+
+					value += signal * mOctaves[o].spectralWeight;
+				}
+
+				return (value * Real(1.25)) - Real(1.0);
+			}
+	};
+
+	class RidgedMultiElement2D : public PipelineElement2D
+	{
+		private:
+			struct Octave
+			{
+				int seed;
+				Real scale;
+				Real spectralWeight;
+			};
+			Octave *mOctaves;
+			size_t mOctaveCount;
+			int mQuality;
+			Real mOffset;
+			Real mGain;
+			Real mScale;
+
+			NOISEPP_INLINE Real calculateGradient (Real x, Real y, int seed) const
+			{
+				if (mQuality == NOISE_QUALITY_STD)
+					return Generator2D::calcGradientCoherentNoiseStd (x, y, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_HIGH)
+					return Generator2D::calcGradientCoherentNoiseHigh (x, y, seed, mScale);
+				else
+					return Generator2D::calcGradientCoherentNoiseLow (x, y, seed, mScale);
+			}
+		public:
+			RidgedMultiElement2D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
+			{
+				mOctaves = new Octave[mOctaveCount];
+				int seed;
+				Real scale = frequency;
+				for (size_t o=0;o<mOctaveCount;++o)
+				{
+					seed = (mainSeed + int(o)) & 0x7fffffff;
+					mOctaves[o].spectralWeight = pow(scale, -exponent);
+					mOctaves[o].scale = scale;
+					mOctaves[o].seed = seed;
+
+					scale *= lacunarity;
+				}
+			}
+			virtual ~RidgedMultiElement2D ()
+			{
+				delete mOctaves;
+				mOctaves = NULL;
+			}
+			virtual Real getValue (Real x, Real y, Cache *cache) const
+			{
+				Real value = 0.0;
+				Real signal = 0.0;
+				Real weight = 1.0;
+
+				for (size_t o=0;o<mOctaveCount;++o)
+				{
+					const Real nx = Math::MakeInt32Range (x * mOctaves[o].scale);
+					const Real ny = Math::MakeInt32Range (y * mOctaves[o].scale);
+					signal = calculateGradient(nx, ny, mOctaves[o].seed);
+					signal = mOffset - std::fabs(signal);
+					signal *= signal;
+					signal *= weight;
+					weight = signal * mGain;
+					if (weight > Real(1.0))
+						weight = Real(1.0);
+					if (weight < Real(-1.0))
+						weight = Real(-1.0);
+
+					value += signal * mOctaves[o].spectralWeight;
+				}
+
+				return (value * Real(1.25)) - Real(1.0);
+			}
+	};
+
+	class RidgedMultiElement3D : public PipelineElement3D
+	{
+		private:
+			struct Octave
+			{
+				int seed;
+				Real scale;
+				Real spectralWeight;
+			};
+			Octave *mOctaves;
+			size_t mOctaveCount;
+			int mQuality;
+			Real mOffset;
+			Real mGain;
+			Real mScale;
+
+			NOISEPP_INLINE Real calculateGradient (Real x, Real y, Real z, int seed) const
+			{
+				if (mQuality == NOISE_QUALITY_STD)
+					return Generator3D::calcGradientCoherentNoiseStd (x, y, z, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_HIGH)
+					return Generator3D::calcGradientCoherentNoiseHigh (x, y, z, seed, mScale);
+				else
+					return Generator3D::calcGradientCoherentNoiseLow (x, y, z, seed, mScale);
+			}
+		public:
+			RidgedMultiElement3D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
+			{
+				mOctaves = new Octave[mOctaveCount];
+				int seed;
+				Real scale = frequency;
+				for (size_t o=0;o<mOctaveCount;++o)
+				{
+					seed = (mainSeed + int(o)) & 0x7fffffff;
+					mOctaves[o].spectralWeight = pow(scale, -exponent);
+					mOctaves[o].scale = scale;
+					mOctaves[o].seed = seed;
+
+					scale *= lacunarity;
+				}
+			}
+			virtual ~RidgedMultiElement3D ()
+			{
+				delete mOctaves;
+				mOctaves = NULL;
+			}
+			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
+			{
+				Real value = 0.0;
+				Real signal = 0.0;
+				Real weight = 1.0;
+
+				for (size_t o=0;o<mOctaveCount;++o)
+				{
+					const Real nx = Math::MakeInt32Range (x * mOctaves[o].scale);
+					const Real ny = Math::MakeInt32Range (y * mOctaves[o].scale);
+					const Real nz = Math::MakeInt32Range (z * mOctaves[o].scale);
+					signal = calculateGradient(nx, ny, nz, mOctaves[o].seed);
+					signal = mOffset - std::fabs(signal);
+					signal *= signal;
+					signal *= weight;
+					weight = signal * mGain;
+					if (weight > Real(1.0))
+						weight = Real(1.0);
+					if (weight < Real(-1.0))
+						weight = Real(-1.0);
+
+					value += signal * mOctaves[o].spectralWeight;
+				}
+
+				return (value * Real(1.25)) - Real(1.0);
+			}
+	};
+
+	/** Module for generating ridged-multifractal noise.
+		Generates ridged-multifractal noise.
+	*/
+	class RidgedMultiModule : public Module
 	{
 		protected:
 			/// The frequency.
@@ -61,9 +282,8 @@ namespace noisepp
 
 		public:
 			/// Constructor.
-			RidgedMultiModuleBase () :
+			RidgedMultiModule () :
 			mFrequency(1.0), mOctaveCount(6), mSeed(0), mQuality(NOISE_QUALITY_STD), mLacunarity(2.0), mExponent(1.0), mOffset(1.0), mGain(2.0), mScale(2.12) {}
-			virtual ~RidgedMultiModuleBase () {}
 
 			/// Sets the frequency.
 			void setFrequency (Real v)
@@ -155,259 +375,16 @@ namespace noisepp
 			{
 				return mScale;
 			}
-	};
-
-	class RidgedMultiElement1D : public PipelineElement1D
-	{
-		private:
-			struct Octave
-			{
-				int seed;
-				Real scale;
-				Real spectralWeight;
-			};
-			Octave *mOctaves;
-			size_t mOctaveCount;
-			int mQuality;
-			Real mOffset;
-			Real mGain;
-			Real mScale;
-
-			NOISEPP_INLINE Real calculateGradient (Real x, int seed) const
-			{
-				if (mQuality == NOISE_QUALITY_STD)
-					return Generator1D::calcGradientCoherentNoiseStd (x, seed, mScale);
-				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator1D::calcGradientCoherentNoiseHigh (x, seed, mScale);
-				else
-					return Generator1D::calcGradientCoherentNoiseLow (x, seed, mScale);
-			}
-		public:
-			RidgedMultiElement1D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
-			{
-				mOctaves = new Octave[mOctaveCount];
-				int seed;
-				Real scale = frequency;
-				for (size_t o=0;o<mOctaveCount;++o)
-				{
-					seed = (mainSeed + int(o)) & 0x7fffffff;
-					mOctaves[o].spectralWeight = pow(scale, -exponent);
-					mOctaves[o].scale = scale;
-					mOctaves[o].seed = seed;
-
-					scale *= lacunarity;
-				}
-			}
-			virtual ~RidgedMultiElement1D ()
-			{
-				delete mOctaves;
-				mOctaves = NULL;
-			}
-			virtual Real getValue (Real x, Cache *cache) const
-			{
-				Real value = 0.0;
-				Real signal = 0.0;
-				Real weight = 1.0;
-
-				for (size_t o=0;o<mOctaveCount;++o)
-				{
-					const Real nx = Math::MakeInt32Range (x * mOctaves[o].scale);
-					signal = calculateGradient(nx, mOctaves[o].seed);
-					signal = mOffset - std::fabs(signal);
-					signal *= signal;
-					signal *= weight;
-					weight = signal * mGain;
-					if (weight > Real(1.0))
-						weight = Real(1.0);
-					if (weight < Real(-1.0))
-						weight = Real(-1.0);
-
-					value += signal * mOctaves[o].spectralWeight;
-				}
-
-				return (value * Real(1.25)) - Real(1.0);
-			}
-	};
-
-	/** 1D module for generating ridged-multifractal noise.
-		Generates ridged-multifractal noise.
-	*/
-	class RidgedMultiModule1D : public Module1D, public RidgedMultiModuleBase
-	{
-		public:
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
 				return pipe->addElement (this, new RidgedMultiElement1D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
 			}
-	};
-
-	class RidgedMultiElement2D : public PipelineElement2D
-	{
-		private:
-			struct Octave
-			{
-				int seed;
-				Real scale;
-				Real spectralWeight;
-			};
-			Octave *mOctaves;
-			size_t mOctaveCount;
-			int mQuality;
-			Real mOffset;
-			Real mGain;
-			Real mScale;
-
-			NOISEPP_INLINE Real calculateGradient (Real x, Real y, int seed) const
-			{
-				if (mQuality == NOISE_QUALITY_STD)
-					return Generator2D::calcGradientCoherentNoiseStd (x, y, seed, mScale);
-				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator2D::calcGradientCoherentNoiseHigh (x, y, seed, mScale);
-				else
-					return Generator2D::calcGradientCoherentNoiseLow (x, y, seed, mScale);
-			}
-		public:
-			RidgedMultiElement2D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
-			{
-				mOctaves = new Octave[mOctaveCount];
-				int seed;
-				Real scale = frequency;
-				for (size_t o=0;o<mOctaveCount;++o)
-				{
-					seed = (mainSeed + int(o)) & 0x7fffffff;
-					mOctaves[o].spectralWeight = pow(scale, -exponent);
-					mOctaves[o].scale = scale;
-					mOctaves[o].seed = seed;
-
-					scale *= lacunarity;
-				}
-			}
-			virtual ~RidgedMultiElement2D ()
-			{
-				delete mOctaves;
-				mOctaves = NULL;
-			}
-			virtual Real getValue (Real x, Real y, Cache *cache) const
-			{
-				Real value = 0.0;
-				Real signal = 0.0;
-				Real weight = 1.0;
-
-				for (size_t o=0;o<mOctaveCount;++o)
-				{
-					const Real nx = Math::MakeInt32Range (x * mOctaves[o].scale);
-					const Real ny = Math::MakeInt32Range (y * mOctaves[o].scale);
-					signal = calculateGradient(nx, ny, mOctaves[o].seed);
-					signal = mOffset - std::fabs(signal);
-					signal *= signal;
-					signal *= weight;
-					weight = signal * mGain;
-					if (weight > Real(1.0))
-						weight = Real(1.0);
-					if (weight < Real(-1.0))
-						weight = Real(-1.0);
-
-					value += signal * mOctaves[o].spectralWeight;
-				}
-
-				return (value * Real(1.25)) - Real(1.0);
-			}
-	};
-
-	/** 2D module for generating ridged-multifractal noise.
-		Generates ridged-multifractal noise.
-	*/
-	class RidgedMultiModule2D : public Module2D, public RidgedMultiModuleBase
-	{
-		public:
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
 				return pipe->addElement (this, new RidgedMultiElement2D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
 			}
-	};
-
-	class RidgedMultiElement3D : public PipelineElement3D
-	{
-		private:
-			struct Octave
-			{
-				int seed;
-				Real scale;
-				Real spectralWeight;
-			};
-			Octave *mOctaves;
-			size_t mOctaveCount;
-			int mQuality;
-			Real mOffset;
-			Real mGain;
-			Real mScale;
-
-			NOISEPP_INLINE Real calculateGradient (Real x, Real y, Real z, int seed) const
-			{
-				if (mQuality == NOISE_QUALITY_STD)
-					return Generator3D::calcGradientCoherentNoiseStd (x, y, z, seed, mScale);
-				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator3D::calcGradientCoherentNoiseHigh (x, y, z, seed, mScale);
-				else
-					return Generator3D::calcGradientCoherentNoiseLow (x, y, z, seed, mScale);
-			}
-		public:
-			RidgedMultiElement3D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
-			{
-				mOctaves = new Octave[mOctaveCount];
-				int seed;
-				Real scale = frequency;
-				for (size_t o=0;o<mOctaveCount;++o)
-				{
-					seed = (mainSeed + int(o)) & 0x7fffffff;
-					mOctaves[o].spectralWeight = pow(scale, -exponent);
-					mOctaves[o].scale = scale;
-					mOctaves[o].seed = seed;
-
-					scale *= lacunarity;
-				}
-			}
-			virtual ~RidgedMultiElement3D ()
-			{
-				delete mOctaves;
-				mOctaves = NULL;
-			}
-			virtual Real getValue (Real x, Real y, Real z, Cache *cache) const
-			{
-				Real value = 0.0;
-				Real signal = 0.0;
-				Real weight = 1.0;
-
-				for (size_t o=0;o<mOctaveCount;++o)
-				{
-					const Real nx = Math::MakeInt32Range (x * mOctaves[o].scale);
-					const Real ny = Math::MakeInt32Range (y * mOctaves[o].scale);
-					const Real nz = Math::MakeInt32Range (z * mOctaves[o].scale);
-					signal = calculateGradient(nx, ny, nz, mOctaves[o].seed);
-					signal = mOffset - std::fabs(signal);
-					signal *= signal;
-					signal *= weight;
-					weight = signal * mGain;
-					if (weight > Real(1.0))
-						weight = Real(1.0);
-					if (weight < Real(-1.0))
-						weight = Real(-1.0);
-
-					value += signal * mOctaves[o].spectralWeight;
-				}
-
-				return (value * Real(1.25)) - Real(1.0);
-			}
-	};
-
-	/** 3D module for generating ridged-multifractal noise.
-		Generates ridged-multifractal noise.
-	*/
-	class RidgedMultiModule3D : public Module3D, public RidgedMultiModuleBase
-	{
-		public:
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{

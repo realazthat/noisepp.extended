@@ -59,76 +59,6 @@ namespace noisepp
 
 	};
 
-	/** 1D turbulence module.
-		Adds turbulence to the source module by randomly modificating the coordinates.
-	*/
-	class TurbulenceModule1D : public Module1D
-	{
-		private:
-			Real mPower;
-			PerlinModule1D mPerlinX;
-			PerlinModule1D mPerlinY;
-
-		public:
-			/// Constructor.
-			TurbulenceModule1D() : Module1D(1), mPower(1.0)
-			{
-				setRoughness (3);
-				setSeed (0);
-			}
-			/// Sets the power.
-			void setPower (Real v)
-			{
-				mPower = v;
-			}
-			/// Sets the roughness.
-			void setRoughness (int v)
-			{
-				mPerlinX.setOctaveCount (v);
-				mPerlinY.setOctaveCount (v);
-			}
-			/// Sets the seed.
-			void setSeed (int v)
-			{
-				mPerlinX.setSeed (v);
-				mPerlinY.setSeed (v+1);
-			}
-			/// Sets the frequency.
-			void setFrequency (Real v)
-			{
-				mPerlinX.setFrequency (v);
-				mPerlinY.setFrequency (v);
-			}
-			/// Returns the power.
-			Real getPower () const
-			{
-				return mPower;
-			}
-			/// Returns the roughness.
-			int getRoughness () const
-			{
-				return mPerlinX.getOctaveCount ();
-			}
-			/// Returns the seed.
-			int getSeed () const
-			{
-				return mPerlinX.getSeed ();
-			}
-			/// Returns the frequency.
-			Real getFrequency () const
-			{
-				return mPerlinX.getFrequency ();
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				assert (getSourceModule (0));
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				ElementID perlinX = mPerlinX.addToPipeline(pipe);
-				return pipe->addElement (this, new TurbulenceElement1D(pipe, mPower, first, perlinX));
-			}
-	};
-
 	class TurbulenceElement2D : public PipelineElement2D
 	{
 		private:
@@ -161,77 +91,6 @@ namespace noisepp
 				return getElementValue (mElementPtr, mElement, xFinal, yFinal, cache);
 			}
 
-	};
-
-	/** 2D turbulence module.
-		Adds turbulence to the source module by randomly modificating the coordinates.
-	*/
-	class TurbulenceModule2D : public Module2D
-	{
-		private:
-			Real mPower;
-			PerlinModule2D mPerlinX;
-			PerlinModule2D mPerlinY;
-
-		public:
-			/// Constructor.
-			TurbulenceModule2D() : Module2D(1), mPower(1.0)
-			{
-				setRoughness (3);
-				setSeed (0);
-			}
-			/// Sets the power.
-			void setPower (Real v)
-			{
-				mPower = v;
-			}
-			/// Sets the roughness.
-			void setRoughness (int v)
-			{
-				mPerlinX.setOctaveCount (v);
-				mPerlinY.setOctaveCount (v);
-			}
-			/// Sets the seed.
-			void setSeed (int v)
-			{
-				mPerlinX.setSeed (v);
-				mPerlinY.setSeed (v+1);
-			}
-			/// Sets the frequency.
-			void setFrequency (Real v)
-			{
-				mPerlinX.setFrequency (v);
-				mPerlinY.setFrequency (v);
-			}
-			/// Returns the power.
-			Real getPower () const
-			{
-				return mPower;
-			}
-			/// Returns the roughness.
-			int getRoughness () const
-			{
-				return mPerlinX.getOctaveCount ();
-			}
-			/// Returns the seed.
-			int getSeed () const
-			{
-				return mPerlinX.getSeed ();
-			}
-			/// Returns the frequency.
-			Real getFrequency () const
-			{
-				return mPerlinX.getFrequency ();
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				assert (getSourceModule (0));
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				ElementID perlinX = mPerlinX.addToPipeline(pipe);
-				ElementID perlinY = mPerlinY.addToPipeline(pipe);
-				return pipe->addElement (this, new TurbulenceElement2D(pipe, mPower, first, perlinX, perlinY));
-			}
 	};
 
 	class TurbulenceElement3D : public PipelineElement3D
@@ -278,20 +137,20 @@ namespace noisepp
 
 	};
 
-	/** 3D turbulence module.
+	/** Turbulence module.
 		Adds turbulence to the source module by randomly modificating the coordinates.
 	*/
-	class TurbulenceModule3D : public Module3D
+	class TurbulenceModule : public Module
 	{
 		private:
 			Real mPower;
-			PerlinModule3D mPerlinX;
-			PerlinModule3D mPerlinY;
-			PerlinModule3D mPerlinZ;
+			PerlinModule mPerlinX;
+			PerlinModule mPerlinY;
+			PerlinModule mPerlinZ;
 
 		public:
 			/// Constructor.
-			TurbulenceModule3D() : Module3D(1), mPower(1.0)
+			TurbulenceModule() : Module(1), mPower(1.0)
 			{
 				setRoughness (3);
 				setSeed (0);
@@ -341,6 +200,23 @@ namespace noisepp
 			Real getFrequency () const
 			{
 				return mPerlinX.getFrequency ();
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				ElementID perlinX = mPerlinX.addToPipeline(pipe);
+				return pipe->addElement (this, new TurbulenceElement1D(pipe, mPower, first, perlinX));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				ElementID perlinX = mPerlinX.addToPipeline(pipe);
+				ElementID perlinY = mPerlinY.addToPipeline(pipe);
+				return pipe->addElement (this, new TurbulenceElement2D(pipe, mPower, first, perlinX, perlinY));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const

@@ -91,20 +91,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D inversion module.
+	/** Inversion module.
 		Inverts the output of the source module.
 	*/
-	class InvertModule1D : public SingleSourceModule<Pipeline1D, InvertElement1D>
-	{ };
-	/** 2D inversion module.
-		Inverts the output of the source module.
-	*/
-	class InvertModule2D : public SingleSourceModule<Pipeline2D, InvertElement2D>
-	{ };
-	/** 3D inversion module.
-		Inverts the output of the source module.
-	*/
-	class InvertModule3D : public SingleSourceModule<Pipeline3D, InvertElement3D>
+	class InvertModule : public SingleSourceModule<InvertElement1D, InvertElement2D, InvertElement3D>
 	{ };
 };
 

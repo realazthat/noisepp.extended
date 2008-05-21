@@ -29,13 +29,9 @@ class EditorCurveModule : public EditorModule
 		{
 			return FACTORY_NAME;
 		}
-		virtual noisepp::Module2D &get2DModule ()
+		virtual noisepp::Module &getModule ()
 		{
-			return mModule2D;
-		}
-		virtual noisepp::Module3D &get3DModule ()
-		{
-			return mModule3D;
+			return mModule;
 		}
 		virtual void fillPropertyGrid (wxPropertyGrid *pg);
 		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name);
@@ -44,8 +40,7 @@ class EditorCurveModule : public EditorModule
 		virtual bool readProperties (TiXmlElement *element);
 	protected:
 	private:
-		noisepp::CurveModule2D mModule2D;
-		noisepp::CurveModule3D mModule3D;
+		noisepp::CurveModule mModule;
 };
 
 #endif // EDITORCURVEMODULE_H

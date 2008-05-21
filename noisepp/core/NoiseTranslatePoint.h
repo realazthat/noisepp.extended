@@ -23,38 +23,6 @@ namespace noisepp
 
 	};
 
-	/** 1D transform module for translating.
-		Transforms the source module by translating the coordinates.
-	*/
-	class TranslatePointModule1D : public Module1D
-	{
-		private:
-			Real mTranslationX;
-
-		public:
-			/// Constructor.
-			TranslatePointModule1D() : Module1D(1), mTranslationX(0.0)
-			{
-			}
-			/// Sets the translation applied to the x coordintate.
-			void setTranslationX (Real v)
-			{
-				mTranslationX = v;
-			}
-			/// Returns the translation applied to the x coordintate.
-			Real getTranslationX () const
-			{
-				return mTranslationX;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				assert (getSourceModule (0));
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new TranslatePointElement1D(pipe, first, mTranslationX));
-			}
-	};
-
 	class TranslatePointElement2D : public PipelineElement2D
 	{
 		private:
@@ -74,49 +42,6 @@ namespace noisepp
 				return getElementValue (mElementPtr, mElement, x+mTranslationX, y+mTranslationY, cache);
 			}
 
-	};
-
-	/** 2D transform module for translating.
-		Transforms the source module by translating the coordinates.
-	*/
-	class TranslatePointModule2D : public Module2D
-	{
-		private:
-			Real mTranslationX;
-			Real mTranslationY;
-
-		public:
-			/// Constructor.
-			TranslatePointModule2D() : Module2D(1), mTranslationX(0.0), mTranslationY(0.0)
-			{
-			}
-			/// Sets the translation applied to the x coordintate.
-			void setTranslationX (Real v)
-			{
-				mTranslationX = v;
-			}
-			/// Returns the translation applied to the x coordintate.
-			Real getTranslationX () const
-			{
-				return mTranslationX;
-			}
-			/// Sets the translation applied to the y coordintate.
-			void setTranslationY (Real v)
-			{
-				mTranslationY = v;
-			}
-			/// Returns the translation applied to the y coordintate.
-			Real getTranslationY () const
-			{
-				return mTranslationY;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				assert (getSourceModule (0));
-				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new TranslatePointElement2D(pipe, first, mTranslationX, mTranslationY));
-			}
 	};
 
 	class TranslatePointElement3D : public PipelineElement3D
@@ -141,10 +66,10 @@ namespace noisepp
 
 	};
 
-	/** 3D transform module for translating.
+	/** Transform module for translating.
 		Transforms the source module by translating the coordinates.
 	*/
-	class TranslatePointModule3D : public Module3D
+	class TranslatePointModule : public Module
 	{
 		private:
 			Real mTranslationX;
@@ -153,7 +78,7 @@ namespace noisepp
 
 		public:
 			/// Constructor.
-			TranslatePointModule3D() : Module3D(1), mTranslationX(0.0), mTranslationY(0.0), mTranslationZ(0.0)
+			TranslatePointModule() : Module(1), mTranslationX(0.0), mTranslationY(0.0), mTranslationZ(0.0)
 			{
 			}
 			/// Sets the translation applied to the x coordintate.
@@ -185,6 +110,20 @@ namespace noisepp
 			Real getTranslationZ () const
 			{
 				return mTranslationZ;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new TranslatePointElement1D(pipe, first, mTranslationX));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new TranslatePointElement2D(pipe, first, mTranslationX, mTranslationY));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const

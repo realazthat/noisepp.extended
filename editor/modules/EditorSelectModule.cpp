@@ -30,9 +30,9 @@ void EditorSelectModule::fillPropertyGrid (wxPropertyGrid *pg)
 	appendSourceModuleProperty (pg, wxT("Source module 2"), mSourceModules[1]);
 	appendSourceModuleProperty (pg, wxT("Control module"), mSourceModules[2]);
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Lower bound"), wxPG_LABEL, mModule3D.getLowerBound()) );
-	pg->Append( wxFloatProperty(wxT("Upper bound"), wxPG_LABEL, mModule3D.getUpperBound()) );
-	pg->Append( wxFloatProperty(wxT("Edge falloff"), wxPG_LABEL, mModule3D.getEdgeFalloff()) );
+	pg->Append( wxFloatProperty(wxT("Lower bound"), wxPG_LABEL, mModule.getLowerBound()) );
+	pg->Append( wxFloatProperty(wxT("Upper bound"), wxPG_LABEL, mModule.getUpperBound()) );
+	pg->Append( wxFloatProperty(wxT("Edge falloff"), wxPG_LABEL, mModule.getEdgeFalloff()) );
 }
 
 void EditorSelectModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -55,20 +55,17 @@ void EditorSelectModule::onPropertyChange (wxPropertyGrid *pg, const wxString &n
 	else if (name == _("Lower bound"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setLowerBound (val);
-		mModule2D.setLowerBound (val);
+		mModule.setLowerBound (val);
 	}
 	else if (name == _("Upper bound"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setUpperBound (val);
-		mModule2D.setUpperBound (val);
+		mModule.setUpperBound (val);
 	}
 	else if (name == _("Edge falloff"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setEdgeFalloff (val);
-		mModule2D.setEdgeFalloff (val);
+		mModule.setEdgeFalloff (val);
 	}
 }
 
@@ -80,28 +77,25 @@ bool EditorSelectModule::validate (wxPropertyGrid *pg)
 	module = getSourceModule(0);
 	if (module)
 	{
-		mModule2D.setSourceModule(0, module->get2DModule());
-		mModule3D.setSourceModule(0, module->get3DModule());
+		mModule.setSourceModule(0, module->getModule());
 	}
 	valid = setValid (pg, "Source module 1", module != NULL && module->validate(NULL)) && valid;
 	module = getSourceModule(1);
 	if (module)
 	{
-		mModule2D.setSourceModule(1, module->get2DModule());
-		mModule3D.setSourceModule(1, module->get3DModule());
+		mModule.setSourceModule(1, module->getModule());
 	}
 	valid = setValid (pg, "Source module 2", module != NULL && module->validate(NULL)) && valid;
 	module = getSourceModule(2);
 	if (module)
 	{
-		mModule2D.setSourceModule(2, module->get2DModule());
-		mModule3D.setSourceModule(2, module->get3DModule());
+		mModule.setSourceModule(2, module->getModule());
 	}
 	valid = setValid (pg, "Control module", module != NULL && module->validate(NULL)) && valid;
 
-	valid = setValid (pg, "Lower bound", mModule3D.getUpperBound() > mModule3D.getLowerBound()) && valid;
-	valid = setValid (pg, "Upper bound", mModule3D.getLowerBound() < mModule3D.getUpperBound()) && valid;
-	valid = setValid (pg, "Edge falloff", mModule3D.getEdgeFalloff() >= 0) && valid;
+	valid = setValid (pg, "Lower bound", mModule.getUpperBound() > mModule.getLowerBound()) && valid;
+	valid = setValid (pg, "Upper bound", mModule.getLowerBound() < mModule.getUpperBound()) && valid;
+	valid = setValid (pg, "Edge falloff", mModule.getEdgeFalloff() >= 0) && valid;
 
 	return valid;
 }
@@ -113,15 +107,15 @@ void EditorSelectModule::writeProperties (TiXmlElement *element)
 	writeSourceModules (element);
 
 	prop = new TiXmlElement ("LowerBound");
-	prop->SetDoubleAttribute ("value", mModule3D.getLowerBound());
+	prop->SetDoubleAttribute ("value", mModule.getLowerBound());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("UpperBound");
-	prop->SetDoubleAttribute ("value", mModule3D.getUpperBound());
+	prop->SetDoubleAttribute ("value", mModule.getUpperBound());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("EdgeFalloff");
-	prop->SetDoubleAttribute ("value", mModule3D.getEdgeFalloff());
+	prop->SetDoubleAttribute ("value", mModule.getEdgeFalloff());
 	element->LinkEndChild (prop);
 }
 
@@ -136,20 +130,17 @@ bool EditorSelectModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("LowerBound");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setLowerBound (dval);
-	mModule2D.setLowerBound (dval);
+	mModule.setLowerBound (dval);
 
 	prop = element->FirstChildElement ("UpperBound");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setUpperBound (dval);
-	mModule2D.setUpperBound (dval);
+	mModule.setUpperBound (dval);
 
 	prop = element->FirstChildElement ("EdgeFalloff");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setEdgeFalloff (dval);
-	mModule2D.setEdgeFalloff (dval);
+	mModule.setEdgeFalloff (dval);
 
 	return true;
 }

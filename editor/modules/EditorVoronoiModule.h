@@ -29,13 +29,9 @@ class EditorVoronoiModule : public EditorModule
 		{
 			return FACTORY_NAME;
 		}
-		virtual noisepp::Module2D &get2DModule ()
+		virtual noisepp::Module &getModule ()
 		{
-			return mModule2D;
-		}
-		virtual noisepp::Module3D &get3DModule ()
-		{
-			return mModule3D;
+			return mModule;
 		}
 		virtual void fillPropertyGrid (wxPropertyGrid *pg);
 		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name);
@@ -44,8 +40,7 @@ class EditorVoronoiModule : public EditorModule
 		virtual bool readProperties (TiXmlElement *element);
 	protected:
 	private:
-		noisepp::VoronoiModule2D mModule2D;
-		noisepp::VoronoiModule3D mModule3D;
+		noisepp::VoronoiModule mModule;
 };
 
 #endif // EDITORVORONOIMODULE_H

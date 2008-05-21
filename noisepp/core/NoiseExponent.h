@@ -34,37 +34,6 @@
 
 namespace noisepp
 {
-	/// Exponent module base class
-	template <class Pipeline, class Element>
-	class ExponentModuleBase : public Module<Pipeline>
-	{
-		private:
-			Real mExponent;
-
-		public:
-			/// Constructor.
-			ExponentModuleBase() : Module<Pipeline>(1), mExponent(1.0)
-			{
-			}
-			/// Sets the exponent.
-			void setExponent (Real v)
-			{
-				mExponent = v;
-			}
-			/// Returns the exponent.
-			Real getExponent () const
-			{
-				return mExponent;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline *pipe) const
-			{
-				assert (Module<Pipeline>::getSourceModule (0));
-				ElementID first = Module<Pipeline>::getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new Element(pipe, first, mExponent));
-			}
-	};
-
 	class ExponentElement1D : public PipelineElement1D
 	{
 		private:
@@ -125,21 +94,51 @@ namespace noisepp
 			}
 	};
 
-	/** 1D exponent module.
+	/** Exponent module.
 		Normalizes the output of the source module and exponentiates it
 	*/
-	class ExponentModule1D : public ExponentModuleBase<Pipeline1D, ExponentElement1D>
-	{ };
-	/** 2D exponent module.
-		Normalizes the output of the source module and exponentiates it
-	*/
-	class ExponentModule2D : public ExponentModuleBase<Pipeline2D, ExponentElement2D>
-	{ };
-	/** 3D exponent module.
-		Normalizes the output of the source module and exponentiates it
-	*/
-	class ExponentModule3D : public ExponentModuleBase<Pipeline3D, ExponentElement3D>
-	{ };
+	class ExponentModule : public Module
+	{
+		private:
+			Real mExponent;
+
+		public:
+			/// Constructor.
+			ExponentModule() : Module(1), mExponent(1.0)
+			{
+			}
+			/// Sets the exponent.
+			void setExponent (Real v)
+			{
+				mExponent = v;
+			}
+			/// Returns the exponent.
+			Real getExponent () const
+			{
+				return mExponent;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ExponentElement1D(pipe, first, mExponent));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ExponentElement2D(pipe, first, mExponent));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline3D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ExponentElement3D(pipe, first, mExponent));
+			}
+	};
 };
 
 #endif

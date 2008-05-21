@@ -44,17 +44,6 @@ namespace noisepp
 			}
 	};
 
-	/// 1D module for generating a checkerboard pattern.
-	class CheckerboardModule1D : public Module1D
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				return pipe->addElement (this, new CheckerboardElement1D);
-			}
-	};
-
 	class CheckerboardElement2D : public PipelineElement2D
 	{
 		public:
@@ -63,17 +52,6 @@ namespace noisepp
 				const int ix = (int)(floor (Math::MakeInt32Range (x)));
 				const int iy = (int)(floor (Math::MakeInt32Range (y)));
 				return (ix & 1 ^ iy & 1)? Real(-1.0) : Real(1.0);
-			}
-	};
-
-	/// 2D module for generating a checkerboard pattern.
-	class CheckerboardModule2D : public Module2D
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				return pipe->addElement (this, new CheckerboardElement2D);
 			}
 	};
 
@@ -89,10 +67,20 @@ namespace noisepp
 			}
 	};
 
-	/// 3D module for generating a checkerboard pattern.
-	class CheckerboardModule3D : public Module3D
+	/// Module for generating a checkerboard pattern.
+	class CheckerboardModule : public Module
 	{
 		public:
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				return pipe->addElement (this, new CheckerboardElement1D);
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				return pipe->addElement (this, new CheckerboardElement2D);
+			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{

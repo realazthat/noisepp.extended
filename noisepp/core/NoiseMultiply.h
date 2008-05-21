@@ -100,20 +100,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D multiplication module.
+	/** Multiplication module.
 		Returns the product of the two source modules.
 	*/
-	class MultiplyModule1D : public DualSourceModule<Pipeline1D, MultiplyElement1D>
-	{ };
-	/** 2D multiplication module.
-		Returns the product of the two source modules.
-	*/
-	class MultiplyModule2D : public DualSourceModule<Pipeline2D, MultiplyElement2D>
-	{ };
-	/** 3D multiplication module.
-		Returns the product of the two source modules.
-	*/
-	class MultiplyModule3D : public DualSourceModule<Pipeline3D, MultiplyElement3D>
+	class MultiplyModule : public DualSourceModule<MultiplyElement1D, MultiplyElement2D, MultiplyElement3D>
 	{ };
 };
 

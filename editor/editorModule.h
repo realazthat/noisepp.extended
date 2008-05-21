@@ -34,8 +34,7 @@ class EditorModule
 	public:
 		EditorModule(int sourceModules=0);
 		virtual const std::string &getFactoryName () const = 0;
-		virtual noisepp::Module2D &get2DModule () = 0;
-		virtual noisepp::Module3D &get3DModule () = 0;
+		virtual noisepp::Module &getModule () = 0;
 		virtual void fillPropertyGrid (wxPropertyGrid *pg) = 0;
 		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name) = 0;
 		virtual bool validate (wxPropertyGrid *pg) = 0;

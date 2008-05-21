@@ -91,20 +91,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module that outputs the absolute value of the input value from the source module.
+	/** Module that outputs the absolute value of the input value from the source module.
 		Calculates the absolute value of the value from the source module.
 	*/
-	class AbsoluteModule1D : public SingleSourceModule<Pipeline1D, AbsoluteElement1D>
-	{ };
-	/** 2D module that outputs the absolute value of the input value from the source module.
-		Calculates the absolute value of the value from the source module.
-	*/
-	class AbsoluteModule2D : public SingleSourceModule<Pipeline2D, AbsoluteElement2D>
-	{ };
-	/** 3D module that outputs the absolute value of the input value from the source module.
-		Calculates the absolute value of the value from the source module.
-	*/
-	class AbsoluteModule3D : public SingleSourceModule<Pipeline3D, AbsoluteElement3D>
+	class AbsoluteModule : public SingleSourceModule<AbsoluteElement1D, AbsoluteElement2D, AbsoluteElement3D>
 	{ };
 };
 

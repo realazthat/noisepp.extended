@@ -50,53 +50,6 @@ namespace noisepp
 
 	typedef std::vector<CurveControlPoint> CurveControlPointVector;
 
-	/// Curve module base class.
-	template <class Pipeline, class Element>
-	class CurveModuleBase : public Module<Pipeline>
-	{
-		private:
-			CurveControlPointVector mControlPoints;
-
-		public:
-			/// Constructor.
-			CurveModuleBase() : Module<Pipeline>(1)
-			{
-			}
-			/// Adds a control point.
-			void addControlPoint (Real inValue, Real outValue)
-			{
-				CurveControlPoint point;
-				point.inValue = inValue;
-				point.outValue = outValue;
-				mControlPoints.push_back (point);
-				std::sort (mControlPoints.begin(), mControlPoints.end());
-			}
-			/// Clears all control points.
-			void clearControlPoints ()
-			{
-				mControlPoints.clear ();
-			}
-			/// Returns a reference to the control point vector.
-			CurveControlPointVector &getControlPoints ()
-			{
-				return mControlPoints;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline *pipe) const
-			{
-				assert (Module<Pipeline>::getSourceModule (0));
-				ElementID first = Module<Pipeline>::getSourceModule(0)->addToPipeline(pipe);
-				int count = mControlPoints.size ();
-				assert (count >= 4);
-				CurveControlPoint *points = new CurveControlPoint[count];
-				for (int i=0;i<count;++i)
-				{
-					points[i] = mControlPoints[i];
-				}
-				return pipe->addElement (this, new Element(pipe, first, points, count));
-			}
-	};
-
 	template <class PipelineElement>
 	class CurveElementBase : public PipelineElement
 	{
@@ -198,21 +151,81 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module that maps the values from the source module onto a curve.
+	/** Module that maps the values from the source module onto a curve.
 		Maps the values from the source modules onto the curve defined by the specified control points (at least 4)
 	*/
-	class CurveModule1D : public CurveModuleBase<Pipeline1D, CurveElement1D>
-	{ };
-	/** 2D module that maps the values from the source module onto a curve.
-		Maps the values from the source modules onto the curve defined by the specified control points (at least 4)
-	*/
-	class CurveModule2D : public CurveModuleBase<Pipeline2D, CurveElement2D>
-	{ };
-	/** 3D module that maps the values from the source module onto a curve.
-		Maps the values from the source modules onto the curve defined by the specified control points (at least 4)
-	*/
-	class CurveModule3D : public CurveModuleBase<Pipeline3D, CurveElement3D>
-	{ };
+	class CurveModule : public Module
+	{
+		private:
+			CurveControlPointVector mControlPoints;
+
+		public:
+			/// Constructor.
+			CurveModule() : Module(1)
+			{
+			}
+			/// Adds a control point.
+			void addControlPoint (Real inValue, Real outValue)
+			{
+				CurveControlPoint point;
+				point.inValue = inValue;
+				point.outValue = outValue;
+				mControlPoints.push_back (point);
+				std::sort (mControlPoints.begin(), mControlPoints.end());
+			}
+			/// Clears all control points.
+			void clearControlPoints ()
+			{
+				mControlPoints.clear ();
+			}
+			/// Returns a reference to the control point vector.
+			CurveControlPointVector &getControlPoints ()
+			{
+				return mControlPoints;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				int count = mControlPoints.size ();
+				assert (count >= 4);
+				CurveControlPoint *points = new CurveControlPoint[count];
+				for (int i=0;i<count;++i)
+				{
+					points[i] = mControlPoints[i];
+				}
+				return pipe->addElement (this, new CurveElement1D(pipe, first, points, count));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				int count = mControlPoints.size ();
+				assert (count >= 4);
+				CurveControlPoint *points = new CurveControlPoint[count];
+				for (int i=0;i<count;++i)
+				{
+					points[i] = mControlPoints[i];
+				}
+				return pipe->addElement (this, new CurveElement2D(pipe, first, points, count));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline3D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				int count = mControlPoints.size ();
+				assert (count >= 4);
+				CurveControlPoint *points = new CurveControlPoint[count];
+				for (int i=0;i<count;++i)
+				{
+					points[i] = mControlPoints[i];
+				}
+				return pipe->addElement (this, new CurveElement3D(pipe, first, points, count));
+			}
+	};
 };
 
 #endif

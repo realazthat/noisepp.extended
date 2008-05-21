@@ -107,7 +107,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 		pipeline2D = new noisepp::ThreadedPipeline2D (threads);
 	else
 		pipeline2D = new noisepp::Pipeline2D;
-	noisepp::ElementID id = get2DModule().addToPipeline (pipeline2D);
+	noisepp::ElementID id = getModule().addToPipeline (pipeline2D);
 	noisepp::PipelineElement2D *element = pipeline2D->getElement(id);
 
 	double *buffer = new double[w*h];

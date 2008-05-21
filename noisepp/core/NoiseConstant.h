@@ -34,34 +34,6 @@
 
 namespace noisepp
 {
-	/// Constant module base class.
-	template <class Pipeline, class Element>
-	class ConstantModuleBase : public Module<Pipeline>
-	{
-		private:
-			Real mValue;
-
-		public:
-			/// Constructor.
-			ConstantModuleBase() : Module<Pipeline>(0)
-			{
-			}
-			/// Sets the constant value.
-			void setValue (Real v)
-			{
-				mValue = v;
-			}
-			/// Returns the constant value.
-			Real getValue () const
-			{
-				return mValue;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline *pipe) const
-			{
-				return pipe->addElement (this, new Element(mValue));
-			}
-	};
 	template <class PipelineElement>
 	class ConstantElement : public PipelineElement
 	{
@@ -90,21 +62,45 @@ namespace noisepp
 	typedef ConstantElement<PipelineElement2D> ConstantElement2D;
 	typedef ConstantElement<PipelineElement3D> ConstantElement3D;
 
-	/** 1D module which returns a constant value.
+	/** Module which returns a constant value.
 		Returns the specified constant value.
 	*/
-	class ConstantModule1D : public ConstantModuleBase<Pipeline1D, ConstantElement1D>
-	{ };
-	/** 2D module which returns a constant value.
-		Returns the specified constant value.
-	*/
-	class ConstantModule2D : public ConstantModuleBase<Pipeline2D, ConstantElement2D>
-	{ };
-	/** 3D module which returns a constant value.
-		Returns the specified constant value.
-	*/
-	class ConstantModule3D : public ConstantModuleBase<Pipeline3D, ConstantElement3D>
-	{ };
+	class ConstantModule : public Module
+	{
+		private:
+			Real mValue;
+
+		public:
+			/// Constructor.
+			ConstantModule() : Module(0)
+			{
+			}
+			/// Sets the constant value.
+			void setValue (Real v)
+			{
+				mValue = v;
+			}
+			/// Returns the constant value.
+			Real getValue () const
+			{
+				return mValue;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				return pipe->addElement (this, new ConstantElement1D(mValue));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				return pipe->addElement (this, new ConstantElement2D(mValue));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline3D *pipe) const
+			{
+				return pipe->addElement (this, new ConstantElement3D(mValue));
+			}
+	};
 };
 
 #endif

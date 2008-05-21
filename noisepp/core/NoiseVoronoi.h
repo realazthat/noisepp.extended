@@ -36,67 +36,6 @@
 
 namespace noisepp
 {
-	/// Voronoi module base class.
-	class VoronoiModuleBase
-	{
-		protected:
-			/// The frequency.
-			Real mFrequency;
-			/// The seed.
-			int mSeed;
-			/// The displacement factor.
-			Real mDisplacement;
-			/// Distance factor enabled.
-			bool mEnableDistance;
-
-		public:
-			/// Constructor.
-			VoronoiModuleBase () :
-					mFrequency(1.0), mSeed(0), mDisplacement(1.0), mEnableDistance(false) {}
-			virtual ~VoronoiModuleBase () {}
-
-			/// Sets the frequency.
-			void setFrequency (Real v)
-			{
-				mFrequency = v;
-			}
-			/// Returns the frequency.
-			Real getFrequency () const
-			{
-				return mFrequency;
-			}
-			/// Sets the seed.
-			void setSeed (int v)
-			{
-				mSeed = v;
-			}
-			/// Returns the seed.
-			int getSeed () const
-			{
-				return mSeed;
-			}
-			/// Sets the displacement factor.
-			void setDisplacement (Real v)
-			{
-				mDisplacement = v;
-			}
-			/// Returns the displacement factor.
-			Real getDisplacement () const
-			{
-				return mDisplacement;
-			}
-			/// Enables the distance factor.
-			void setEnableDistance (bool v=true)
-			{
-				mEnableDistance = v;
-			}
-			/// Returns if distance factor is enabled.
-			bool isDistanceEnabled () const
-			{
-				return mEnableDistance;
-			}
-	};
-
 	class VoronoiElement2D : public PipelineElement2D
 	{
 		private:
@@ -153,19 +92,6 @@ namespace noisepp
 				}
 
 				return value + (mDisplacement * (Real)Generator2D::calcNoise((int)floor(xmin), (int)floor(ymin)));
-			}
-	};
-
-	/** 2D module for generating Voronoi cells.
-		Generates voronoi cells.
-	*/
-	class VoronoiModule2D : public Module2D, public VoronoiModuleBase
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				return pipe->addElement (this, new VoronoiElement2D(mFrequency, mSeed, mDisplacement, mEnableDistance));
 			}
 	};
 
@@ -238,12 +164,71 @@ namespace noisepp
 			}
 	};
 
-	/** 3D module for generating Voronoi cells.
+	/** Module for generating Voronoi cells.
 		Generates voronoi cells.
 	*/
-	class VoronoiModule3D : public Module3D, public VoronoiModuleBase
+	class VoronoiModule : public Module
 	{
+		protected:
+			/// The frequency.
+			Real mFrequency;
+			/// The seed.
+			int mSeed;
+			/// The displacement factor.
+			Real mDisplacement;
+			/// Distance factor enabled.
+			bool mEnableDistance;
+
 		public:
+			/// Constructor.
+			VoronoiModule () :
+					mFrequency(1.0), mSeed(0), mDisplacement(1.0), mEnableDistance(false) {}
+
+			/// Sets the frequency.
+			void setFrequency (Real v)
+			{
+				mFrequency = v;
+			}
+			/// Returns the frequency.
+			Real getFrequency () const
+			{
+				return mFrequency;
+			}
+			/// Sets the seed.
+			void setSeed (int v)
+			{
+				mSeed = v;
+			}
+			/// Returns the seed.
+			int getSeed () const
+			{
+				return mSeed;
+			}
+			/// Sets the displacement factor.
+			void setDisplacement (Real v)
+			{
+				mDisplacement = v;
+			}
+			/// Returns the displacement factor.
+			Real getDisplacement () const
+			{
+				return mDisplacement;
+			}
+			/// Enables the distance factor.
+			void setEnableDistance (bool v=true)
+			{
+				mEnableDistance = v;
+			}
+			/// Returns if distance factor is enabled.
+			bool isDistanceEnabled () const
+			{
+				return mEnableDistance;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				return pipe->addElement (this, new VoronoiElement2D(mFrequency, mSeed, mDisplacement, mEnableDistance));
+			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{

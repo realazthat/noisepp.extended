@@ -196,19 +196,6 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module for generating perlin noise.
-		Generates perlin noise.
-	*/
-	class PerlinModule1D : public Module1D, public PerlinModuleBase
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				return pipe->addElement (this, new PerlinElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
-			}
-	};
-
 	class PerlinElement2D : public PipelineElement2D
 	{
 		private:
@@ -270,19 +257,6 @@ namespace noisepp
 				}
 
 				return value;
-			}
-	};
-
-	/** 2D module for generating perlin noise.
-		Generates perlin noise.
-	*/
-	class PerlinModule2D : public Module2D, public PerlinModuleBase
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				return pipe->addElement (this, new PerlinElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
 			}
 	};
 
@@ -351,12 +325,22 @@ namespace noisepp
 			}
 	};
 
-	/** 3D module for generating perlin noise.
+	/** Module for generating perlin noise.
 		Generates perlin noise.
 	*/
-	class PerlinModule3D : public Module3D, public PerlinModuleBase
+	class PerlinModule : public Module, public PerlinModuleBase
 	{
 		public:
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				return pipe->addElement (this, new PerlinElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				return pipe->addElement (this, new PerlinElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{

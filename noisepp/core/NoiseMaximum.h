@@ -109,20 +109,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D maximum module.
+	/** Maximum module.
 		Returns the maximum of the two source modules.
 	*/
-	class MaximumModule1D : public DualSourceModule<Pipeline1D, MaximumElement1D>
-	{ };
-	/** 2D maximum module.
-		Returns the maximum of the two source modules.
-	*/
-	class MaximumModule2D : public DualSourceModule<Pipeline2D, MaximumElement2D>
-	{ };
-	/** 3D maximum module.
-		Returns the maximum of the two source modules.
-	*/
-	class MaximumModule3D : public DualSourceModule<Pipeline3D, MaximumElement3D>
+	class MaximumModule : public DualSourceModule<MaximumElement1D, MaximumElement2D, MaximumElement3D>
 	{ };
 };
 

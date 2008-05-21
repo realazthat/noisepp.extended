@@ -26,7 +26,7 @@ EditorConstantModule::EditorConstantModule() : EditorModule(0)
 void EditorConstantModule::fillPropertyGrid (wxPropertyGrid *pg)
 {
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Value"), wxPG_LABEL, mModule3D.getValue()) );
+	pg->Append( wxFloatProperty(wxT("Value"), wxPG_LABEL, mModule.getValue()) );
 }
 
 void EditorConstantModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -34,8 +34,7 @@ void EditorConstantModule::onPropertyChange (wxPropertyGrid *pg, const wxString 
 	if (name == _("Value"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setValue (val);
-		mModule2D.setValue (val);
+		mModule.setValue (val);
 	}
 }
 
@@ -49,7 +48,7 @@ void EditorConstantModule::writeProperties (TiXmlElement *element)
 	TiXmlElement *prop;
 
 	prop = new TiXmlElement ("Value");
-	prop->SetDoubleAttribute ("value", mModule3D.getValue());
+	prop->SetDoubleAttribute ("value", mModule.getValue());
 	element->LinkEndChild (prop);
 }
 
@@ -61,8 +60,7 @@ bool EditorConstantModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("Value");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setValue (dval);
-	mModule2D.setValue (dval);
+	mModule.setValue (dval);
 
 	return true;
 }

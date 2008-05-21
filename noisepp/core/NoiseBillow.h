@@ -99,19 +99,6 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module for generating "billowy" perlin noise.
-		Generates "billowy" perlin noise.
-	*/
-	class BillowModule1D : public Module1D, public BillowModuleBase
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				return pipe->addElement (this, new BillowElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
-			}
-	};
-
 	class BillowElement2D : public PipelineElement2D
 	{
 		private:
@@ -174,19 +161,6 @@ namespace noisepp
 				}
 
 				return value;
-			}
-	};
-
-	/** 2D module for generating "billowy" perlin noise.
-		Generates "billowy" perlin noise.
-	*/
-	class BillowModule2D : public Module2D, public BillowModuleBase
-	{
-		public:
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				return pipe->addElement (this, new BillowElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
 			}
 	};
 
@@ -256,12 +230,22 @@ namespace noisepp
 			}
 	};
 
-	/** 3D module for generating "billowy" perlin noise.
+	/** Module for generating "billowy" perlin noise.
 		Generates "billowy" perlin noise.
 	*/
-	class BillowModule3D : public Module3D, public BillowModuleBase
+	class BillowModule : public Module, public BillowModuleBase
 	{
 		public:
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				return pipe->addElement (this, new BillowElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				return pipe->addElement (this, new BillowElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{

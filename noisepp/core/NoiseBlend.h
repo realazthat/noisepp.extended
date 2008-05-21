@@ -115,20 +115,10 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module for blending.
+	/** Module for blending.
 		Blends the two values of the source modules controlled by the value of the control module.
 	*/
-	class BlendModule1D : public TripleSourceModule<Pipeline1D, BlendElement1D>
-	{ };
-	/** 2D module for blending.
-		Blends the two values of the source modules controlled by the value of the control module.
-	*/
-	class BlendModule2D : public TripleSourceModule<Pipeline2D, BlendElement2D>
-	{ };
-	/** 3D module for blending.
-		Blends the two values of the source modules controlled by the value of the control module.
-	*/
-	class BlendModule3D : public TripleSourceModule<Pipeline3D, BlendElement3D>
+	class BlendModule : public TripleSourceModule<BlendElement1D, BlendElement2D, BlendElement3D>
 	{ };
 };
 

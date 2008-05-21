@@ -28,9 +28,9 @@ void EditorScalePointModule::fillPropertyGrid (wxPropertyGrid *pg)
 	pg->Append( wxPropertyCategory(wxT("Source modules")) );
 	appendSourceModuleProperty (pg, wxT("Source module"), mSourceModules[0]);
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
-	pg->Append( wxFloatProperty(wxT("Scale X"), wxPG_LABEL, mModule3D.getScaleX()) );
-	pg->Append( wxFloatProperty(wxT("Scale Y"), wxPG_LABEL, mModule3D.getScaleY()) );
-	pg->Append( wxFloatProperty(wxT("Scale Z"), wxPG_LABEL, mModule3D.getScaleZ()) );
+	pg->Append( wxFloatProperty(wxT("Scale X"), wxPG_LABEL, mModule.getScaleX()) );
+	pg->Append( wxFloatProperty(wxT("Scale Y"), wxPG_LABEL, mModule.getScaleY()) );
+	pg->Append( wxFloatProperty(wxT("Scale Z"), wxPG_LABEL, mModule.getScaleZ()) );
 }
 
 void EditorScalePointModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -43,19 +43,17 @@ void EditorScalePointModule::onPropertyChange (wxPropertyGrid *pg, const wxStrin
 	else if (name == _("Scale X"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setScaleX (val);
-		mModule2D.setScaleX (val);
+		mModule.setScaleX (val);
 	}
 	else if (name == _("Scale Y"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setScaleY (val);
-		mModule2D.setScaleY (val);
+		mModule.setScaleY (val);
 	}
 	else if (name == _("Scale Z"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
-		mModule3D.setScaleZ (val);
+		mModule.setScaleZ (val);
 	}
 }
 
@@ -67,8 +65,7 @@ bool EditorScalePointModule::validate (wxPropertyGrid *pg)
 	module = getSourceModule(0);
 	if (module)
 	{
-		mModule2D.setSourceModule(0, module->get2DModule());
-		mModule3D.setSourceModule(0, module->get3DModule());
+		mModule.setSourceModule(0, module->getModule());
 	}
 	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
 
@@ -82,15 +79,15 @@ void EditorScalePointModule::writeProperties (TiXmlElement *element)
 	writeSourceModules (element);
 
 	prop = new TiXmlElement ("ScaleX");
-	prop->SetDoubleAttribute ("value", mModule3D.getScaleX());
+	prop->SetDoubleAttribute ("value", mModule.getScaleX());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("ScaleY");
-	prop->SetDoubleAttribute ("value", mModule3D.getScaleY());
+	prop->SetDoubleAttribute ("value", mModule.getScaleY());
 	element->LinkEndChild (prop);
 
 	prop = new TiXmlElement ("ScaleZ");
-	prop->SetDoubleAttribute ("value", mModule3D.getScaleZ());
+	prop->SetDoubleAttribute ("value", mModule.getScaleZ());
 	element->LinkEndChild (prop);
 }
 
@@ -105,19 +102,17 @@ bool EditorScalePointModule::readProperties (TiXmlElement *element)
 	prop = element->FirstChildElement ("ScaleX");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setScaleX (dval);
-	mModule2D.setScaleX (dval);
+	mModule.setScaleX (dval);
 
 	prop = element->FirstChildElement ("ScaleY");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setScaleY (dval);
-	mModule2D.setScaleY (dval);
+	mModule.setScaleY (dval);
 
 	prop = element->FirstChildElement ("ScaleZ");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
-	mModule3D.setScaleZ (dval);
+	mModule.setScaleZ (dval);
 
 	return true;
 }

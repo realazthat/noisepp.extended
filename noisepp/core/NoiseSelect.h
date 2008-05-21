@@ -34,62 +34,6 @@
 
 namespace noisepp
 {
-	/// Select module base class.
-	template <class Pipeline, class Element>
-	class SelectModuleBase : public TripleSourceModuleBase<Pipeline>
-	{
-		private:
-			Real mLowerBound, mUpperBound;
-			Real mEdgeFalloff;
-
-		public:
-			SelectModuleBase() : mLowerBound(-1.0), mUpperBound(1.0), mEdgeFalloff(0.0)
-			{
-			}
-			/// Sets the lower bound.
-			void setLowerBound (Real v)
-			{
-				mLowerBound = v;
-			}
-			/// Returns the lower bound.
-			Real getLowerBound () const
-			{
-				return mLowerBound;
-			}
-			/// Sets the upper bound.
-			void setUpperBound (Real v)
-			{
-				mUpperBound = v;
-			}
-			/// Returns the upper bound.
-			Real getUpperBound () const
-			{
-				return mUpperBound;
-			}
-			/// Sets the edge falloff
-			void setEdgeFalloff (Real v)
-			{
-				const Real range = Real(0.5) * (mUpperBound - mLowerBound);
-				mEdgeFalloff = (v > range) ? range : v;
-			}
-			/// Returns the edge falloff
-			Real getEdgeFalloff () const
-			{
-				return mEdgeFalloff;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			virtual ElementID addToPipeline (Pipeline *pipe) const
-			{
-				assert (Module<Pipeline>::getSourceModule (0));
-				assert (Module<Pipeline>::getSourceModule (1));
-				assert (Module<Pipeline>::getSourceModule (2));
-				ElementID first = Module<Pipeline>::getSourceModule(0)->addToPipeline(pipe);
-				ElementID second = Module<Pipeline>::getSourceModule(1)->addToPipeline(pipe);
-				ElementID third = Module<Pipeline>::getSourceModule(2)->addToPipeline(pipe);
-				return pipe->addElement (this, new Element(pipe, first, second, third, mLowerBound, mUpperBound, mEdgeFalloff));
-			}
-	};
-
 	class SelectElement1D : public PipelineElement1D
 	{
 		private:
@@ -318,33 +262,88 @@ namespace noisepp
 			}
 	};
 
-	/** 1D select module.
+	/** Select module.
 		Selects the output value controlled by the control module.
 		If the value of the select module is within the range specified
 		the value of source module 1 is returned. Otherwise, the value of source
 		module 0 is returned.
 		The transition can be smoothed by setting an edge falloff.
 	*/
-	class SelectModule1D : public SelectModuleBase<Pipeline1D, SelectElement1D>
-	{ };
-	/** 2D select module.
-		Selects the output value controlled by the control module.
-		If the value of the select module is within the range specified
-		the value of source module 1 is returned. Otherwise, the value of source
-		module 0 is returned.
-		The transition can be smoothed by setting an edge falloff.
-	*/
-	class SelectModule2D : public SelectModuleBase<Pipeline2D, SelectElement2D>
-	{ };
-	/** 3D select module.
-		Selects the output value controlled by the control module.
-		If the value of the select module is within the range specified
-		the value of source module 1 is returned. Otherwise, the value of source
-		module 0 is returned.
-		The transition can be smoothed by setting an edge falloff.
-	*/
-	class SelectModule3D : public SelectModuleBase<Pipeline3D, SelectElement3D>
-	{ };
+	class SelectModule : public TripleSourceModuleBase
+	{
+		private:
+			Real mLowerBound, mUpperBound;
+			Real mEdgeFalloff;
+
+		public:
+			SelectModule() : mLowerBound(-1.0), mUpperBound(1.0), mEdgeFalloff(0.0)
+			{
+			}
+			/// Sets the lower bound.
+			void setLowerBound (Real v)
+			{
+				mLowerBound = v;
+			}
+			/// Returns the lower bound.
+			Real getLowerBound () const
+			{
+				return mLowerBound;
+			}
+			/// Sets the upper bound.
+			void setUpperBound (Real v)
+			{
+				mUpperBound = v;
+			}
+			/// Returns the upper bound.
+			Real getUpperBound () const
+			{
+				return mUpperBound;
+			}
+			/// Sets the edge falloff
+			void setEdgeFalloff (Real v)
+			{
+				const Real range = Real(0.5) * (mUpperBound - mLowerBound);
+				mEdgeFalloff = (v > range) ? range : v;
+			}
+			/// Returns the edge falloff
+			Real getEdgeFalloff () const
+			{
+				return mEdgeFalloff;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				assert (getSourceModule (1));
+				assert (getSourceModule (2));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				ElementID second = getSourceModule(1)->addToPipeline(pipe);
+				ElementID third = getSourceModule(2)->addToPipeline(pipe);
+				return pipe->addElement (this, new SelectElement1D(pipe, first, second, third, mLowerBound, mUpperBound, mEdgeFalloff));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				assert (getSourceModule (1));
+				assert (getSourceModule (2));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				ElementID second = getSourceModule(1)->addToPipeline(pipe);
+				ElementID third = getSourceModule(2)->addToPipeline(pipe);
+				return pipe->addElement (this, new SelectElement2D(pipe, first, second, third, mLowerBound, mUpperBound, mEdgeFalloff));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			virtual ElementID addToPipeline (Pipeline3D *pipe) const
+			{
+				assert (getSourceModule (0));
+				assert (getSourceModule (1));
+				assert (getSourceModule (2));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				ElementID second = getSourceModule(1)->addToPipeline(pipe);
+				ElementID third = getSourceModule(2)->addToPipeline(pipe);
+				return pipe->addElement (this, new SelectElement3D(pipe, first, second, third, mLowerBound, mUpperBound, mEdgeFalloff));
+			}
+	};
 };
 
 #endif

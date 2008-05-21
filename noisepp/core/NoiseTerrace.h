@@ -36,61 +36,6 @@ namespace noisepp
 {
 	typedef std::vector<Real> TerraceControlPointVector;
 
-	/// Terrace module base class.
-	template <class Pipeline, class Element>
-	class TerraceModuleBase : public Module<Pipeline>
-	{
-		private:
-			TerraceControlPointVector mControlPoints;
-			bool mInvert;
-
-		public:
-			/// Constructor.
-			TerraceModuleBase() : Module<Pipeline>(1), mInvert(false)
-			{
-			}
-			/// Adds a control point.
-			void addControlPoint (Real value)
-			{
-				mControlPoints.push_back (value);
-				std::sort (mControlPoints.begin(), mControlPoints.end());
-			}
-			/// Clears all control points.
-			void clearControlPoints ()
-			{
-				mControlPoints.clear ();
-			}
-			/// Returns a reference to the control point vector.
-			TerraceControlPointVector &getControlPoints ()
-			{
-				return mControlPoints;
-			}
-			/// Enables inversion.
-			void invert (bool v=true)
-			{
-				mInvert = v;
-			}
-			/// Returns if inverted.
-			bool isInverted () const
-			{
-				return mInvert;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline *pipe) const
-			{
-				assert (Module<Pipeline>::getSourceModule (0));
-				ElementID first = Module<Pipeline>::getSourceModule(0)->addToPipeline(pipe);
-				int count = mControlPoints.size ();
-				assert (count >= 2);
-				Real *points = new Real[count];
-				for (int i=0;i<count;++i)
-				{
-					points[i] = mControlPoints[i];
-				}
-				return pipe->addElement (this, new Element(pipe, first, points, count, mInvert));
-			}
-	};
-
 	template <class PipelineElement>
 	class TerraceElementBase : public PipelineElement
 	{
@@ -196,23 +141,89 @@ namespace noisepp
 			}
 	};
 
-	/** 1D terrace forming module.
+	/** Terrace forming module.
 		Maps the output value of the source module onto a terrace-forming curve.
 	*/
-	class TerraceModule1D : public TerraceModuleBase<Pipeline1D, TerraceElement1D>
-	{ };
+	class TerraceModule : public Module
+	{
+		private:
+			TerraceControlPointVector mControlPoints;
+			bool mInvert;
 
-	/** 2D terrace forming module.
-		Maps the output value of the source module onto a terrace-forming curve.
-	*/
-	class TerraceModule2D : public TerraceModuleBase<Pipeline2D, TerraceElement2D>
-	{ };
-
-	/** 3D terrace forming module.
-		Maps the output value of the source module onto a terrace-forming curve.
-	*/
-	class TerraceModule3D : public TerraceModuleBase<Pipeline3D, TerraceElement3D>
-	{ };
+		public:
+			/// Constructor.
+			TerraceModule() : Module(1), mInvert(false)
+			{
+			}
+			/// Adds a control point.
+			void addControlPoint (Real value)
+			{
+				mControlPoints.push_back (value);
+				std::sort (mControlPoints.begin(), mControlPoints.end());
+			}
+			/// Clears all control points.
+			void clearControlPoints ()
+			{
+				mControlPoints.clear ();
+			}
+			/// Returns a reference to the control point vector.
+			TerraceControlPointVector &getControlPoints ()
+			{
+				return mControlPoints;
+			}
+			/// Enables inversion.
+			void invert (bool v=true)
+			{
+				mInvert = v;
+			}
+			/// Returns if inverted.
+			bool isInverted () const
+			{
+				return mInvert;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				int count = mControlPoints.size ();
+				assert (count >= 2);
+				Real *points = new Real[count];
+				for (int i=0;i<count;++i)
+				{
+					points[i] = mControlPoints[i];
+				}
+				return pipe->addElement (this, new TerraceElement1D(pipe, first, points, count, mInvert));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				int count = mControlPoints.size ();
+				assert (count >= 2);
+				Real *points = new Real[count];
+				for (int i=0;i<count;++i)
+				{
+					points[i] = mControlPoints[i];
+				}
+				return pipe->addElement (this, new TerraceElement2D(pipe, first, points, count, mInvert));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline3D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				int count = mControlPoints.size ();
+				assert (count >= 2);
+				Real *points = new Real[count];
+				for (int i=0;i<count;++i)
+				{
+					points[i] = mControlPoints[i];
+				}
+				return pipe->addElement (this, new TerraceElement3D(pipe, first, points, count, mInvert));
+			}
+	};
 };
 
 #endif // NOISEPP_TERRACE_H

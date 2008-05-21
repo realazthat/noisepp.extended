@@ -34,49 +34,6 @@
 
 namespace noisepp
 {
-	/** Module for scaling with bias.
-		Scales the output value from the source module by scaling with bias.
-	*/
-	template <class Pipeline, class Element>
-	class ScaleBiasModuleBase : public Module<Pipeline>
-	{
-		private:
-			Real mScale, mBias;
-
-		public:
-			/// Constructor.
-			ScaleBiasModuleBase() : Module<Pipeline>(1), mScale(1.0), mBias(0.0)
-			{
-			}
-			/// Sets the scaling factor.
-			void setScale (Real v)
-			{
-				mScale = v;
-			}
-			/// Returns the scaling factor.
-			Real getScale () const
-			{
-				return mScale;
-			}
-			/// Sets the bias value.
-			void setBias (Real v)
-			{
-				mBias = v;
-			}
-			/// Returns the bias value.
-			Real getBias () const
-			{
-				return mBias;
-			}
-			/// @copydoc noisepp::Module::addToPipeline()
-			ElementID addToPipeline (Pipeline *pipe) const
-			{
-				assert (Module<Pipeline>::getSourceModule (0));
-				ElementID first = Module<Pipeline>::getSourceModule(0)->addToPipeline(pipe);
-				return pipe->addElement (this, new Element(pipe, first, mScale, mBias));
-			}
-	};
-
 	class ScaleBiasElement1D : public PipelineElement1D
 	{
 		private:
@@ -137,21 +94,61 @@ namespace noisepp
 			}
 	};
 
-	/** 1D module for scaling with bias.
-		Scales the output value of the source module by scaling with bias.
+	/** Module for scaling with bias.
+		Transforms the output value of the source module by scaling with bias.
 	*/
-	class ScaleBiasModule1D : public ScaleBiasModuleBase<Pipeline1D, ScaleBiasElement1D>
-	{ };
-	/** 2D module for scaling with bias.
-		Scales the output value of the source module by scaling with bias.
-	*/
-	class ScaleBiasModule2D : public ScaleBiasModuleBase<Pipeline2D, ScaleBiasElement2D>
-	{ };
-	/** 3D module for scaling with bias.
-		Scales the output value of the source module by scaling with bias.
-	*/
-	class ScaleBiasModule3D : public ScaleBiasModuleBase<Pipeline3D, ScaleBiasElement3D>
-	{ };
+	class ScaleBiasModule : public Module
+	{
+		private:
+			Real mScale, mBias;
+
+		public:
+			/// Constructor.
+			ScaleBiasModule() : Module(1), mScale(1.0), mBias(0.0)
+			{
+			}
+			/// Sets the scaling factor.
+			void setScale (Real v)
+			{
+				mScale = v;
+			}
+			/// Returns the scaling factor.
+			Real getScale () const
+			{
+				return mScale;
+			}
+			/// Sets the bias value.
+			void setBias (Real v)
+			{
+				mBias = v;
+			}
+			/// Returns the bias value.
+			Real getBias () const
+			{
+				return mBias;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ScaleBiasElement1D(pipe, first, mScale, mBias));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline2D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ScaleBiasElement2D(pipe, first, mScale, mBias));
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline3D *pipe) const
+			{
+				assert (getSourceModule (0));
+				ElementID first = getSourceModule(0)->addToPipeline(pipe);
+				return pipe->addElement (this, new ScaleBiasElement3D(pipe, first, mScale, mBias));
+			}
+	};
 };
 
 #endif
