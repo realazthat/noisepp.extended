@@ -27,6 +27,11 @@
 #include "modules/EditorCurveModule.h"
 #include "modules/EditorExponentModule.h"
 #include "modules/EditorRidgedMultiModule.h"
+#include "modules/EditorScaleBiasModule.h"
+#include "modules/EditorScalePointModule.h"
+#include "modules/EditorTerraceModule.h"
+#include "modules/EditorTranslatePointModule.h"
+#include "modules/EditorVoronoiModule.h"
 
 EditorModuleManager::EditorModuleManager()
 {
@@ -40,6 +45,11 @@ EditorModuleManager::EditorModuleManager()
 	//registerFactory(new EditorModuleFactory<EditorCurveModule>);
 	registerFactory(new EditorModuleFactory<EditorExponentModule>);
 	registerFactory(new EditorModuleFactory<EditorRidgedMultiModule>);
+	registerFactory(new EditorModuleFactory<EditorScaleBiasModule>);
+	registerFactory(new EditorModuleFactory<EditorScalePointModule>);
+	//registerFactory(new EditorModuleFactory<EditorTerraceModule>);
+	registerFactory(new EditorModuleFactory<EditorTranslatePointModule>);
+	registerFactory(new EditorModuleFactory<EditorVoronoiModule>);
 }
 
 EditorModuleManager::~EditorModuleManager()
