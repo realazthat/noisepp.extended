@@ -77,15 +77,15 @@ namespace noisepp
 				const Real xGradient = randomVectors3D[(vIndex<<2)];
 
 				const Real xDelta = fx - Real(ix);
-				return xDelta * xGradient * Real(2.12);
+				return xDelta * xGradient;
 			}
 
-			static NOISEPP_INLINE Real interpGradientCoherentNoise (Real x, int x0, int x1, Real xs, int seed)
+			static NOISEPP_INLINE Real interpGradientCoherentNoise (Real x, int x0, int x1, Real xs, int seed, Real scale)
 			{
 				Real n0, n1;
 				n0 = calcGradientNoise(x, x0, seed);
 				n1 = calcGradientNoise(x, x1, seed);
-				return Math::InterpLinear (n0, n1, xs);
+				return Math::InterpLinear (n0, n1, xs) * scale;
 			}
 
 			static NOISEPP_INLINE int intNoise (int x, int seed)
@@ -95,31 +95,31 @@ namespace noisepp
 				return (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff;
 			}
 		public:
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseHigh (Real x, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseHigh (Real x, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_1D;
 
 				const Real xs = Math::CubicCurve5 (x - Real(x0));
 
-				return interpGradientCoherentNoise (x, x0, x1, xs, seed);
+				return interpGradientCoherentNoise (x, x0, x1, xs, seed, scale);
 			}
 
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseStd (Real x, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseStd (Real x, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_1D;
 
 				const Real xs = Math::CubicCurve3 (x - Real(x0));
 
-				return interpGradientCoherentNoise (x, x0, x1, xs, seed);
+				return interpGradientCoherentNoise (x, x0, x1, xs, seed, scale);
 			}
 
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseLow (Real x, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseLow (Real x, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_1D;
 
 				const Real xs = x - Real(x0);
 
-				return interpGradientCoherentNoise (x, x0, x1, xs, seed);
+				return interpGradientCoherentNoise (x, x0, x1, xs, seed, scale);
 			}
 
 			static NOISEPP_INLINE Real calcNoise (int x, int seed)
@@ -141,10 +141,10 @@ namespace noisepp
 
 				const Real xDelta = fx - Real(ix);
 				const Real yDelta = fy - Real(iy);
-				return (xGradient * xDelta + yGradient * yDelta) * Real(2.12);
+				return (xGradient * xDelta + yGradient * yDelta);
 			}
 
-			static NOISEPP_INLINE Real interpGradientCoherentNoise (Real x, Real y, int x0, int x1, int y0, int y1, Real xs, Real ys, int seed)
+			static NOISEPP_INLINE Real interpGradientCoherentNoise (Real x, Real y, int x0, int x1, int y0, int y1, Real xs, Real ys, int seed, Real scale)
 			{
 				Real n0, n1, ix0, ix1;
 				n0 = calcGradientNoise(x, y, x0, y0, seed);
@@ -153,7 +153,7 @@ namespace noisepp
 				n0 = calcGradientNoise(x, y, x0, y1, seed);
 				n1 = calcGradientNoise(x, y, x1, y1, seed);
 				ix1 = Math::InterpLinear (n0, n1, xs);
-				return Math::InterpLinear (ix0, ix1, ys);
+				return Math::InterpLinear (ix0, ix1, ys) * scale;
 			}
 
 			static NOISEPP_INLINE int intNoise (int x, int y, int seed)
@@ -163,34 +163,34 @@ namespace noisepp
 				return (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff;
 			}
 		public:
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseHigh (Real x, Real y, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseHigh (Real x, Real y, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_2D;
 
 				const Real xs = Math::CubicCurve5 (x - Real(x0));
 				const Real ys = Math::CubicCurve5 (y - Real(y0));
 
-				return interpGradientCoherentNoise (x, y, x0, x1, y0, y1, xs, ys, seed);
+				return interpGradientCoherentNoise (x, y, x0, x1, y0, y1, xs, ys, seed, scale);
 			}
 
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseStd (Real x, Real y, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseStd (Real x, Real y, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_2D;
 
 				const Real xs = Math::CubicCurve3 (x - Real(x0));
 				const Real ys = Math::CubicCurve3 (y - Real(y0));
 
-				return interpGradientCoherentNoise (x, y, x0, x1, y0, y1, xs, ys, seed);
+				return interpGradientCoherentNoise (x, y, x0, x1, y0, y1, xs, ys, seed, scale);
 			}
 
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseLow (Real x, Real y, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseLow (Real x, Real y, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_2D;
 
 				const Real xs = x - Real(x0);
 				const Real ys = y - Real(y0);
 
-				return interpGradientCoherentNoise (x, y, x0, x1, y0, y1, xs, ys, seed);
+				return interpGradientCoherentNoise (x, y, x0, x1, y0, y1, xs, ys, seed, scale);
 			}
 
 			static NOISEPP_INLINE Real calcNoise (int x, int y, int seed=0)
@@ -214,10 +214,10 @@ namespace noisepp
 				const Real xDelta = fx - Real(ix);
 				const Real yDelta = fy - Real(iy);
 				const Real zDelta = fz - Real(iz);
-				return (xGradient * xDelta + yGradient * yDelta + zGradient * zDelta) * Real(2.12);
+				return (xGradient * xDelta + yGradient * yDelta + zGradient * zDelta);
 			}
 
-			static NOISEPP_INLINE Real interpGradientCoherentNoise (Real x, Real y, Real z, int x0, int x1, int y0, int y1, int z0, int z1, Real xs, Real ys, Real zs, int seed)
+			static NOISEPP_INLINE Real interpGradientCoherentNoise (Real x, Real y, Real z, int x0, int x1, int y0, int y1, int z0, int z1, Real xs, Real ys, Real zs, int seed, Real scale)
 			{
 				Real n0, n1, ix0, ix1, iy0, iy1;
 				n0 = calcGradientNoise(x, y, z, x0, y0, z0, seed);
@@ -235,7 +235,7 @@ namespace noisepp
 				ix1 = Math::InterpLinear (n0, n1, xs);
 				iy1 = Math::InterpLinear (ix0, ix1, ys);
 
-				return Math::InterpLinear (iy0, iy1, zs);
+				return Math::InterpLinear (iy0, iy1, zs) * scale;
 			}
 
 			static NOISEPP_INLINE int intNoise (int x, int y, int z, int seed)
@@ -245,7 +245,7 @@ namespace noisepp
 				return (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff;
 			}
 		public:
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseHigh (Real x, Real y, Real z, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseHigh (Real x, Real y, Real z, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_3D;
 
@@ -253,10 +253,10 @@ namespace noisepp
 				const Real ys = Math::CubicCurve5 (y - Real(y0));
 				const Real zs = Math::CubicCurve5 (z - Real(z0));
 
-				return interpGradientCoherentNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed);
+				return interpGradientCoherentNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed, scale);
 			}
 
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseStd (Real x, Real y, Real z, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseStd (Real x, Real y, Real z, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_3D;
 
@@ -264,10 +264,10 @@ namespace noisepp
 				const Real ys = Math::CubicCurve3 (y - Real(y0));
 				const Real zs = Math::CubicCurve3 (z - Real(z0));
 
-				return interpGradientCoherentNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed);
+				return interpGradientCoherentNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed, scale);
 			}
 
-			static NOISEPP_INLINE Real calcGradientCoherentNoiseLow (Real x, Real y, Real z, int seed)
+			static NOISEPP_INLINE Real calcGradientCoherentNoiseLow (Real x, Real y, Real z, int seed, Real scale)
 			{
 				NOISE_GENERATOR_INTEGER_CLAMP_3D;
 
@@ -275,7 +275,7 @@ namespace noisepp
 				const Real ys = y - Real(y0);
 				const Real zs = z - Real(y0);
 
-				return interpGradientCoherentNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed);
+				return interpGradientCoherentNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed, scale);
 			}
 
 			static NOISEPP_INLINE Real calcNoise (int x, int y, int z, int seed=0)

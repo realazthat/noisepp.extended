@@ -56,11 +56,13 @@ namespace noisepp
 			Real mOffset;
 			/// The gain factor.
 			Real mGain;
+			/// The noise scale factor.
+			Real mScale;
 
 		public:
 			/// Constructor.
 			RidgedMultiModuleBase () :
-			mFrequency(1.0), mOctaveCount(6), mSeed(0), mQuality(NOISE_QUALITY_STD), mLacunarity(2.0), mExponent(1.0), mOffset(1.0), mGain(2.0) {}
+			mFrequency(1.0), mOctaveCount(6), mSeed(0), mQuality(NOISE_QUALITY_STD), mLacunarity(2.0), mExponent(1.0), mOffset(1.0), mGain(2.0), mScale(2.12) {}
 			virtual ~RidgedMultiModuleBase () {}
 
 			/// Sets the frequency.
@@ -143,6 +145,16 @@ namespace noisepp
 			{
 				return mGain;
 			}
+			/// Sets the noise scale factor.
+			void setScale (Real v)
+			{
+				mScale = v;
+			}
+			/// Returns the noise scale factor.
+			Real getScale ()
+			{
+				return mScale;
+			}
 	};
 
 	class RidgedMultiElement1D : public PipelineElement1D
@@ -159,18 +171,19 @@ namespace noisepp
 			int mQuality;
 			Real mOffset;
 			Real mGain;
+			Real mScale;
 
 			NOISEPP_INLINE Real calculateGradient (Real x, int seed) const
 			{
 				if (mQuality == NOISE_QUALITY_STD)
-					return Generator1D::calcGradientCoherentNoiseStd (x, seed);
+					return Generator1D::calcGradientCoherentNoiseStd (x, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator1D::calcGradientCoherentNoiseHigh (x, seed);
+					return Generator1D::calcGradientCoherentNoiseHigh (x, seed, mScale);
 				else
-					return Generator1D::calcGradientCoherentNoiseLow (x, seed);
+					return Generator1D::calcGradientCoherentNoiseLow (x, seed, mScale);
 			}
 		public:
-			RidgedMultiElement1D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain)
+			RidgedMultiElement1D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
 			{
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
@@ -225,7 +238,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				return pipe->addElement (this, new RidgedMultiElement1D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality));
+				return pipe->addElement (this, new RidgedMultiElement1D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
 			}
 	};
 
@@ -243,18 +256,19 @@ namespace noisepp
 			int mQuality;
 			Real mOffset;
 			Real mGain;
+			Real mScale;
 
 			NOISEPP_INLINE Real calculateGradient (Real x, Real y, int seed) const
 			{
 				if (mQuality == NOISE_QUALITY_STD)
-					return Generator2D::calcGradientCoherentNoiseStd (x, y, seed);
+					return Generator2D::calcGradientCoherentNoiseStd (x, y, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator2D::calcGradientCoherentNoiseHigh (x, y, seed);
+					return Generator2D::calcGradientCoherentNoiseHigh (x, y, seed, mScale);
 				else
-					return Generator2D::calcGradientCoherentNoiseLow (x, y, seed);
+					return Generator2D::calcGradientCoherentNoiseLow (x, y, seed, mScale);
 			}
 		public:
-			RidgedMultiElement2D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain)
+			RidgedMultiElement2D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
 			{
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
@@ -310,7 +324,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				return pipe->addElement (this, new RidgedMultiElement2D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality));
+				return pipe->addElement (this, new RidgedMultiElement2D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
 			}
 	};
 
@@ -328,18 +342,19 @@ namespace noisepp
 			int mQuality;
 			Real mOffset;
 			Real mGain;
+			Real mScale;
 
 			NOISEPP_INLINE Real calculateGradient (Real x, Real y, Real z, int seed) const
 			{
 				if (mQuality == NOISE_QUALITY_STD)
-					return Generator3D::calcGradientCoherentNoiseStd (x, y, z, seed);
+					return Generator3D::calcGradientCoherentNoiseStd (x, y, z, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator3D::calcGradientCoherentNoiseHigh (x, y, z, seed);
+					return Generator3D::calcGradientCoherentNoiseHigh (x, y, z, seed, mScale);
 				else
-					return Generator3D::calcGradientCoherentNoiseLow (x, y, z, seed);
+					return Generator3D::calcGradientCoherentNoiseLow (x, y, z, seed, mScale);
 			}
 		public:
-			RidgedMultiElement3D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain)
+			RidgedMultiElement3D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
 			{
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
@@ -396,7 +411,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				return pipe->addElement (this, new RidgedMultiElement3D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality));
+				return pipe->addElement (this, new RidgedMultiElement3D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
 			}
 	};
 };

@@ -52,11 +52,13 @@ namespace noisepp
 			Real mLacunarity;
 			/// The noise persistence.
 			Real mPersistence;
+			/// The noise scale factor.
+			Real mScale;
 
 		public:
 			/// Constructor.
 			PerlinModuleBase () :
-			mFrequency(1.0), mOctaveCount(6), mSeed(0), mQuality(NOISE_QUALITY_STD), mLacunarity(2.0), mPersistence(0.5) {}
+			mFrequency(1.0), mOctaveCount(6), mSeed(0), mQuality(NOISE_QUALITY_STD), mLacunarity(2.0), mPersistence(0.5), mScale(2.12) {}
 			virtual ~PerlinModuleBase () {}
 
 			/// Sets the frequency.
@@ -119,6 +121,16 @@ namespace noisepp
 			{
 				return mPersistence;
 			}
+			/// Sets the noise scale factor.
+			void setScale (Real v)
+			{
+				mScale = v;
+			}
+			/// Returns the noise scale factor.
+			Real getScale ()
+			{
+				return mScale;
+			}
 	};
 
 	class PerlinElement1D : public PipelineElement1D
@@ -133,18 +145,19 @@ namespace noisepp
 			Octave *mOctaves;
 			size_t mOctaveCount;
 			int mQuality;
+			Real mScale;
 
 			NOISEPP_INLINE Real calculateGradient (Real x, int seed) const
 			{
 				if (mQuality == NOISE_QUALITY_STD)
-					return Generator1D::calcGradientCoherentNoiseStd (x, seed);
+					return Generator1D::calcGradientCoherentNoiseStd (x, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator1D::calcGradientCoherentNoiseHigh (x, seed);
+					return Generator1D::calcGradientCoherentNoiseHigh (x, seed, mScale);
 				else
-					return Generator1D::calcGradientCoherentNoiseLow (x, seed);
+					return Generator1D::calcGradientCoherentNoiseLow (x, seed, mScale);
 			}
 		public:
-			PerlinElement1D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality) : mOctaveCount(octaves), mQuality(quality)
+			PerlinElement1D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
 			{
 				mOctaves = new Octave[mOctaveCount];
 				Real curPersistence = 1.0;
@@ -192,7 +205,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				return pipe->addElement (this, new PerlinElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality));
+				return pipe->addElement (this, new PerlinElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
 			}
 	};
 
@@ -208,18 +221,19 @@ namespace noisepp
 			Octave *mOctaves;
 			size_t mOctaveCount;
 			int mQuality;
+			Real mScale;
 
 			NOISEPP_INLINE Real calculateGradient (Real x, Real y, int seed) const
 			{
 				if (mQuality == NOISE_QUALITY_STD)
-					return Generator2D::calcGradientCoherentNoiseStd (x, y, seed);
+					return Generator2D::calcGradientCoherentNoiseStd (x, y, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator2D::calcGradientCoherentNoiseHigh (x, y, seed);
+					return Generator2D::calcGradientCoherentNoiseHigh (x, y, seed, mScale);
 				else
-					return Generator2D::calcGradientCoherentNoiseLow (x, y, seed);
+					return Generator2D::calcGradientCoherentNoiseLow (x, y, seed, mScale);
 			}
 		public:
-			PerlinElement2D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality) : mOctaveCount(octaves), mQuality(quality)
+			PerlinElement2D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
 			{
 				mOctaves = new Octave[mOctaveCount];
 				Real curPersistence = 1.0;
@@ -268,7 +282,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				return pipe->addElement (this, new PerlinElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality));
+				return pipe->addElement (this, new PerlinElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
 			}
 	};
 
@@ -284,18 +298,19 @@ namespace noisepp
 			Octave *mOctaves;
 			size_t mOctaveCount;
 			int mQuality;
+			Real mScale;
 
 			NOISEPP_INLINE Real calculateGradient (Real x, Real y, Real z, int seed) const
 			{
 				if (mQuality == NOISE_QUALITY_STD)
-					return Generator3D::calcGradientCoherentNoiseStd (x, y, z, seed);
+					return Generator3D::calcGradientCoherentNoiseStd (x, y, z, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
-					return Generator3D::calcGradientCoherentNoiseHigh (x, y, z, seed);
+					return Generator3D::calcGradientCoherentNoiseHigh (x, y, z, seed, mScale);
 				else
-					return Generator3D::calcGradientCoherentNoiseLow (x, y, z, seed);
+					return Generator3D::calcGradientCoherentNoiseLow (x, y, z, seed, mScale);
 			}
 		public:
-			PerlinElement3D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality) : mOctaveCount(octaves), mQuality(quality)
+			PerlinElement3D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
 			{
 				mOctaves = new Octave[mOctaveCount];
 				Real curPersistence = 1.0;
@@ -345,7 +360,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				return pipe->addElement (this, new PerlinElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality));
+				return pipe->addElement (this, new PerlinElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
 			}
 	};
 };
