@@ -104,7 +104,11 @@ namespace noisepp
 		Returns the power of the two source modules.
 	*/
 	class PowerModule : public DualSourceModule<PowerElement1D, PowerElement2D, PowerElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_POWER; }
+	};
 };
 
 #endif

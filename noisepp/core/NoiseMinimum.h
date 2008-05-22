@@ -113,7 +113,11 @@ namespace noisepp
 		Returns the minimum of the two source modules.
 	*/
 	class MinimumModule : public DualSourceModule<MinimumElement1D, MinimumElement2D, MinimumElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_MINIMUM; }
+	};
 };
 
 #endif

@@ -346,6 +346,8 @@ namespace noisepp
 			{
 				return pipe->addElement (this, new PerlinElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_PERLIN; }
 	};
 };
 

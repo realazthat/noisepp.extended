@@ -251,6 +251,8 @@ namespace noisepp
 			{
 				return pipe->addElement (this, new BillowElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_BILLOW; }
 	};
 };
 

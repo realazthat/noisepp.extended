@@ -95,7 +95,11 @@ namespace noisepp
 		Calculates the absolute value of the value from the source module.
 	*/
 	class AbsoluteModule : public SingleSourceModule<AbsoluteElement1D, AbsoluteElement2D, AbsoluteElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_ABSOLUTE; }
+	};
 };
 
 #endif

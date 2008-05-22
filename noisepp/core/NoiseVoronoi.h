@@ -234,6 +234,8 @@ namespace noisepp
 			{
 				return pipe->addElement (this, new VoronoiElement3D(mFrequency, mSeed, mDisplacement, mEnableDistance));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_VORONOI; }
 	};
 };
 

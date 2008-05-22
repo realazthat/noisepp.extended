@@ -104,7 +104,11 @@ namespace noisepp
 		Adds the values of the two source modules together.
 	*/
 	class AdditionModule : public DualSourceModule<AdditionElement1D, AdditionElement2D, AdditionElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_ADDITION; }
+	};
 };
 
 #endif

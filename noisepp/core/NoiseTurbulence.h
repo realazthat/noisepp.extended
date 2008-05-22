@@ -228,6 +228,8 @@ namespace noisepp
 				ElementID perlinZ = mPerlinZ.addToPipeline(pipe);
 				return pipe->addElement (this, new TurbulenceElement3D(pipe, mPower, first, perlinX, perlinY, perlinZ));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_TURBULENCE; }
 	};
 };
 

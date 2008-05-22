@@ -100,6 +100,8 @@ namespace noisepp
 			{
 				return pipe->addElement (this, new ConstantElement3D(mValue));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_CONSTANT; }
 	};
 };
 

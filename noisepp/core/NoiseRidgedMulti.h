@@ -390,6 +390,8 @@ namespace noisepp
 			{
 				return pipe->addElement (this, new RidgedMultiElement3D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_RIDGEDMULTI; }
 	};
 };
 

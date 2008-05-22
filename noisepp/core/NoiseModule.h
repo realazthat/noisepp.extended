@@ -34,6 +34,34 @@
 
 namespace noisepp
 {
+	typedef unsigned short ModuleTypeId;
+	enum
+	{
+		MODULE_PERLIN=0,
+		MODULE_BILLOW=1,
+		MODULE_ADDITION=2,
+		MODULE_ABSOLUTE=3,
+		MODULE_BLEND=4,
+		MODULE_CHECKERBOARD=5,
+		MODULE_CLAMP=6,
+		MODULE_CONSTANT=7,
+		MODULE_CURVE=8,
+		MODULE_EXPONENT=9,
+		MODULE_INVERT=10,
+		MODULE_MAXIMUM=11,
+		MODULE_MINIMUM=12,
+		MODULE_MULTIPLY=13,
+		MODULE_POWER=14,
+		MODULE_RIDGEDMULTI=15,
+		MODULE_SCALEBIAS=16,
+		MODULE_SELECT=17,
+		MODULE_SCALEPOINT=18,
+		MODULE_TURBULENCE=19,
+		MODULE_TERRACE=20,
+		MODULE_TRANSLATEPOINT=21,
+		MODULE_VORONOI=22
+	};
+
 	/// Module base class.
 	class Module
 	{
@@ -128,6 +156,8 @@ namespace noisepp
 			{
 				return addToPipeline(&pipe);
 			}
+			/// Returns the module type ID.
+			virtual ModuleTypeId getType() const = 0;
 			virtual ~Module ()
 			{
 				if (mSourceModules)

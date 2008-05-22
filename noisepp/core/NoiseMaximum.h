@@ -113,7 +113,11 @@ namespace noisepp
 		Returns the maximum of the two source modules.
 	*/
 	class MaximumModule : public DualSourceModule<MaximumElement1D, MaximumElement2D, MaximumElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_MAXIMUM; }
+	};
 };
 
 #endif

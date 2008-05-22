@@ -343,6 +343,8 @@ namespace noisepp
 				ElementID third = getSourceModule(2)->addToPipeline(pipe);
 				return pipe->addElement (this, new SelectElement3D(pipe, first, second, third, mLowerBound, mUpperBound, mEdgeFalloff));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_SELECT; }
 	};
 };
 

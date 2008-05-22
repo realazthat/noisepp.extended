@@ -95,7 +95,11 @@ namespace noisepp
 		Inverts the output of the source module.
 	*/
 	class InvertModule : public SingleSourceModule<InvertElement1D, InvertElement2D, InvertElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_INVERT; }
+	};
 };
 
 #endif

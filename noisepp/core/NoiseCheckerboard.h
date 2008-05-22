@@ -86,6 +86,8 @@ namespace noisepp
 			{
 				return pipe->addElement (this, new CheckerboardElement3D);
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_CHECKERBOARD; }
 	};
 };
 

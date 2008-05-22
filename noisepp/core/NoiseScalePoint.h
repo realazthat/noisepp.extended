@@ -163,6 +163,8 @@ namespace noisepp
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScalePointElement3D(pipe, first, mScaleX, mScaleY, mScaleZ));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_SCALEPOINT; }
 	};
 };
 

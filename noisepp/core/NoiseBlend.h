@@ -119,7 +119,11 @@ namespace noisepp
 		Blends the two values of the source modules controlled by the value of the control module.
 	*/
 	class BlendModule : public TripleSourceModule<BlendElement1D, BlendElement2D, BlendElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_BLEND; }
+	};
 };
 
 #endif

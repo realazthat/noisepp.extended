@@ -132,6 +132,8 @@ namespace noisepp
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new TranslatePointElement3D(pipe, first, mTranslationX, mTranslationY, mTranslationZ));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_TRANSLATEPOINT; }
 	};
 };
 

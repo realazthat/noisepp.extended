@@ -225,6 +225,8 @@ namespace noisepp
 				}
 				return pipe->addElement (this, new CurveElement3D(pipe, first, points, count));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_CURVE; }
 	};
 };
 

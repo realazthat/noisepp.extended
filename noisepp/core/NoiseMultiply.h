@@ -104,7 +104,11 @@ namespace noisepp
 		Returns the product of the two source modules.
 	*/
 	class MultiplyModule : public DualSourceModule<MultiplyElement1D, MultiplyElement2D, MultiplyElement3D>
-	{ };
+	{
+		public:
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_MULTIPLY; }
+	};
 };
 
 #endif

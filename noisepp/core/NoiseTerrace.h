@@ -223,6 +223,8 @@ namespace noisepp
 				}
 				return pipe->addElement (this, new TerraceElement3D(pipe, first, points, count, mInvert));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_TERRACE; }
 	};
 };
 

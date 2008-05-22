@@ -148,6 +148,8 @@ namespace noisepp
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScaleBiasElement3D(pipe, first, mScale, mBias));
 			}
+			/// @copydoc noisepp::Module::getType()
+			ModuleTypeId getType() const { return MODULE_SCALEBIAS; }
 	};
 };
 
