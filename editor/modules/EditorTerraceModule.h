@@ -18,6 +18,7 @@
 #ifndef EDITORTERRACEMODULE_H
 #define EDITORTERRACEMODULE_H
 
+#include <list>
 #include <editorModule.h>
 
 class EditorTerraceModule : public EditorModule
@@ -40,7 +41,13 @@ class EditorTerraceModule : public EditorModule
 		virtual bool readProperties (TiXmlElement *element);
 	protected:
 	private:
+		typedef std::list<wxPGId> ControlPointList;
 		noisepp::TerraceModule mModule;
+		int mPointCount;
+		wxPGId mPointCategoryID;
+		ControlPointList mControlPointIDs;
+
+		void changeNumberOfControlPoints (wxPropertyGrid *pg);
 };
 
 #endif // EDITORTERRACEMODULE_H

@@ -18,6 +18,7 @@
 #ifndef EDITORCURVEMODULE_H
 #define EDITORCURVEMODULE_H
 
+#include <list>
 #include <editorModule.h>
 
 class EditorCurveModule : public EditorModule
@@ -34,13 +35,25 @@ class EditorCurveModule : public EditorModule
 			return mModule;
 		}
 		virtual void fillPropertyGrid (wxPropertyGrid *pg);
-		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name);
+		virtual void onPropertyChange (wxPropertyGrid *pg, wxPropertyGridEvent& event);
 		virtual bool validate (wxPropertyGrid *pg);
 		virtual void writeProperties (TiXmlElement *element);
 		virtual bool readProperties (TiXmlElement *element);
 	protected:
 	private:
+		struct ControlPoint
+		{
+			wxPGId parent;
+			wxPGId in, out;
+		};
+		typedef std::list<ControlPoint> ControlPointList;
+
+		int mPointCount;
+		wxPGId mPointCategoryID;
 		noisepp::CurveModule mModule;
+		ControlPointList mControlPointIDs;
+
+		void changeNumberOfControlPoints (wxPropertyGrid *pg);
 };
 
 #endif // EDITORCURVEMODULE_H

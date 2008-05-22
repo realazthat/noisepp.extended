@@ -36,7 +36,8 @@ class EditorModule
 		virtual const std::string &getFactoryName () const = 0;
 		virtual noisepp::Module &getModule () = 0;
 		virtual void fillPropertyGrid (wxPropertyGrid *pg) = 0;
-		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name) = 0;
+		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name) {}
+		virtual void onPropertyChange (wxPropertyGrid *pg, wxPropertyGridEvent& event);
 		virtual bool validate (wxPropertyGrid *pg) = 0;
 		virtual void writeProperties (TiXmlElement *element) = 0;
 		virtual bool readProperties (TiXmlElement *element) = 0;

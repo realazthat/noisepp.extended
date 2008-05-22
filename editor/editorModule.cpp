@@ -112,8 +112,8 @@ void EditorModule::generate (double x, double y, double width, double height, in
 
 	double *buffer = new double[w*h];
 
-	double xDelta = width / double(w-1);
-	double yDelta = height / double(h-1);
+	double xDelta = width / double(w);
+	double yDelta = height / double(h);
 
 	for (int yi=0;yi<h;++yi)
 	{
@@ -206,4 +206,9 @@ bool EditorModule::readSourceModules (TiXmlElement *element)
 	}
 
 	return true;
+}
+
+void EditorModule::onPropertyChange (wxPropertyGrid *pg, wxPropertyGridEvent& event)
+{
+	onPropertyChange (pg, event.GetPropertyName());
 }

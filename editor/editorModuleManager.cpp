@@ -50,12 +50,12 @@ EditorModuleManager::EditorModuleManager()
 	registerFactory(new EditorModuleFactory<EditorCheckerboardModule>);
 	registerFactory(new EditorModuleFactory<EditorClampModule>);
 	registerFactory(new EditorModuleFactory<EditorConstantModule>);
-	//registerFactory(new EditorModuleFactory<EditorCurveModule>);
+	registerFactory(new EditorModuleFactory<EditorCurveModule>);
 	registerFactory(new EditorModuleFactory<EditorExponentModule>);
 	registerFactory(new EditorModuleFactory<EditorRidgedMultiModule>);
 	registerFactory(new EditorModuleFactory<EditorScaleBiasModule>);
 	registerFactory(new EditorModuleFactory<EditorScalePointModule>);
-	//registerFactory(new EditorModuleFactory<EditorTerraceModule>);
+	registerFactory(new EditorModuleFactory<EditorTerraceModule>);
 	registerFactory(new EditorModuleFactory<EditorTranslatePointModule>);
 	registerFactory(new EditorModuleFactory<EditorVoronoiModule>);
 	registerFactory(new EditorModuleFactory<EditorAbsoluteModule>);

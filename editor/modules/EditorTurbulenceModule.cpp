@@ -29,8 +29,8 @@ void EditorTurbulenceModule::fillPropertyGrid (wxPropertyGrid *pg)
 	appendSourceModuleProperty (pg, wxT("Source module"), mSourceModules[0]);
 	pg->Append( wxPropertyCategory(wxT("Parameters")) );
 	pg->Append( wxFloatProperty(wxT("Power"), wxPG_LABEL, mModule.getPower()) );
-	pg->Append( wxFloatProperty(wxT("Roughness"), wxPG_LABEL, mModule.getRoughness()) );
 	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule.getFrequency()) );
+	pg->Append( wxIntProperty(wxT("Roughness"), wxPG_LABEL, mModule.getRoughness()) );
 	pg->Append( wxIntProperty(wxT("Seed"), wxPG_LABEL, mModule.getSeed()) );
 }
 
@@ -46,15 +46,15 @@ void EditorTurbulenceModule::onPropertyChange (wxPropertyGrid *pg, const wxStrin
 		double val = pg->GetPropertyValueAsDouble (name);
 		mModule.setPower (val);
 	}
-	else if (name == _("Roughness"))
-	{
-		double val = pg->GetPropertyValueAsDouble (name);
-		mModule.setRoughness (val);
-	}
 	else if (name == _("Frequency"))
 	{
 		double val = pg->GetPropertyValueAsDouble (name);
 		mModule.setFrequency (val);
+	}
+	else if (name == _("Roughness"))
+	{
+		int val = pg->GetPropertyValueAsInt (name);
+		mModule.setRoughness (val);
 	}
 	else if (name == _("Seed"))
 	{
@@ -119,15 +119,15 @@ bool EditorTurbulenceModule::readProperties (TiXmlElement *element)
 		return false;
 	mModule.setPower (dval);
 
-	prop = element->FirstChildElement ("Roughness");
-	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
-		return false;
-	mModule.setRoughness (dval);
-
 	prop = element->FirstChildElement ("Frequency");
 	if (prop == NULL || prop->QueryDoubleAttribute ("value", &dval) != TIXML_SUCCESS)
 		return false;
 	mModule.setFrequency (dval);
+
+	prop = element->FirstChildElement ("Roughness");
+	if (prop == NULL || prop->QueryIntAttribute ("value", &ival) != TIXML_SUCCESS)
+		return false;
+	mModule.setRoughness (ival);
 
 	prop = element->FirstChildElement ("Seed");
 	if (prop == NULL || prop->QueryIntAttribute ("value", &ival) != TIXML_SUCCESS)
