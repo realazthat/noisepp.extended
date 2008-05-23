@@ -54,6 +54,7 @@ class EditorCurveModule : public EditorModule
 		ControlPointList mControlPointIDs;
 
 		void changeNumberOfControlPoints (wxPropertyGrid *pg);
+		int getNumberOfMatches (const noisepp::Real &v);
 };
 
 #endif // EDITORCURVEMODULE_H

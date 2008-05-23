@@ -112,6 +112,14 @@ bool EditorCurveModule::validate (wxPropertyGrid *pg)
 	{
 		mModule.addControlPoint (pg->GetPropertyValueAsDouble(it->in), pg->GetPropertyValueAsDouble(it->out));
 	}
+	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+	{
+		bool valid = getNumberOfMatches(pg->GetPropertyValueAsDouble(it->in)) == 1;
+		wxString name = pg->GetPropertyName(it->parent);
+		wxString outname = name+wxT(".")+pg->GetPropertyName(it->out);
+		setValid (pg, name.mb_str(), valid);
+		setValid (pg, outname.mb_str(), true);
+	}
 
 	return valid;
 }
@@ -157,4 +165,17 @@ bool EditorCurveModule::readProperties (TiXmlElement *element)
 	mPointCount = mModule.getControlPoints().size();
 
 	return true;
+}
+
+int EditorCurveModule::getNumberOfMatches (const noisepp::Real &v)
+{
+	int matches = 0;
+	noisepp::CurveControlPointVector &points = mModule.getControlPoints ();
+
+	for (noisepp::CurveControlPointVector::iterator it=points.begin();it!=points.end();++it)
+	{
+		if (fabs(it->inValue - v) < 1.0e-7)
+			++matches;
+	}
+	return matches;
 }

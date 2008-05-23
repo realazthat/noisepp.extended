@@ -48,6 +48,7 @@ class EditorTerraceModule : public EditorModule
 		ControlPointList mControlPointIDs;
 
 		void changeNumberOfControlPoints (wxPropertyGrid *pg);
+		int getNumberOfMatches (const noisepp::Real &v);
 };
 
 #endif // EDITORTERRACEMODULE_H

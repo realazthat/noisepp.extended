@@ -112,6 +112,10 @@ bool EditorTerraceModule::validate (wxPropertyGrid *pg)
 		mModule.addControlPoint (pg->GetPropertyValueAsDouble(*it));
 	}
 
+	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+	{
+		setValid (pg, pg->GetPropertyName(*it).mb_str(), getNumberOfMatches(pg->GetPropertyValueAsDouble(*it)) == 1);
+	}
 
 	return valid;
 }
@@ -166,4 +170,17 @@ bool EditorTerraceModule::readProperties (TiXmlElement *element)
 	mPointCount = mModule.getControlPoints().size();
 
 	return true;
+}
+
+int EditorTerraceModule::getNumberOfMatches (const noisepp::Real &v)
+{
+	int matches = 0;
+	noisepp::TerraceControlPointVector &points = mModule.getControlPoints ();
+
+	for (noisepp::TerraceControlPointVector::iterator it=points.begin();it!=points.end();++it)
+	{
+		if (fabs(*it - v) < 1.0e-7)
+			++matches;
+	}
+	return matches;
 }
