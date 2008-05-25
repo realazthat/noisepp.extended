@@ -121,6 +121,13 @@ namespace noisepp
 					}
 				}
 			}
+			/// @copydoc noisepp::Pipeline::addJob()
+			virtual void addJob (PipelineJob *job)
+			{
+				assert (job);
+				threadpp::Mutex::Lock lk(mMutex);
+				Pipeline<Element>::mJobs.push (job);
+			}
 			virtual ~ThreadedPipeline ()
 			{
 				mThreadsDone = true;

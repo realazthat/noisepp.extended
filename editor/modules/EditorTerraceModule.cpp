@@ -114,7 +114,7 @@ bool EditorTerraceModule::validate (wxPropertyGrid *pg)
 
 	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
 	{
-		setValid (pg, pg->GetPropertyName(*it).mb_str(), getNumberOfMatches(pg->GetPropertyValueAsDouble(*it)) == 1);
+		valid = setValid (pg, pg->GetPropertyName(*it).mb_str(), getNumberOfMatches(pg->GetPropertyValueAsDouble(*it)) == 1) && valid;
 	}
 
 	return valid;

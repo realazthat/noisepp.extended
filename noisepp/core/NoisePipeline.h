@@ -133,7 +133,7 @@ namespace noisepp
 				return id;
 			}
 			/// Adds a job to the queue.
-			void addJob (PipelineJob *job)
+			virtual void addJob (PipelineJob *job)
 			{
 				assert (job);
 				mJobs.push (job);

@@ -114,10 +114,10 @@ bool EditorCurveModule::validate (wxPropertyGrid *pg)
 	}
 	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
 	{
-		bool valid = getNumberOfMatches(pg->GetPropertyValueAsDouble(it->in)) == 1;
+		bool v = getNumberOfMatches(pg->GetPropertyValueAsDouble(it->in)) == 1;
 		wxString name = pg->GetPropertyName(it->parent);
 		wxString outname = name+wxT(".")+pg->GetPropertyName(it->out);
-		setValid (pg, name.mb_str(), valid);
+		valid = setValid (pg, name.mb_str(), v) && valid;
 		setValid (pg, outname.mb_str(), true);
 	}
 
