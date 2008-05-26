@@ -37,7 +37,7 @@
 namespace noisepp
 {
 	/// Perlin base class.
-	class PerlinModuleBase
+	class PerlinModuleBase : public Module
 	{
 		protected:
 			/// The noise frequency.
@@ -131,6 +131,12 @@ namespace noisepp
 			{
 				return mScale;
 			}
+#if NOISEPP_ENABLE_UTILS
+			/// @copydoc noisepp::Module::write()
+			virtual void write (utils::OutStream &stream) const;
+			/// @copydoc noisepp::Module::read()
+			virtual void read (utils::InStream &stream);
+#endif
 	};
 
 	class PerlinElement1D : public PipelineElement1D
@@ -328,23 +334,23 @@ namespace noisepp
 	/** Module for generating perlin noise.
 		Generates perlin noise.
 	*/
-	class PerlinModule : public Module, public PerlinModuleBase
+	class PerlinModule : public PerlinModuleBase
 	{
 		public:
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				return pipe->addElement (this, new PerlinElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new PerlinElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				return pipe->addElement (this, new PerlinElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new PerlinElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				return pipe->addElement (this, new PerlinElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new PerlinElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::getType()
 			ModuleTypeId getType() const { return MODULE_PERLIN; }

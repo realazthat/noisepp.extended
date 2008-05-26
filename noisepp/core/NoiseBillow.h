@@ -233,23 +233,23 @@ namespace noisepp
 	/** Module for generating "billowy" perlin noise.
 		Generates "billowy" perlin noise.
 	*/
-	class BillowModule : public Module, public BillowModuleBase
+	class BillowModule : public BillowModuleBase
 	{
 		public:
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				return pipe->addElement (this, new BillowElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new BillowElement1D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				return pipe->addElement (this, new BillowElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new BillowElement2D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				return pipe->addElement (this, new BillowElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new BillowElement3D(mOctaveCount, mFrequency, mLacunarity, mPersistence, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::getType()
 			ModuleTypeId getType() const { return MODULE_BILLOW; }

@@ -62,6 +62,14 @@ namespace noisepp
 		MODULE_VORONOI=22
 	};
 
+#if NOISEPP_ENABLE_UTILS
+	namespace utils
+	{
+		class InStream;
+		class OutStream;
+	};
+#endif
+
 	/// Module base class.
 	class Module
 	{
@@ -166,6 +174,12 @@ namespace noisepp
 					mSourceModules = NULL;
 				}
 			}
+#if NOISEPP_ENABLE_UTILS
+			/// Writes the module to the specified data stream
+			virtual void write (utils::OutStream &stream) const;
+			/// Reads the module from the specified data stream
+			virtual void read (utils::InStream &stream);
+#endif
 	};
 
 	/// Template class for a module with one source module

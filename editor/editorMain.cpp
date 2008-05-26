@@ -45,6 +45,7 @@ BEGIN_EVENT_TABLE(editorFrame, wxFrame)
 	EVT_MENU(idMenuOpen, editorFrame::OnOpen)
 	EVT_MENU(idMenuSave, editorFrame::OnSave)
 	EVT_MENU(idMenuSaveAs, editorFrame::OnSaveAs)
+	EVT_MENU(idMenuExport, editorFrame::OnExport)
 	EVT_MENU(idMenuQuit, editorFrame::OnQuit)
 	EVT_MENU(idMenuAbout, editorFrame::OnAbout)
 	EVT_BUTTON(idModuleAddBtn, editorFrame::OnModuleAdd)
@@ -61,12 +62,14 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	// create a menu bar
 	wxMenuBar* mbar = new wxMenuBar();
 	wxMenu* fileMenu = new wxMenu(_T(""));
-	fileMenu->Append(idMenuNew, _("&New"), _("Create a new pipeline"));
+	fileMenu->Append(idMenuNew, _("&New"), _("Create a new project"));
 	fileMenu->AppendSeparator();
-	fileMenu->Append(idMenuOpen, _("&Open"), _("Open an existing pipeline"));
+	fileMenu->Append(idMenuOpen, _("&Open"), _("Open an existing project"));
 	fileMenu->AppendSeparator();
-	mSaveMenuItem = fileMenu->Append(idMenuSave, _("&Save"), _("Save the pipeline"));
-	fileMenu->Append(idMenuSaveAs, _("Save &as..."), _("Save the pipeline under different name"));
+	mSaveMenuItem = fileMenu->Append(idMenuSave, _("&Save"), _("Save the project"));
+	fileMenu->Append(idMenuSaveAs, _("Save &as..."), _("Save the project under different name"));
+	fileMenu->AppendSeparator();
+	fileMenu->Append(idMenuExport, _("&Export"), _("Export the pipeline"));
 	fileMenu->AppendSeparator();
 	fileMenu->Append(idMenuQuit, _("&Quit\tAlt-F4"), _("Quit the Noise++ Editor"));
 	mbar->Append(fileMenu, _("&File"));
@@ -460,5 +463,28 @@ void editorFrame::OnModuleProperyGridChange(wxPropertyGridEvent& event)
 			module->generate (0, 0, 1, 1, 200, 200, getNumberOfCores());
 			mCanvas->Refresh ();
 		}
+	}
+}
+
+void editorFrame::OnExport(wxCommandEvent& event)
+{
+	EditorModule *module = EditorModuleManager::getInstance().getModule(mModuleList->GetStringSelection());
+	if (module)
+	{
+		wxFileDialog dialog (this, _("Export pipeline as ..."), _(""), _(""), _("Noise++ pipeline (*.pipeline)|*.pipeline"), wxFD_SAVE);
+		if (dialog.ShowModal() == wxID_OK)
+		{
+			wxString path = dialog.GetPath ();
+			if (!module->exportToFile(path.mb_str()))
+			{
+				wxMessageDialog dial (this, wxT("Can't file for writing"), wxT("Error"), wxOK | wxICON_ERROR);
+				dial.ShowModal();
+			}
+		}
+	}
+	else
+	{
+		wxMessageDialog dial (this, wxT("No module selected"), wxT("Error"), wxOK | wxICON_ERROR);
+		dial.ShowModal();
 	}
 }

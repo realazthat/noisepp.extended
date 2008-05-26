@@ -65,6 +65,8 @@ class EditorModule
 		}
 
 		EditorModule *getSourceModule (int i) const;
+
+		bool exportToFile (const char *name);
 	protected:
 		bool setValid (wxPropertyGrid *pg, const char *name, bool valid);
 		void appendQualityProperty (wxPropertyGrid *pg, int quality=noisepp::NOISE_QUALITY_STD);

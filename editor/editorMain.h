@@ -44,6 +44,7 @@ class editorFrame: public wxFrame
 		wxListBox *mModuleList;
 		wxPropertyGrid *mModuleProps;
 		wxMenuItem *mSaveMenuItem;
+		wxMenuItem *mExportMenuItem;
 		editorCanvas *mCanvas;
 		wxButton *mAddBtn;
 		wxButton *mRenameBtn;
@@ -75,7 +76,8 @@ class editorFrame: public wxFrame
 			idModuleDelBtn,
 			idModuleList,
 			idModuleProperties,
-			idModuleGenBtn
+			idModuleGenBtn,
+			idMenuExport
 		};
 		void OnClose(wxCloseEvent& event);
 		void OnNew(wxCommandEvent& event);
@@ -88,6 +90,7 @@ class editorFrame: public wxFrame
 		void OnModuleRen(wxCommandEvent& event);
 		void OnModuleDel(wxCommandEvent& event);
 		void OnModuleGen(wxCommandEvent& event);
+		void OnExport(wxCommandEvent& event);
 		void updateModuleSelection();
 		void OnModuleSelect(wxCommandEvent& event)
 		{

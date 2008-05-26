@@ -20,6 +20,7 @@
 #include <wx/wx.h>
 #include "editorModule.h"
 #include "editorModuleManager.h"
+#include "NoiseUtils.h"
 
 class LineJob2D : public noisepp::PipelineJob
 {
@@ -107,6 +108,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 		pipeline2D = new noisepp::ThreadedPipeline2D (threads);
 	else
 		pipeline2D = new noisepp::Pipeline2D;
+
 	noisepp::ElementID id = getModule().addToPipeline (pipeline2D);
 	noisepp::PipelineElement2D *element = pipeline2D->getElement(id);
 
@@ -211,4 +213,19 @@ bool EditorModule::readSourceModules (TiXmlElement *element)
 void EditorModule::onPropertyChange (wxPropertyGrid *pg, wxPropertyGridEvent& event)
 {
 	onPropertyChange (pg, event.GetPropertyName());
+}
+
+bool EditorModule::exportToFile (const char *name)
+{
+	noisepp::utils::FileOutStream f;
+	if (!f.open (name))
+		return false;
+
+	noisepp::utils::Writer writer(f);
+	writer.addModule (getModule());
+	writer.writePipeline ();
+
+	f.close ();
+
+	return true;
 }

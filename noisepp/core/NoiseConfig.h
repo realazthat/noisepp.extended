@@ -29,13 +29,21 @@
 #ifndef NOISEPP_CONFIG_H
 #define NOISEPP_CONFIG_H
 
-// Defines whether the boost library is used to enable multi-threading support
+// Defines whether the threadpp library is used to enable multi-threading support
 #ifndef NOISEPP_ENABLE_THREADS
 #define NOISEPP_ENABLE_THREADS 1
 #endif
 
 #ifndef NOISEPP_DOUBLE_PRECISION
 #define NOISEPP_DOUBLE_PRECISION 1
+#endif
+
+#ifndef NOISEPP_BIG_ENDIAN
+#define NOISEPP_BIG_ENDIAN 0
+#endif
+
+#ifndef NOISEPP_ENABLE_UTILS
+#define NOISEPP_ENABLE_UTILS 1
 #endif
 
 #endif

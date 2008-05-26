@@ -378,20 +378,26 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				return pipe->addElement (this, new RidgedMultiElement1D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new RidgedMultiElement1D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				return pipe->addElement (this, new RidgedMultiElement2D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new RidgedMultiElement2D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				return pipe->addElement (this, new RidgedMultiElement3D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed, mQuality, mScale));
+				return pipe->addElement (this, new RidgedMultiElement3D(mOctaveCount, mFrequency, mLacunarity, mExponent, mOffset, mGain, mSeed+pipe->getSeed(), mQuality, mScale));
 			}
 			/// @copydoc noisepp::Module::getType()
 			ModuleTypeId getType() const { return MODULE_RIDGEDMULTI; }
+#if NOISEPP_ENABLE_UTILS
+			/// @copydoc noisepp::Module::write()
+			virtual void write (utils::OutStream &stream) const;
+			/// @copydoc noisepp::Module::read()
+			virtual void read (utils::InStream &stream);
+#endif
 	};
 };
 

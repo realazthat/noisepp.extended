@@ -227,15 +227,21 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				return pipe->addElement (this, new VoronoiElement2D(mFrequency, mSeed, mDisplacement, mEnableDistance));
+				return pipe->addElement (this, new VoronoiElement2D(mFrequency, mSeed+pipe->getSeed(), mDisplacement, mEnableDistance));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				return pipe->addElement (this, new VoronoiElement3D(mFrequency, mSeed, mDisplacement, mEnableDistance));
+				return pipe->addElement (this, new VoronoiElement3D(mFrequency, mSeed+pipe->getSeed(), mDisplacement, mEnableDistance));
 			}
 			/// @copydoc noisepp::Module::getType()
 			ModuleTypeId getType() const { return MODULE_VORONOI; }
+#if NOISEPP_ENABLE_UTILS
+			/// @copydoc noisepp::Module::write()
+			virtual void write (utils::OutStream &stream) const;
+			/// @copydoc noisepp::Module::read()
+			virtual void read (utils::InStream &stream);
+#endif
 	};
 };
 

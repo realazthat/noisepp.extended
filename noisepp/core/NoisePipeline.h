@@ -76,6 +76,9 @@ namespace noisepp
 	template <class Element>
 	class Pipeline
 	{
+		private:
+			int mSeed;
+
 		protected:
 			/// Element vector.
 			std::vector<Element*> mElements;
@@ -85,6 +88,10 @@ namespace noisepp
 			PipelineJobQueue mJobs;
 
 		public:
+			/// Constructor.
+			Pipeline () : mSeed(0)
+			{
+			}
 			/// Returns the element with the specified ID.
 			NOISEPP_INLINE Element *getElement (ElementID i) const
 			{
@@ -95,6 +102,17 @@ namespace noisepp
 			ElementID getElementCount () const
 			{
 				return mElements.size ();
+			}
+			/// Sets the master seed value.
+			/// You have to call this BEFORE adding your modules or this will have no effect.
+			void setSeed (int seed)
+			{
+				mSeed = seed;
+			}
+			/// Returns the master seed value.
+			int getSeed () const
+			{
+				return mSeed;
 			}
 			/// Creates a clean cache.
 			/// You need only one cache per pipeline and thread.

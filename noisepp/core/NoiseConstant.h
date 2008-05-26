@@ -102,6 +102,12 @@ namespace noisepp
 			}
 			/// @copydoc noisepp::Module::getType()
 			ModuleTypeId getType() const { return MODULE_CONSTANT; }
+#if NOISEPP_ENABLE_UTILS
+			/// @copydoc noisepp::Module::write()
+			virtual void write (utils::OutStream &stream) const;
+			/// @copydoc noisepp::Module::read()
+			virtual void read (utils::InStream &stream);
+#endif
 	};
 };
 
