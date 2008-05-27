@@ -26,23 +26,30 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef NOISEUTILS_H
-#define NOISEUTILS_H
+#ifndef NOISESYSTEM_H
+#define NOISESYSTEM_H
 
-#if NOISEPP_ENABLE_UTILS == 0
-#error "Please set NOISEPP_ENABLE_UTILS to 1"
-#endif
+#include "NoisePipeline.h"
 
-#define NOISE_FILE_VERSION 0
+namespace noisepp
+{
+namespace utils
+{
 
-#include "NoiseEndianUtils.h"
-#include "NoiseInStream.h"
-#include "NoiseOutStream.h"
-#include "NoiseWriter.h"
-#include "NoiseReader.h"
-#include "NoiseColourValue.h"
-#include "NoiseImage.h"
-#include "NoiseSystem.h"
-#include "NoiseGradientRenderer.h"
+class System
+{
+	public:
+		static int getNumberOfCPUs();
+		static Pipeline1D *createOptimalPipeline1D ();
+		static Pipeline2D *createOptimalPipeline2D ();
+		static Pipeline3D *createOptimalPipeline3D ();
+	protected:
+	private:
+		static int mNumberOfCPUs;
+		static int calculateNumberOfCPUs();
+};
 
-#endif // NOISEUTILS_H
+};
+};
+
+#endif // NOISESYSTEM_H

@@ -26,23 +26,69 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef NOISEUTILS_H
-#define NOISEUTILS_H
+#include "NoisePrerequisites.h"
+#include "NoiseSystem.h"
 
-#if NOISEPP_ENABLE_UTILS == 0
-#error "Please set NOISEPP_ENABLE_UTILS to 1"
+#if NOISEPP_ENABLE_THREADS
+#	include "NoiseThreadedPipeline.h"
 #endif
 
-#define NOISE_FILE_VERSION 0
+#if NOISEPP_PLATFORM == NOISEPP_PLATFORM_UNIX
+#	include <unistd.h>
+#elif NOISEPP_PLATFORM == NOISEPP_PLATFORM_WINDOWS
+#	define WIN32_LEAN_AND_MEAN
+#	include <windows.h>
+#endif
 
-#include "NoiseEndianUtils.h"
-#include "NoiseInStream.h"
-#include "NoiseOutStream.h"
-#include "NoiseWriter.h"
-#include "NoiseReader.h"
-#include "NoiseColourValue.h"
-#include "NoiseImage.h"
-#include "NoiseSystem.h"
-#include "NoiseGradientRenderer.h"
+namespace noisepp
+{
+namespace utils
+{
 
-#endif // NOISEUTILS_H
+int System::mNumberOfCPUs = System::calculateNumberOfCPUs();
+
+int System::calculateNumberOfCPUs()
+{
+#if NOISEPP_PLATFORM == NOISEPP_PLATFORM_UNIX
+	return sysconf(_SC_NPROCESSORS_ONLN);
+#elif NOISEPP_PLATFORM == NOISEPP_PLATFORM_WINDOWS
+	SYSTEM_INFO siSysInfo;
+	GetSystemInfo(&siSysInfo);
+	return siSysInfo.dwNumberOfProcessors;
+#endif
+}
+
+int System::getNumberOfCPUs()
+{
+	return mNumberOfCPUs;
+}
+
+Pipeline1D *System::createOptimalPipeline1D ()
+{
+#if NOISEPP_ENABLE_THREADS
+	if (mNumberOfCPUs > 1)
+		return new ThreadedPipeline1D (mNumberOfCPUs);
+#endif
+	return new Pipeline1D;
+}
+
+Pipeline2D *System::createOptimalPipeline2D ()
+{
+#if NOISEPP_ENABLE_THREADS
+	if (mNumberOfCPUs > 1)
+		return new ThreadedPipeline2D (mNumberOfCPUs);
+#endif
+	return new Pipeline2D;
+}
+
+Pipeline3D *System::createOptimalPipeline3D ()
+{
+#if NOISEPP_ENABLE_THREADS
+	if (mNumberOfCPUs > 1)
+		return new ThreadedPipeline3D (mNumberOfCPUs);
+#endif
+	return new Pipeline3D;
+}
+
+};
+};

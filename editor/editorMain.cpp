@@ -20,24 +20,7 @@
 #endif
 
 #include "editorMain.h"
-
-#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
-
-int editorFrame::getNumberOfCores ()
-{
-#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
-	SYSTEM_INFO siSysInfo;
-	GetSystemInfo(&siSysInfo);
-	return siSysInfo.dwNumberOfProcessors;
-#else
-	return sysconf(_SC_NPROCESSORS_ONLN);
-#endif
-}
+#include "NoiseUtils.h"
 
 BEGIN_EVENT_TABLE(editorFrame, wxFrame)
 	EVT_CLOSE(editorFrame::OnClose)
@@ -125,7 +108,7 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	// create a status bar
 	CreateStatusBar(2);
 	wxString cores;
-	int nCores = getNumberOfCores();
+	int nCores = noisepp::utils::System::getNumberOfCPUs();
 	if (nCores > 1)
 	{
 		cores << nCores << wxT(" CPUs");
@@ -397,9 +380,9 @@ void editorFrame::OnModuleGen(wxCommandEvent& event)
 			assert (module->validate(mModuleProps));
 			for (int i=0;i<module->getNumberOfSourceModules();++i)
 			{
-				module->getSourceModule(i)->generate (0, 0, 1, 1, 200, 200, getNumberOfCores());
+				module->getSourceModule(i)->generate (0, 0, 1, 1, 200, 200);
 			}
-			module->generate (0, 0, 1, 1, 200, 200, getNumberOfCores());
+			module->generate (0, 0, 1, 1, 200, 200);
 			mCanvas->Refresh ();
 		}
 	}
@@ -460,7 +443,7 @@ void editorFrame::OnModuleProperyGridChange(wxPropertyGridEvent& event)
 		mGenerateBtn->Enable (valid);
 		if (valid)
 		{
-			module->generate (0, 0, 1, 1, 200, 200, getNumberOfCores());
+			module->generate (0, 0, 1, 1, 200, 200);
 			mCanvas->Refresh ();
 		}
 	}

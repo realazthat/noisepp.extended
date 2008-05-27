@@ -39,8 +39,6 @@ class editorFrame: public wxFrame
 		editorFrame(wxFrame *frame, const wxString& title);
 		~editorFrame();
 	private:
-		int getNumberOfCores ();
-
 		wxListBox *mModuleList;
 		wxPropertyGrid *mModuleProps;
 		wxMenuItem *mSaveMenuItem;

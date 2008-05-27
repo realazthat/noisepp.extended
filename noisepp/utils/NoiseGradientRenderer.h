@@ -26,23 +26,41 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef NOISEUTILS_H
-#define NOISEUTILS_H
+#ifndef GRADIENTRENDERER_H
+#define GRADIENTRENDERER_H
 
-#if NOISEPP_ENABLE_UTILS == 0
-#error "Please set NOISEPP_ENABLE_UTILS to 1"
-#endif
-
-#define NOISE_FILE_VERSION 0
-
-#include "NoiseEndianUtils.h"
-#include "NoiseInStream.h"
-#include "NoiseOutStream.h"
-#include "NoiseWriter.h"
-#include "NoiseReader.h"
+#include "NoisePrerequisites.h"
 #include "NoiseColourValue.h"
 #include "NoiseImage.h"
-#include "NoiseSystem.h"
-#include "NoiseGradientRenderer.h"
 
-#endif // NOISEUTILS_H
+namespace noisepp
+{
+namespace utils
+{
+
+class GradientRenderer
+{
+	public:
+		GradientRenderer();
+		void addGradient (Real value, const ColourValue &color);
+		void renderImage (Image &image, const Real *data);
+		~GradientRenderer();
+	protected:
+	private:
+		struct Gradient
+		{
+			Real value;
+			ColourValue color;
+			bool operator< (const Gradient &g) const
+			{
+				return (value < g.value);
+			}
+		};
+		typedef std::vector<Gradient> GradientVector;
+		GradientVector mGradients;
+};
+
+};
+};
+
+#endif // GRADIENTRENDERER_H

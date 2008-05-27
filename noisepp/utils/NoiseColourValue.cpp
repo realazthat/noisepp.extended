@@ -26,23 +26,32 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef NOISEUTILS_H
-#define NOISEUTILS_H
-
-#if NOISEPP_ENABLE_UTILS == 0
-#error "Please set NOISEPP_ENABLE_UTILS to 1"
-#endif
-
-#define NOISE_FILE_VERSION 0
-
-#include "NoiseEndianUtils.h"
-#include "NoiseInStream.h"
-#include "NoiseOutStream.h"
-#include "NoiseWriter.h"
-#include "NoiseReader.h"
 #include "NoiseColourValue.h"
-#include "NoiseImage.h"
-#include "NoiseSystem.h"
-#include "NoiseGradientRenderer.h"
 
-#endif // NOISEUTILS_H
+namespace noisepp
+{
+namespace utils
+{
+
+ColourValue::ColourValue(float r, float g, float b) : r(r), g(g), b(b)
+{
+}
+
+void ColourValue::writeRGB (unsigned char *& buffer)
+{
+	*buffer++ = toUChar (r);
+	*buffer++ = toUChar (g);
+	*buffer++ = toUChar (b);
+}
+
+unsigned char ColourValue::toUChar (float f)
+{
+	if (f < 0.0f)
+		f = 0.0f;
+	if (f > 1.0f)
+		f = 1.0f;
+	return (unsigned char)(f * 255.0f);
+}
+
+};
+};

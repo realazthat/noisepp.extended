@@ -56,7 +56,6 @@ class OutStream
 			EndianUtils::flipEndian (&t, sizeof(T));
 			write (&t, sizeof(T));
 		}
-
 		void writeInt (int t)
 		{
 			write (t);
@@ -79,6 +78,12 @@ class FileOutStream : public OutStream
 		bool open (const std::string &filename);
 		bool isOpen () const;
 		void close ();
+		template <class T>
+		void write (T t)
+		{
+			EndianUtils::flipEndian (&t, sizeof(T));
+			write (&t, sizeof(T));
+		}
 		virtual void write (const void *buffer, size_t len);
 		virtual size_t tell ();
 		virtual void seek (size_t pos);
@@ -99,6 +104,12 @@ class MemoryOutStream : public OutStream
 		size_t getBufferSize () const
 		{
 			return mSize;
+		}
+		template <class T>
+		void write (T t)
+		{
+			EndianUtils::flipEndian (&t, sizeof(T));
+			write (&t, sizeof(T));
 		}
 		virtual ~MemoryOutStream ();
 		virtual void write (const void *buffer, size_t len);

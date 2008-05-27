@@ -100,14 +100,10 @@ bool EditorModule::setValid (wxPropertyGrid *pg, const char *name, bool valid)
 	return valid;
 }
 
-void EditorModule::generate (double x, double y, double width, double height, int w, int h, int threads)
+void EditorModule::generate (double x, double y, double width, double height, int w, int h)
 {
 	freeImage ();
-	noisepp::Pipeline2D *pipeline2D = NULL;
-	if (threads > 1)
-		pipeline2D = new noisepp::ThreadedPipeline2D (threads);
-	else
-		pipeline2D = new noisepp::Pipeline2D;
+	noisepp::Pipeline2D *pipeline2D = noisepp::utils::System::createOptimalPipeline2D ();
 
 	noisepp::ElementID id = getModule().addToPipeline (pipeline2D);
 	noisepp::PipelineElement2D *element = pipeline2D->getElement(id);
@@ -126,7 +122,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	pipeline2D->executeJobs ();
 
 	unsigned char *pixels = (unsigned char *)malloc(w*h*3);
-	unsigned char *dest = pixels;
+	/*unsigned char *dest = pixels;
 	double d;
 	unsigned char p;
 	for (int n=0;n<w*h;++n)
@@ -140,7 +136,26 @@ void EditorModule::generate (double x, double y, double width, double height, in
 		*dest++ = p;
 		*dest++ = p;
 		*dest++ = p;
-	}
+	}*/
+
+	noisepp::utils::Image img;
+	img.create (w, h);
+
+	noisepp::utils::GradientRenderer gradients;
+	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.0f));
+	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));
+	/*gradients.addGradient (-1.0000, noisepp::utils::ColourValue (  0,   0, 128)/255.f); // deeps
+	gradients.addGradient (-0.2500, noisepp::utils::ColourValue (  0,   0, 255)/255.f); // shallow
+	gradients.addGradient ( 0.0000, noisepp::utils::ColourValue (  0, 128, 255)/255.f); // shore
+	gradients.addGradient ( 0.0625, noisepp::utils::ColourValue (240, 240,  64)/255.f); // sand
+	gradients.addGradient ( 0.1250, noisepp::utils::ColourValue ( 32, 160,   0)/255.f); // grass
+	gradients.addGradient ( 0.3750, noisepp::utils::ColourValue (224, 224,   0)/255.f); // dirt
+	gradients.addGradient ( 0.7500, noisepp::utils::ColourValue (128, 128, 128)/255.f); // rock
+	gradients.addGradient ( 1.0000, noisepp::utils::ColourValue (255, 255, 255)/255.f); // snow*/
+	gradients.renderImage (img, buffer);
+
+	std::memcpy (pixels, img.getPixelData(), w*h*3);
+	img.saveBMP ("test.bmp");
 
 	mImage = new wxImage (w, h, pixels);
 	mBitmap = new wxBitmap (*mImage);

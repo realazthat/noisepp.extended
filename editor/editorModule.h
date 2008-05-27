@@ -43,7 +43,7 @@ class EditorModule
 		virtual bool readProperties (TiXmlElement *element) = 0;
 		virtual ~EditorModule();
 
-		void generate (double x, double y, double width, double height, int w, int h, int threads=1);
+		void generate (double x, double y, double width, double height, int w, int h);
 		wxImage *getImage () const
 		{
 			return mImage;

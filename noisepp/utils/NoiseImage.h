@@ -26,23 +26,56 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef NOISEUTILS_H
-#define NOISEUTILS_H
+#ifndef NOISEIMAGE_H
+#define NOISEIMAGE_H
 
-#if NOISEPP_ENABLE_UTILS == 0
-#error "Please set NOISEPP_ENABLE_UTILS to 1"
-#endif
+#include <cassert>
 
-#define NOISE_FILE_VERSION 0
+namespace noisepp
+{
+namespace utils
+{
 
-#include "NoiseEndianUtils.h"
-#include "NoiseInStream.h"
-#include "NoiseOutStream.h"
-#include "NoiseWriter.h"
-#include "NoiseReader.h"
-#include "NoiseColourValue.h"
-#include "NoiseImage.h"
-#include "NoiseSystem.h"
-#include "NoiseGradientRenderer.h"
+class Image
+{
+	public:
+		Image();
+		void create (int width, int height);
+		void clear ();
 
-#endif // NOISEUTILS_H
+		unsigned char *getPixelData () const
+		{
+			return mData;
+		}
+		unsigned char *getPixelData (int i) const
+		{
+			assert (i < mWidth*mHeight);
+			return mData+i*3;
+		}
+		unsigned char *getPixelData (int x, int y) const
+		{
+			return mData+(y*mWidth+x)*3;
+		}
+
+		int getWidth () const
+		{
+			return mWidth;
+		}
+		int getHeight () const
+		{
+			return mHeight;
+		}
+
+		~Image();
+
+		void saveBMP (const char *filename);
+	protected:
+	private:
+		unsigned char *mData;
+		int mWidth, mHeight;
+};
+
+};
+};
+
+#endif // NOISEIMAGE_H

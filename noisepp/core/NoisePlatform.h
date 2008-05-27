@@ -29,6 +29,15 @@
 #ifndef NOISEPP_PLATFORM_H
 #define NOISEPP_PLATFORM_H
 
+#define NOISEPP_PLATFORM_UNIX 1
+#define NOISEPP_PLATFORM_WINDOWS 2
+
+#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
+#	define NOISEPP_PLATFORM NOISEPP_PLATFORM_WINDOWS
+#else
+#	define NOISEPP_PLATFORM NOISEPP_PLATFORM_UNIX
+#endif
+
 #if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
 #    define NOISEPP_INLINE __attribute__((always_inline)) inline
 #else
