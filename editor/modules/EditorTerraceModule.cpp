@@ -106,15 +106,24 @@ bool EditorTerraceModule::validate (wxPropertyGrid *pg)
 	}
 	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
 
-	mModule.clearControlPoints ();
-	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+	if (pg)
 	{
-		mModule.addControlPoint (pg->GetPropertyValueAsDouble(*it));
-	}
+		mModule.clearControlPoints ();
+		for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+		{
+			mModule.addControlPoint (pg->GetPropertyValueAsDouble(*it));
+		}
 
-	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+		for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+		{
+			valid = setValid (pg, pg->GetPropertyName(*it).mb_str(), getNumberOfMatches(pg->GetPropertyValueAsDouble(*it)) == 1) && valid;
+		}
+		if (!valid)
+			mModule.clearControlPoints ();
+	}
+	else
 	{
-		valid = setValid (pg, pg->GetPropertyName(*it).mb_str(), getNumberOfMatches(pg->GetPropertyValueAsDouble(*it)) == 1) && valid;
+		valid = !mModule.getControlPoints().empty() && valid;
 	}
 
 	return valid;

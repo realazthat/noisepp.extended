@@ -377,6 +377,7 @@ void editorFrame::OnModuleGen(wxCommandEvent& event)
 		EditorModule *module = EditorModuleManager::getInstance().getModule(mModuleList->GetString(id));
 		if (module)
 		{
+			module->validate(NULL);
 			assert (module->validate(mModuleProps));
 			for (int i=0;i<module->getNumberOfSourceModules();++i)
 			{

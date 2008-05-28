@@ -30,6 +30,10 @@ IMPLEMENT_APP(editorApp);
 
 bool editorApp::OnInit()
 {
+#if __WXGTK__
+	setlocale(LC_NUMERIC, "C");
+#endif
+
 	editorFrame* frame = new editorFrame(0L, _("Noise++ Editor"));
 
 	frame->Show();

@@ -107,18 +107,27 @@ bool EditorCurveModule::validate (wxPropertyGrid *pg)
 	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
 
 
-	mModule.clearControlPoints ();
-	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+	if (pg)
 	{
-		mModule.addControlPoint (pg->GetPropertyValueAsDouble(it->in), pg->GetPropertyValueAsDouble(it->out));
+		mModule.clearControlPoints ();
+		for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+		{
+			mModule.addControlPoint (pg->GetPropertyValueAsDouble(it->in), pg->GetPropertyValueAsDouble(it->out));
+		}
+		for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+		{
+			bool v = getNumberOfMatches(pg->GetPropertyValueAsDouble(it->in)) == 1;
+			wxString name = pg->GetPropertyName(it->parent);
+			wxString outname = name+wxT(".")+pg->GetPropertyName(it->out);
+			valid = setValid (pg, name.mb_str(), v) && valid;
+			setValid (pg, outname.mb_str(), true);
+		}
+		if (!valid)
+			mModule.clearControlPoints ();
 	}
-	for (ControlPointList::iterator it=mControlPointIDs.begin();it!=mControlPointIDs.end();++it)
+	else
 	{
-		bool v = getNumberOfMatches(pg->GetPropertyValueAsDouble(it->in)) == 1;
-		wxString name = pg->GetPropertyName(it->parent);
-		wxString outname = name+wxT(".")+pg->GetPropertyName(it->out);
-		valid = setValid (pg, name.mb_str(), v) && valid;
-		setValid (pg, outname.mb_str(), true);
+		valid = !mModule.getControlPoints().empty() && valid;
 	}
 
 	return valid;

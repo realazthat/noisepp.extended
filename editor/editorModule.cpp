@@ -142,7 +142,12 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	img.create (w, h);
 
 	noisepp::utils::GradientRenderer gradients;
-	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.0f));
+	/*gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.0f));
+	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));*/
+	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.2f));
+	gradients.addGradient (-0.8, noisepp::utils::ColourValue(0.0f, 0.0f, 0.6f));
+	gradients.addGradient ( 0.0, noisepp::utils::ColourValue(1.0f, 0.0f, 0.0f));
+	gradients.addGradient ( 0.6, noisepp::utils::ColourValue(1.0f, 1.0f, 0.0f));
 	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));
 	/*gradients.addGradient (-1.0000, noisepp::utils::ColourValue (  0,   0, 128)/255.f); // deeps
 	gradients.addGradient (-0.2500, noisepp::utils::ColourValue (  0,   0, 255)/255.f); // shallow
@@ -155,7 +160,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	gradients.renderImage (img, buffer);
 
 	std::memcpy (pixels, img.getPixelData(), w*h*3);
-	img.saveBMP ("test.bmp");
+	//img.saveBMP ("test.bmp");
 
 	mImage = new wxImage (w, h, pixels);
 	mBitmap = new wxBitmap (*mImage);
