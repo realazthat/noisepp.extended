@@ -241,3 +241,16 @@ bool EditorModuleManager::readDoc (TiXmlElement *root)
 
 	return true;
 }
+
+void EditorModuleManager::freeChildrenData (EditorModule *module)
+{
+	for (ModuleMap::iterator it=mModules.begin();it!=mModules.end();++it)
+	{
+		assert (it->second);
+		for (size_t i=0;i<it->second->getModule().getSourceModuleCount();++i)
+		{
+			if (it->second->getModule().getSourceModule (i) == &module->getModule())
+				it->second->freeData ();
+		}
+	}
+}

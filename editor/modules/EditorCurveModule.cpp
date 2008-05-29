@@ -100,11 +100,11 @@ bool EditorCurveModule::validate (wxPropertyGrid *pg)
 	EditorModule *module = NULL;
 
 	module = getSourceModule(0);
-	if (module)
+	if (module && module->validateTree(this))
 	{
 		mModule.setSourceModule(0, module->getModule());
 	}
-	valid = setValid (pg, "Source module", module != NULL && module->validate(NULL)) && valid;
+	valid = setValid (pg, "Source module", module != NULL && module->validateTree(this) && module->validate(NULL)) && valid;
 
 
 	if (pg)

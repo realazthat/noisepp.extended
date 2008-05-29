@@ -439,7 +439,7 @@ void editorFrame::OnModuleProperyGridChange(wxPropertyGridEvent& event)
 	if (module)
 	{
 		setChanged ();
-		module->onPropertyChange(mModuleProps, event);
+		module->changeProperty(mModuleProps, event);
 		bool valid = module->validate (mModuleProps);
 		mGenerateBtn->Enable (valid);
 		if (valid)

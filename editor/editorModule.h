@@ -36,8 +36,6 @@ class EditorModule
 		virtual const std::string &getFactoryName () const = 0;
 		virtual noisepp::Module &getModule () = 0;
 		virtual void fillPropertyGrid (wxPropertyGrid *pg) = 0;
-		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name) {}
-		virtual void onPropertyChange (wxPropertyGrid *pg, wxPropertyGridEvent& event);
 		virtual bool validate (wxPropertyGrid *pg) = 0;
 		virtual void writeProperties (TiXmlElement *element) = 0;
 		virtual bool readProperties (TiXmlElement *element) = 0;
@@ -67,6 +65,10 @@ class EditorModule
 		EditorModule *getSourceModule (int i) const;
 
 		bool exportToFile (const char *name);
+
+		void changeProperty (wxPropertyGrid *pg, wxPropertyGridEvent& event);
+
+		bool validateTree (EditorModule *child);
 	protected:
 		bool setValid (wxPropertyGrid *pg, const char *name, bool valid);
 		void appendQualityProperty (wxPropertyGrid *pg, int quality=noisepp::NOISE_QUALITY_STD);
@@ -76,12 +78,19 @@ class EditorModule
 		void writeSourceModules (TiXmlElement *element);
 		bool readSourceModules (TiXmlElement *element);
 
+		virtual void onPropertyChange (wxPropertyGrid *pg, const wxString &name) {}
+		virtual void onPropertyChange (wxPropertyGrid *pg, wxPropertyGridEvent& event);
+
 		wxString *mSourceModules;
 		int mSourceModuleCount;
 	private:
 		int mWidth, mHeight;
 		wxImage *mImage;
 		wxBitmap *mBitmap;
+
+		double *mData;
+
+		void freeData ();
 
 		void freeImage ();
 };

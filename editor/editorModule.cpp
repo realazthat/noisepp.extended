@@ -51,7 +51,7 @@ class LineJob2D : public noisepp::PipelineJob
 		}
 };
 
-EditorModule::EditorModule(int sourceModules) : mSourceModules(NULL), mSourceModuleCount(sourceModules), mWidth(0), mHeight(0), mImage(NULL), mBitmap(NULL)
+EditorModule::EditorModule(int sourceModules) : mSourceModules(NULL), mSourceModuleCount(sourceModules), mWidth(0), mHeight(0), mImage(NULL), mBitmap(NULL), mData(NULL)
 {
 	if (mSourceModuleCount > 0)
 	{
@@ -62,6 +62,7 @@ EditorModule::EditorModule(int sourceModules) : mSourceModules(NULL), mSourceMod
 EditorModule::~EditorModule()
 {
 	freeImage ();
+	freeData ();
 	if (mSourceModules)
 	{
 		delete[] mSourceModules;
@@ -103,40 +104,28 @@ bool EditorModule::setValid (wxPropertyGrid *pg, const char *name, bool valid)
 void EditorModule::generate (double x, double y, double width, double height, int w, int h)
 {
 	freeImage ();
-	noisepp::Pipeline2D *pipeline2D = noisepp::utils::System::createOptimalPipeline2D ();
-
-	noisepp::ElementID id = getModule().addToPipeline (pipeline2D);
-	noisepp::PipelineElement2D *element = pipeline2D->getElement(id);
-
-	double *buffer = new double[w*h];
-
-	double xDelta = width / double(w);
-	double yDelta = height / double(h);
-
-	for (int yi=0;yi<h;++yi)
+	if (!mData)
 	{
-		pipeline2D->addJob (new LineJob2D (pipeline2D, element, x, y, w, xDelta, buffer+yi*w));
-		y += yDelta;
+		mData = new double[w*h];
+		noisepp::Pipeline2D *pipeline2D = noisepp::utils::System::createOptimalPipeline2D ();
+
+		noisepp::ElementID id = getModule().addToPipeline (pipeline2D);
+		noisepp::PipelineElement2D *element = pipeline2D->getElement(id);
+
+		double xDelta = width / double(w);
+		double yDelta = height / double(h);
+
+		for (int yi=0;yi<h;++yi)
+		{
+			pipeline2D->addJob (new LineJob2D (pipeline2D, element, x, y, w, xDelta, mData+yi*w));
+			y += yDelta;
+		}
+
+		pipeline2D->executeJobs ();
+		delete pipeline2D;
 	}
 
-	pipeline2D->executeJobs ();
-
 	unsigned char *pixels = (unsigned char *)malloc(w*h*3);
-	/*unsigned char *dest = pixels;
-	double d;
-	unsigned char p;
-	for (int n=0;n<w*h;++n)
-	{
-		d = (buffer[n] + 1.0) * 0.5 * 255.0;
-		if (d < 0.0)
-			d = 0.0;
-		if (d > 255.0)
-			d = 255.0;
-		p = (unsigned char)(d);
-		*dest++ = p;
-		*dest++ = p;
-		*dest++ = p;
-	}*/
 
 	noisepp::utils::Image img;
 	img.create (w, h);
@@ -157,16 +146,13 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	gradients.addGradient ( 0.3750, noisepp::utils::ColourValue (224, 224,   0)/255.f); // dirt
 	gradients.addGradient ( 0.7500, noisepp::utils::ColourValue (128, 128, 128)/255.f); // rock
 	gradients.addGradient ( 1.0000, noisepp::utils::ColourValue (255, 255, 255)/255.f); // snow*/
-	gradients.renderImage (img, buffer);
+	gradients.renderImage (img, mData);
 
 	std::memcpy (pixels, img.getPixelData(), w*h*3);
 	//img.saveBMP ("test.bmp");
 
 	mImage = new wxImage (w, h, pixels);
 	mBitmap = new wxBitmap (*mImage);
-
-	delete[] buffer;
-	delete pipeline2D;
 }
 
 void EditorModule::appendQualityProperty (wxPropertyGrid *pg, int quality)
@@ -235,6 +221,23 @@ void EditorModule::onPropertyChange (wxPropertyGrid *pg, wxPropertyGridEvent& ev
 	onPropertyChange (pg, event.GetPropertyName());
 }
 
+void EditorModule::changeProperty (wxPropertyGrid *pg, wxPropertyGridEvent& event)
+{
+	freeData ();
+	freeImage ();
+	EditorModuleManager::getInstance().freeChildrenData (this);
+	onPropertyChange (pg, event);
+}
+
+void EditorModule::freeData ()
+{
+	if (mData)
+	{
+		delete[] mData;
+		mData = NULL;
+	}
+}
+
 bool EditorModule::exportToFile (const char *name)
 {
 	noisepp::utils::FileOutStream f;
@@ -248,4 +251,10 @@ bool EditorModule::exportToFile (const char *name)
 	f.close ();
 
 	return true;
+}
+
+bool EditorModule::validateTree (EditorModule *child)
+{
+	assert (child);
+	return !getModule().walkTree(&child->getModule());
 }

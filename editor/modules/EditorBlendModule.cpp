@@ -56,23 +56,23 @@ bool EditorBlendModule::validate (wxPropertyGrid *pg)
 	EditorModule *module = NULL;
 
 	module = getSourceModule(0);
-	if (module)
+	if (module && module->validateTree(this))
 	{
 		mModule.setSourceModule(0, module->getModule());
 	}
-	valid = setValid (pg, "Source module 1", module != NULL && module->validate(NULL)) && valid;
+	valid = setValid (pg, "Source module 1", module != NULL && module->validateTree(this) && module->validate(NULL)) && valid;
 	module = getSourceModule(1);
-	if (module)
+	if (module && module->validateTree(this))
 	{
 		mModule.setSourceModule(1, module->getModule());
 	}
-	valid = setValid (pg, "Source module 2", module != NULL && module->validate(NULL)) && valid;
+	valid = setValid (pg, "Source module 2", module != NULL && module->validateTree(this) && module->validate(NULL)) && valid;
 	module = getSourceModule(2);
-	if (module)
+	if (module && module->validateTree(this))
 	{
 		mModule.setSourceModule(2, module->getModule());
 	}
-	valid = setValid (pg, "Control module", module != NULL && module->validate(NULL)) && valid;
+	valid = setValid (pg, "Control module", module != NULL && module->validateTree(this) && module->validate(NULL)) && valid;
 
 	return valid;
 }

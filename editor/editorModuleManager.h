@@ -66,6 +66,8 @@ class EditorModuleManager
 
 		void writeToDoc (TiXmlElement *root);
 		bool readDoc (TiXmlElement *root);
+
+		void freeChildrenData (EditorModule *module);
 };
 
 #endif // EDITORMODULEMANAGER_H
