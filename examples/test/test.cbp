@@ -38,6 +38,7 @@
 			<Add option="-fexceptions" />
 			<Add directory="../../noisepp/core" />
 			<Add directory="../../noisepp/threadpp" />
+			<Add directory="../../noisepp/utils" />
 		</Compiler>
 		<Linker>
 			<Add library="rt" />
