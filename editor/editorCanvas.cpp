@@ -15,6 +15,8 @@
 // along with the Noise++ Editor.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <GL/glew.h>
+
 #include "editorCanvas.h"
 #include "editorModule.h"
 #include "editorModuleManager.h"
@@ -124,6 +126,8 @@ void editorCanvas::init ()
 	glLoadIdentity();
 	glViewport(0, 0, (GLint) w, (GLint) h);
 	glOrtho(0,w,0,h,0,128);
+
+	glewInit();
 
 	glEnable(GL_TEXTURE_2D);
 

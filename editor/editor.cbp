@@ -52,6 +52,12 @@
 			<Add option="`wx-config --libs gl,core,base,adv`" />
 			<Add library="noisepp" />
 		</Linker>
+		<Unit filename="GL/glew.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="GL/glew.h" />
+		<Unit filename="GL/glxew.h" />
+		<Unit filename="GL/wglew.h" />
 		<Unit filename="editorApp.cpp" />
 		<Unit filename="editorApp.h" />
 		<Unit filename="editorCanvas.cpp" />

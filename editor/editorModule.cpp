@@ -15,6 +15,7 @@
 // along with the Noise++ Editor.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <GL/glew.h>
 #include <cstdlib>
 #include <sstream>
 #include <wx/wx.h>
@@ -159,7 +160,15 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	mBitmap = new wxBitmap (*mImage);
 	glGenTextures (1, &mTexture);
 	glBindTexture(GL_TEXTURE_2D, mTexture);
-	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	if (GLEW_SGIS_generate_mipmap)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	}
+	else
+	{
+		gluBuild2DMipmaps(GL_TEXTURE_2D, 3, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	}
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
