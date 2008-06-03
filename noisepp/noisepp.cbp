@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="noisepp" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../lib/Debug/libnoisepp" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Debug/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="../lib/Release/libnoisepp" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="core" />
+			<Add directory="utils" />
+			<Add directory="threadpp" />
+		</Compiler>
+		<Unit filename="core/Noise.h" />
+		<Unit filename="core/NoiseAbsolute.h" />
+		<Unit filename="core/NoiseAddition.h" />
+		<Unit filename="core/NoiseBillow.h" />
+		<Unit filename="core/NoiseBlend.h" />
+		<Unit filename="core/NoiseCheckerboard.h" />
+		<Unit filename="core/NoiseClamp.h" />
+		<Unit filename="core/NoiseConfig.h" />
+		<Unit filename="core/NoiseConstant.h" />
+		<Unit filename="core/NoiseCurve.h" />
+		<Unit filename="core/NoiseExponent.h" />
+		<Unit filename="core/NoiseGenerator.h" />
+		<Unit filename="core/NoiseInvert.h" />
+		<Unit filename="core/NoiseMath.h" />
+		<Unit filename="core/NoiseMaximum.h" />
+		<Unit filename="core/NoiseMinimum.h" />
+		<Unit filename="core/NoiseModule.h" />
+		<Unit filename="core/NoiseMultiply.h" />
+		<Unit filename="core/NoisePerlin.h" />
+		<Unit filename="core/NoisePipeline.h" />
+		<Unit filename="core/NoisePlatform.h" />
+		<Unit filename="core/NoisePower.h" />
+		<Unit filename="core/NoisePrerequisites.h" />
+		<Unit filename="core/NoiseRidgedMulti.h" />
+		<Unit filename="core/NoiseScaleBias.h" />
+		<Unit filename="core/NoiseScalePoint.h" />
+		<Unit filename="core/NoiseSelect.h" />
+		<Unit filename="core/NoiseStdHeaders.h" />
+		<Unit filename="core/NoiseTerrace.h" />
+		<Unit filename="core/NoiseThreadedPipeline.h" />
+		<Unit filename="core/NoiseTranslatePoint.h" />
+		<Unit filename="core/NoiseTurbulence.h" />
+		<Unit filename="core/NoiseVectorTable.h" />
+		<Unit filename="core/NoiseVoronoi.h" />
+		<Unit filename="threadpp/Thread.h" />
+		<Unit filename="threadpp/ThreadCondition.h" />
+		<Unit filename="threadpp/ThreadImplementation.h" />
+		<Unit filename="threadpp/ThreadMutex.h" />
+		<Unit filename="threadpp/ThreadPlatform.h" />
+		<Unit filename="threadpp/ThreadPrerequisites.h" />
+		<Unit filename="threadpp/ThreadStdHeaders.h" />
+		<Unit filename="utils/NoiseColourValue.cpp" />
+		<Unit filename="utils/NoiseColourValue.h" />
+		<Unit filename="utils/NoiseEndianUtils.cpp" />
+		<Unit filename="utils/NoiseEndianUtils.h" />
+		<Unit filename="utils/NoiseGradientRenderer.cpp" />
+		<Unit filename="utils/NoiseGradientRenderer.h" />
+		<Unit filename="utils/NoiseImage.cpp" />
+		<Unit filename="utils/NoiseImage.h" />
+		<Unit filename="utils/NoiseInStream.cpp" />
+		<Unit filename="utils/NoiseInStream.h" />
+		<Unit filename="utils/NoiseModules.cpp" />
+		<Unit filename="utils/NoiseOutStream.cpp" />
+		<Unit filename="utils/NoiseOutStream.h" />
+		<Unit filename="utils/NoiseReader.cpp" />
+		<Unit filename="utils/NoiseReader.h" />
+		<Unit filename="utils/NoiseSystem.cpp" />
+		<Unit filename="utils/NoiseSystem.h" />
+		<Unit filename="utils/NoiseUtils.h" />
+		<Unit filename="utils/NoiseWriter.cpp" />
+		<Unit filename="utils/NoiseWriter.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

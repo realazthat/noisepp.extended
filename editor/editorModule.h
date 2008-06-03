@@ -23,6 +23,7 @@
 #include <wx/propgrid/propgrid.h>
 #include <wx/image.h>
 #include <wx/bitmap.h>
+#include <wx/glcanvas.h>
 #include <xml/tinyxml.h>
 
 class EditorModuleManager;
@@ -49,6 +50,10 @@ class EditorModule
 		wxBitmap *getBitmap () const
 		{
 			return mBitmap;
+		}
+		GLuint getTexture () const
+		{
+			return mTexture;
 		}
 
 		int getNumberOfSourceModules () const
@@ -87,11 +92,11 @@ class EditorModule
 		int mWidth, mHeight;
 		wxImage *mImage;
 		wxBitmap *mBitmap;
+		GLuint mTexture;
 
 		double *mData;
 
 		void freeData ();
-
 		void freeImage ();
 };
 

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="editor" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Linux_Debug">
+				<Option output="bin/Debug/editor" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option external_deps="../lib/Debug/libnoisepp.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add directory="../lib/Debug" />
+				</Linker>
+			</Target>
+			<Target title="Linux_Release">
+				<Option output="bin/Release/editor" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option external_deps="../lib/Release/libnoisepp.a;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add directory="../lib/Release" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="`wx-config --cflags`" />
+			<Add directory="./" />
+			<Add directory="../noisepp/core" />
+			<Add directory="../noisepp/threadpp" />
+			<Add directory="../noisepp/utils" />
+		</Compiler>
+		<Linker>
+			<Add option="`wx-config --libs gl,core,base,adv`" />
+			<Add library="noisepp" />
+		</Linker>
+		<Unit filename="editorApp.cpp" />
+		<Unit filename="editorApp.h" />
+		<Unit filename="editorCanvas.cpp" />
+		<Unit filename="editorCanvas.h" />
+		<Unit filename="editorMain.cpp" />
+		<Unit filename="editorMain.h" />
+		<Unit filename="editorModule.cpp" />
+		<Unit filename="editorModule.h" />
+		<Unit filename="editorModuleFactory.cpp" />
+		<Unit filename="editorModuleFactory.h" />
+		<Unit filename="editorModuleManager.cpp" />
+		<Unit filename="editorModuleManager.h" />
+		<Unit filename="modules/EditorAbsoluteModule.cpp" />
+		<Unit filename="modules/EditorAbsoluteModule.h" />
+		<Unit filename="modules/EditorAdditionModule.cpp" />
+		<Unit filename="modules/EditorAdditionModule.h" />
+		<Unit filename="modules/EditorBillowModule.cpp" />
+		<Unit filename="modules/EditorBillowModule.h" />
+		<Unit filename="modules/EditorBlendModule.cpp" />
+		<Unit filename="modules/EditorBlendModule.h" />
+		<Unit filename="modules/EditorCheckerboardModule.cpp" />
+		<Unit filename="modules/EditorCheckerboardModule.h" />
+		<Unit filename="modules/EditorClampModule.cpp" />
+		<Unit filename="modules/EditorClampModule.h" />
+		<Unit filename="modules/EditorConstantModule.cpp" />
+		<Unit filename="modules/EditorConstantModule.h" />
+		<Unit filename="modules/EditorCurveModule.cpp" />
+		<Unit filename="modules/EditorCurveModule.h" />
+		<Unit filename="modules/EditorExponentModule.cpp" />
+		<Unit filename="modules/EditorExponentModule.h" />
+		<Unit filename="modules/EditorInvertModule.cpp" />
+		<Unit filename="modules/EditorInvertModule.h" />
+		<Unit filename="modules/EditorMaximumModule.cpp" />
+		<Unit filename="modules/EditorMaximumModule.h" />
+		<Unit filename="modules/EditorMinimumModule.cpp" />
+		<Unit filename="modules/EditorMinimumModule.h" />
+		<Unit filename="modules/EditorMultiplyModule.cpp" />
+		<Unit filename="modules/EditorMultiplyModule.h" />
+		<Unit filename="modules/EditorPerlinModule.cpp" />
+		<Unit filename="modules/EditorPerlinModule.h" />
+		<Unit filename="modules/EditorPowerModule.cpp" />
+		<Unit filename="modules/EditorPowerModule.h" />
+		<Unit filename="modules/EditorRidgedMultiModule.cpp" />
+		<Unit filename="modules/EditorRidgedMultiModule.h" />
+		<Unit filename="modules/EditorScaleBiasModule.cpp" />
+		<Unit filename="modules/EditorScaleBiasModule.h" />
+		<Unit filename="modules/EditorScalePointModule.cpp" />
+		<Unit filename="modules/EditorScalePointModule.h" />
+		<Unit filename="modules/EditorSelectModule.cpp" />
+		<Unit filename="modules/EditorSelectModule.h" />
+		<Unit filename="modules/EditorTerraceModule.cpp" />
+		<Unit filename="modules/EditorTerraceModule.h" />
+		<Unit filename="modules/EditorTranslatePointModule.cpp" />
+		<Unit filename="modules/EditorTranslatePointModule.h" />
+		<Unit filename="modules/EditorTurbulenceModule.cpp" />
+		<Unit filename="modules/EditorTurbulenceModule.h" />
+		<Unit filename="modules/EditorVoronoiModule.cpp" />
+		<Unit filename="modules/EditorVoronoiModule.h" />
+		<Unit filename="wx/propgrid/advprops.cpp" />
+		<Unit filename="wx/propgrid/advprops.h" />
+		<Unit filename="wx/propgrid/extras.cpp" />
+		<Unit filename="wx/propgrid/extras.h" />
+		<Unit filename="wx/propgrid/manager.cpp" />
+		<Unit filename="wx/propgrid/manager.h" />
+		<Unit filename="wx/propgrid/odcombo.cpp" />
+		<Unit filename="wx/propgrid/odcombo.h" />
+		<Unit filename="wx/propgrid/pg_dox_mainpage.h" />
+		<Unit filename="wx/propgrid/propdev.h" />
+		<Unit filename="wx/propgrid/propgrid.cpp" />
+		<Unit filename="wx/propgrid/propgrid.h" />
+		<Unit filename="wx/propgrid/props.cpp" />
+		<Unit filename="xml/tinystr.cpp" />
+		<Unit filename="xml/tinystr.h" />
+		<Unit filename="xml/tinyxml.cpp" />
+		<Unit filename="xml/tinyxml.h" />
+		<Unit filename="xml/tinyxmlerror.cpp" />
+		<Unit filename="xml/tinyxmlparser.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

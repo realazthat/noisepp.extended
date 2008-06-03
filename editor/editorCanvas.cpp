@@ -20,12 +20,17 @@
 #include "editorModuleManager.h"
 
 const wxCoord titleHeight = 20;
+int attribList [] = {WX_GL_RGBA , WX_GL_DOUBLEBUFFER};
 
-editorCanvas::editorCanvas(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style) : wxScrolledWindow(parent, id, pos, size, style)
+editorCanvas::editorCanvas(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style) : wxGLCanvas(parent, (wxGLCanvas*)NULL, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE , wxEmptyString, attribList),
+		mInit(false), mScale(1.0f), mTranslateX(0.0), mTranslateY(0.0)
 {
 	SetBackgroundColour (*wxWHITE);
-	SetScrollRate( 10, 10 );
 	Connect(wxEVT_PAINT, wxPaintEventHandler(editorCanvas::OnPaint));
+	Connect(wxEVT_SIZE, wxSizeEventHandler(editorCanvas::OnSize));
+	Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(editorCanvas::OnMouseWheel));
+	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(editorCanvas::OnMouseClick));
+	Connect(wxEVT_MOTION, wxMouseEventHandler(editorCanvas::OnMouseMove));
 }
 
 editorCanvas::~editorCanvas()
@@ -48,43 +53,133 @@ void editorCanvas::drawModule(wxPaintDC &dc, int center_x, int center_y, wxCoord
 
 	if (bitmap)
 	{
-		/*wxCoord xo = center_x-w/2;
-		wxCoord yo = tLine+1;
-
-		EditorModule *module = EditorModuleManager::getInstance().getModule(name);
-		if (module)
-		{
-			noisepp::Pipeline2D pipeline;
-			noisepp::ElementID id = module->get2DModule().addToPipe (pipeline);
-			noisepp::PipelineElement2D *element = pipeline.getElement(id);
-			noisepp::Cache *cache = pipeline.createCache ();
-			int y, lasty;
-			for (int n=0;n<w;++n)
-			{
-				double d = (element->getValue((double)n/(double)(w-1), 0, cache) + 1.0) * 0.5 * (h-1);
-				if (d < 0.0)
-					d = 0.0;
-				if (d > (h-1))
-					d = h-1;
-				lasty = y;
-				y = (int)d;
-				if (n > 0)
-				{
-					dc.DrawLine(xo+n-1, yo+lasty, xo+n, yo+y);
-				}
-			}
-			pipeline.freeCache (cache);
-		}*/
-
 		assert (bitmap->GetWidth() == w);
 		assert (bitmap->GetHeight() == h);
 		dc.DrawBitmap (*bitmap, center_x-w/2, tLine+1, false);
 	}
 }
 
+void editorCanvas::OnMouseWheel(wxMouseEvent& event)
+{
+	int w, h;
+	GetClientSize(&w, &h);
+
+	double scale_add = event.GetWheelRotation()/event.GetWheelDelta() * 0.1 * mScale;
+	mScale += scale_add;
+	if (mScale < 0.0001)
+		mScale = 0.0001;
+	mTranslateX += mTranslateX * scale_add;
+	mTranslateY += mTranslateY * scale_add;
+	Refresh(false);
+}
+
+void editorCanvas::OnMouseMove(wxMouseEvent& event)
+{
+	if (event.LeftIsDown())
+	{
+		mTranslateX += event.GetX() - mDownX;
+		mTranslateY -= event.GetY() - mDownY;
+		mDownX = event.GetX();
+		mDownY = event.GetY();
+		Refresh(false);
+	}
+}
+
+void editorCanvas::OnMouseClick(wxMouseEvent& event)
+{
+	if (event.GetButton() == wxMOUSE_BTN_LEFT)
+	{
+		mDownX = event.GetX();
+		mDownY = event.GetY();
+	}
+}
+
+void editorCanvas::OnSize(wxSizeEvent& event)
+{
+	// this is also necessary to update the context on some platforms
+	wxGLCanvas::OnSize(event);
+
+	// set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
+	int w, h;
+	GetClientSize(&w, &h);
+#ifndef __WXMOTIF__
+	if (GetContext())
+#endif
+	{
+		SetCurrent();
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glViewport(0, 0, (GLint) w, (GLint) h);
+		glOrtho(0,w,0,h,0,128);
+	}
+}
+
+void editorCanvas::init ()
+{
+	int w, h;
+	GetClientSize(&w, &h);
+
+	SetCurrent();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glViewport(0, 0, (GLint) w, (GLint) h);
+	glOrtho(0,w,0,h,0,128);
+
+	glEnable(GL_TEXTURE_2D);
+
+	mInit = true;
+}
+
 void editorCanvas::OnPaint(wxPaintEvent& event)
 {
 	wxPaintDC dc(this);
+
+#ifndef __WXMOTIF__
+	if (!GetContext()) return;
+#endif
+	SetCurrent();
+	if (!mInit)
+		init ();
+
+	int w, h;
+	GetClientSize(&w, &h);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glViewport(0, 0, (GLint) w, (GLint) h);
+	glOrtho(0,w,0,h,0,128);
+
+	/* clear color and depth buffers */
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	wxCoord image_width = 200;
+	wxCoord image_height = 200;
+	if (!mModule.IsEmpty())
+	{
+		EditorModule *module = EditorModuleManager::getInstance().getModule(mModule);
+		if (module)
+		{
+			GLuint texture = module->getTexture();
+			glTranslated (mTranslateX, mTranslateY, 0);
+			//glTranslated (w/2, h/2, 0);
+			glScaled (mScale, mScale, 1);
+			glColor3f (1, 1, 1);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glBegin(GL_QUADS);
+			{
+				glTexCoord2f(0, 1); glVertex2i(-image_width/2, -image_height/2);
+				glTexCoord2f(1, 1); glVertex2i(image_width/2, -image_height/2);
+				glTexCoord2f(1, 0); glVertex2i(image_width/2, image_height/2);
+				glTexCoord2f(0, 0); glVertex2i(-image_width/2, image_height/2);
+			}
+			glEnd();
+		}
+	}
+
+	glFlush();
+	SwapBuffers();
+
+	/*wxPaintDC dc(this);
 	PrepareDC( dc );
 
 	wxCoord w, h;
@@ -190,7 +285,7 @@ void editorCanvas::OnPaint(wxPaintEvent& event)
 		}
 		else
 			drawModule (dc, w/2, h/2, 200, 200, mModule, NULL);
-	}
+	}*/
 }
 
 void editorCanvas::setModule (const wxString &module)

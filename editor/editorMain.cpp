@@ -383,7 +383,7 @@ void editorFrame::OnModuleGen(wxCommandEvent& event)
 			{
 				module->getSourceModule(i)->generate (0, 0, 1, 1, 200, 200);
 			}
-			module->generate (0, 0, 1, 1, 200, 200);
+			module->generate (0, 0, 1, 1, 1024, 1024);
 			mCanvas->Refresh ();
 		}
 	}
@@ -444,7 +444,7 @@ void editorFrame::OnModuleProperyGridChange(wxPropertyGridEvent& event)
 		mGenerateBtn->Enable (valid);
 		if (valid)
 		{
-			module->generate (0, 0, 1, 1, 200, 200);
+			module->generate (0, 0, 1, 1, 1024, 1024);
 			mCanvas->Refresh ();
 		}
 	}

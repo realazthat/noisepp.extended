@@ -51,7 +51,7 @@ class LineJob2D : public noisepp::PipelineJob
 		}
 };
 
-EditorModule::EditorModule(int sourceModules) : mSourceModules(NULL), mSourceModuleCount(sourceModules), mWidth(0), mHeight(0), mImage(NULL), mBitmap(NULL), mData(NULL)
+EditorModule::EditorModule(int sourceModules) : mSourceModules(NULL), mSourceModuleCount(sourceModules), mWidth(0), mHeight(0), mImage(NULL), mBitmap(NULL), mTexture(0), mData(NULL)
 {
 	if (mSourceModuleCount > 0)
 	{
@@ -81,6 +81,11 @@ void EditorModule::freeImage ()
 	{
 		delete mBitmap;
 		mBitmap = NULL;
+	}
+	if (mTexture)
+	{
+		glDeleteTextures (1, &mTexture);
+		mTexture = 0;
 	}
 }
 
@@ -149,10 +154,16 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	gradients.renderImage (img, mData);
 
 	std::memcpy (pixels, img.getPixelData(), w*h*3);
-	//img.saveBMP ("test.bmp");
 
 	mImage = new wxImage (w, h, pixels);
 	mBitmap = new wxBitmap (*mImage);
+	glGenTextures (1, &mTexture);
+	glBindTexture(GL_TEXTURE_2D, mTexture);
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
 }
 
 void EditorModule::appendQualityProperty (wxPropertyGrid *pg, int quality)
