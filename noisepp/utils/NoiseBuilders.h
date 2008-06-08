@@ -26,24 +26,24 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef NOISEUTILS_H
-#define NOISEUTILS_H
+#ifndef NOISEBUILDERS_H
+#define NOISEBUILDERS_H
 
-#if NOISEPP_ENABLE_UTILS == 0
-#error "Please set NOISEPP_ENABLE_UTILS to 1"
-#endif
+#include "NoisePipelineJobs.h"
 
-#define NOISE_FILE_VERSION 0
+namespace noisepp
+{
+namespace utils
+{
 
-#include "NoiseEndianUtils.h"
-#include "NoiseInStream.h"
-#include "NoiseOutStream.h"
-#include "NoiseWriter.h"
-#include "NoiseReader.h"
-#include "NoiseColourValue.h"
-#include "NoiseImage.h"
-#include "NoiseSystem.h"
-#include "NoiseGradientRenderer.h"
-#include "NoiseBuilders.h"
+class Builder
+{
+	public:
+		Builder ();
+		virtual ~Builder ();
+};
 
-#endif // NOISEUTILS_H
+};
+};
+
+#endif // NOISEBUILDERS_H

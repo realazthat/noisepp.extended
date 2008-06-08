@@ -114,21 +114,21 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new TranslatePointElement1D(pipe, first, mTranslationX));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new TranslatePointElement2D(pipe, first, mTranslationX, mTranslationY));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new TranslatePointElement3D(pipe, first, mTranslationX, mTranslationY, mTranslationZ));
 			}

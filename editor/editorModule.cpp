@@ -23,35 +23,6 @@
 #include "editorModuleManager.h"
 #include "NoiseUtils.h"
 
-class LineJob2D : public noisepp::PipelineJob
-{
-	private:
-		noisepp::Pipeline2D *mPipe;
-		noisepp::PipelineElement2D *mElement;
-		double x, y;
-		int n;
-		double delta;
-		double *buffer;
-
-	public:
-		LineJob2D (noisepp::Pipeline2D *pipe, noisepp::PipelineElement2D *element, double x, double y, int n, double delta, double *buffer) :
-			mPipe(pipe), mElement(element), x(x), y(y), n(n), delta(delta), buffer(buffer)
-		{
-		}
-		void execute (noisepp::Cache *cache)
-		{
-			for (int i=0;i<n;++i)
-			{
-				// cleans the cache
-				mPipe->cleanCache (cache);
-				// calculates the value
-				buffer[i] = mElement->getValue(x, y, cache);
-				// move on
-				x += delta;
-			}
-		}
-};
-
 EditorModule::EditorModule(int sourceModules) : mSourceModules(NULL), mSourceModuleCount(sourceModules), mWidth(0), mHeight(0), mImage(NULL), mBitmap(NULL), mTexture(0), mData(NULL)
 {
 	if (mSourceModuleCount > 0)
@@ -123,7 +94,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 
 		for (int yi=0;yi<h;++yi)
 		{
-			pipeline2D->addJob (new LineJob2D (pipeline2D, element, x, y, w, xDelta, mData+yi*w));
+			pipeline2D->addJob (new noisepp::LineJob2D (pipeline2D, element, x, y, w, xDelta, mData+yi*w));
 			y += yDelta;
 		}
 
@@ -170,7 +141,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 		gluBuild2DMipmaps(GL_TEXTURE_2D, 3, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 	}
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
 }

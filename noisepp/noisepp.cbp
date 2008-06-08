@@ -61,6 +61,7 @@
 		<Unit filename="core/NoiseMultiply.h" />
 		<Unit filename="core/NoisePerlin.h" />
 		<Unit filename="core/NoisePipeline.h" />
+		<Unit filename="core/NoisePipelineJobs.h" />
 		<Unit filename="core/NoisePlatform.h" />
 		<Unit filename="core/NoisePower.h" />
 		<Unit filename="core/NoisePrerequisites.h" />
@@ -82,6 +83,8 @@
 		<Unit filename="threadpp/ThreadPlatform.h" />
 		<Unit filename="threadpp/ThreadPrerequisites.h" />
 		<Unit filename="threadpp/ThreadStdHeaders.h" />
+		<Unit filename="utils/NoiseBuilders.cpp" />
+		<Unit filename="utils/NoiseBuilders.h" />
 		<Unit filename="utils/NoiseColourValue.cpp" />
 		<Unit filename="utils/NoiseColourValue.h" />
 		<Unit filename="utils/NoiseEndianUtils.cpp" />

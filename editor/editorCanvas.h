@@ -21,14 +21,17 @@
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 
+#include "editorNode.h"
+
 class editorCanvas : public wxGLCanvas
 {
 	public:
-		editorCanvas(wxWindow *parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+		editorCanvas(wxFrame *frame, wxWindow *parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 		virtual ~editorCanvas();
 		void setModule (const wxString &module = wxEmptyString);
 	protected:
 	private:
+		wxFrame *mFrame;
 		wxString mModule;
 		void OnPaint(wxPaintEvent& event);
 		void OnSize(wxSizeEvent& event);
@@ -41,7 +44,7 @@ class editorCanvas : public wxGLCanvas
 		void init ();
 
 		double mScale;
-		double mTranslateX, mTranslateY;
+		double mPosX, mPosY;
 		long mDownX, mDownY;
 };
 

@@ -130,21 +130,21 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScaleBiasElement1D(pipe, first, mScale, mBias));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScaleBiasElement2D(pipe, first, mScale, mBias));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScaleBiasElement3D(pipe, first, mScale, mBias));
 			}

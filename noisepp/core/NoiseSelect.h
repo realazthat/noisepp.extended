@@ -49,7 +49,7 @@ namespace noisepp
 		public:
 			SelectElement1D (const Pipeline1D *pipe, ElementID left, ElementID right, ElementID control, Real lowerBound, Real upperBound, Real edgeFalloff) : mLeft(left), mRight(right), mControl(control), mLowerBound(lowerBound), mUpperBound(upperBound), mEdgeFalloff(edgeFalloff)
 			{
-				assert (mLowerBound < mUpperBound);
+				NoiseAssert (mLowerBound < mUpperBound, (mLowerBound, mUpperBound));
 
 				mLeftPtr = pipe->getElement(mLeft);
 				mRightPtr = pipe->getElement(mRight);
@@ -125,7 +125,7 @@ namespace noisepp
 		public:
 			SelectElement2D (const Pipeline2D *pipe, ElementID left, ElementID right, ElementID control, Real lowerBound, Real upperBound, Real edgeFalloff) : mLeft(left), mRight(right), mControl(control), mLowerBound(lowerBound), mUpperBound(upperBound), mEdgeFalloff(edgeFalloff)
 			{
-				assert (mLowerBound < mUpperBound);
+				NoiseAssert (mLowerBound < mUpperBound, (mLowerBound, mUpperBound));
 
 				mLeftPtr = pipe->getElement(mLeft);
 				mRightPtr = pipe->getElement(mRight);
@@ -201,7 +201,7 @@ namespace noisepp
 		public:
 			SelectElement3D (const Pipeline3D *pipe, ElementID left, ElementID right, ElementID control, Real lowerBound, Real upperBound, Real edgeFalloff) : mLeft(left), mRight(right), mControl(control), mLowerBound(lowerBound), mUpperBound(upperBound), mEdgeFalloff(edgeFalloff)
 			{
-				assert (mLowerBound < mUpperBound);
+				NoiseAssert (mLowerBound < mUpperBound, (mLowerBound, mUpperBound));
 
 				mLeftPtr = pipe->getElement(mLeft);
 				mRightPtr = pipe->getElement(mRight);
@@ -313,9 +313,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				assert (getSourceModule (0));
-				assert (getSourceModule (1));
-				assert (getSourceModule (2));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				ElementID third = getSourceModule(2)->addToPipeline(pipe);
@@ -324,9 +322,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				assert (getSourceModule (0));
-				assert (getSourceModule (1));
-				assert (getSourceModule (2));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				ElementID third = getSourceModule(2)->addToPipeline(pipe);
@@ -335,9 +331,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				assert (getSourceModule (0));
-				assert (getSourceModule (1));
-				assert (getSourceModule (2));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				ElementID third = getSourceModule(2)->addToPipeline(pipe);

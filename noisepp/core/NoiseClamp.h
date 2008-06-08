@@ -142,21 +142,21 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ClampElement1D(pipe, first, mLowerBound, mUpperBound));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ClampElement2D(pipe, first, mLowerBound, mUpperBound));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ClampElement3D(pipe, first, mLowerBound, mUpperBound));
 			}

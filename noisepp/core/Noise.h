@@ -30,8 +30,10 @@
 #define NOISEPP_h
 
 #include "NoiseStdHeaders.h"
+#include "NoiseExceptions.h"
 #include "NoiseMath.h"
 #include "NoisePipeline.h"
+#include "NoisePipelineJobs.h"
 #include "NoiseModule.h"
 #include "NoisePerlin.h"
 #include "NoiseBillow.h"

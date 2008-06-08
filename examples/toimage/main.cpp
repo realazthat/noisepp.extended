@@ -3,35 +3,6 @@
 #include "Noise.h"
 #include "NoiseUtils.h"
 
-class LineJob2D : public noisepp::PipelineJob
-{
-	private:
-		noisepp::Pipeline2D *mPipe;
-		noisepp::PipelineElement2D *mElement;
-		noisepp::Real x, y;
-		int n;
-		noisepp::Real delta;
-		noisepp::Real *buffer;
-
-	public:
-		LineJob2D (noisepp::Pipeline2D *pipe, noisepp::PipelineElement2D *element, noisepp::Real x, noisepp::Real y, int n, noisepp::Real delta, noisepp::Real *buffer) :
-			mPipe(pipe), mElement(element), x(x), y(y), n(n), delta(delta), buffer(buffer)
-		{
-		}
-		void execute (noisepp::Cache *cache)
-		{
-			for (int i=0;i<n;++i)
-			{
-				// cleans the cache
-				mPipe->cleanCache (cache);
-				// calculates the value
-				buffer[i] = mElement->getValue(x, y, cache);
-				// move on
-				x += delta;
-			}
-		}
-};
-
 using namespace std;
 using namespace noisepp;
 using namespace noisepp::utils;
@@ -85,7 +56,7 @@ int main(int argc, char *argv[])
 	// add the jobs to queue
 	for (int yi=0;yi<h;++yi)
 	{
-		pipeline2D->addJob (new LineJob2D (pipeline2D, element, xmin, y, w, xDelta, data+yi*w));
+		pipeline2D->addJob (new noisepp::LineJob2D (pipeline2D, element, xmin, y, w, xDelta, data+yi*w));
 		y += yDelta;
 	}
 	// execute the jobs

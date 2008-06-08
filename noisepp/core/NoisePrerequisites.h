@@ -32,6 +32,7 @@
 #include "NoiseConfig.h"
 #include "NoiseStdHeaders.h"
 #include "NoisePlatform.h"
+#include "NoiseExceptions.h"
 
 namespace noisepp
 {

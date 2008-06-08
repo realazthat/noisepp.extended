@@ -204,7 +204,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID perlinX = mPerlinX.addToPipeline(pipe);
 				return pipe->addElement (this, new TurbulenceElement1D(pipe, mPower, first, perlinX));
@@ -212,7 +212,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID perlinX = mPerlinX.addToPipeline(pipe);
 				ElementID perlinY = mPerlinY.addToPipeline(pipe);
@@ -221,7 +221,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID perlinX = mPerlinX.addToPipeline(pipe);
 				ElementID perlinY = mPerlinY.addToPipeline(pipe);

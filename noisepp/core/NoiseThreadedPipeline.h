@@ -94,10 +94,10 @@ namespace noisepp
 		public:
 			/// Constructor.
 			/// @param n The number of threads
-			ThreadedPipeline (size_t n) : mThreadsDone(false), mWorkingThreads(0)
+			ThreadedPipeline (size_t numberOfThreads) : mThreadsDone(false), mWorkingThreads(0)
 			{
-				assert (n > 0);
-				for (size_t i=0;i<n;++i)
+				NoiseAssert (numberOfThreads > 0, numberOfThreads);
+				for (size_t i=0;i<numberOfThreads;++i)
 				{
 					mThreads.createThread (threadEntry, this);
 				}
@@ -124,7 +124,7 @@ namespace noisepp
 			/// @copydoc noisepp::Pipeline::addJob()
 			virtual void addJob (PipelineJob *job)
 			{
-				assert (job);
+				NoiseAssert (job != NULL, job);
 				threadpp::Mutex::Lock lk(mMutex);
 				Pipeline<Element>::mJobs.push (job);
 			}

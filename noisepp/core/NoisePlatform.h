@@ -44,4 +44,18 @@
 #    define NOISEPP_INLINE inline
 #endif
 
+#if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600))
+# define NOISEPP_CURRENT_FUNCTION __PRETTY_FUNCTION__
+#elif defined(__FUNCSIG__)
+# define NOISEPP_CURRENT_FUNCTION __FUNCSIG__
+#elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
+# define NOISEPP_CURRENT_FUNCTION __FUNCTION__
+#elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x550)
+# define NOISEPP_CURRENT_FUNCTION __FUNC__
+#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+# define NOISEPP_CURRENT_FUNCTION __func__
+#else
+# define NOISEPP_CURRENT_FUNCTION "(unknown)"
+#endif
+
 #endif

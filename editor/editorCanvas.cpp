@@ -24,8 +24,8 @@
 const wxCoord titleHeight = 20;
 int attribList [] = {WX_GL_RGBA , WX_GL_DOUBLEBUFFER};
 
-editorCanvas::editorCanvas(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style) : wxGLCanvas(parent, (wxGLCanvas*)NULL, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE , wxEmptyString, attribList),
-		mInit(false), mScale(1.0f), mTranslateX(0.0), mTranslateY(0.0)
+editorCanvas::editorCanvas(wxFrame *frame, wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style) : wxGLCanvas(parent, (wxGLCanvas*)NULL, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE , wxEmptyString, attribList),
+		mFrame(frame), mInit(false), mScale(0.0), mPosX(0.5), mPosY(0.5)
 {
 	SetBackgroundColour (*wxWHITE);
 	Connect(wxEVT_PAINT, wxPaintEventHandler(editorCanvas::OnPaint));
@@ -66,12 +66,12 @@ void editorCanvas::OnMouseWheel(wxMouseEvent& event)
 	int w, h;
 	GetClientSize(&w, &h);
 
-	double scale_add = event.GetWheelRotation()/event.GetWheelDelta() * 0.1 * mScale;
+	double scale_add = event.GetWheelRotation()/event.GetWheelDelta() * -0.1 * mScale;
 	mScale += scale_add;
 	if (mScale < 0.0001)
 		mScale = 0.0001;
-	mTranslateX += mTranslateX * scale_add;
-	mTranslateY += mTranslateY * scale_add;
+	/*mTranslateX += mTranslateX * scale_add;
+	mTranslateY += mTranslateY * scale_add;*/
 	Refresh(false);
 }
 
@@ -79,8 +79,8 @@ void editorCanvas::OnMouseMove(wxMouseEvent& event)
 {
 	if (event.LeftIsDown())
 	{
-		mTranslateX += event.GetX() - mDownX;
-		mTranslateY -= event.GetY() - mDownY;
+		mPosX -= (event.GetX() - mDownX) * mScale;
+		mPosY -= (event.GetY() - mDownY) * mScale;
 		mDownX = event.GetX();
 		mDownY = event.GetY();
 		Refresh(false);
@@ -148,6 +148,14 @@ void editorCanvas::OnPaint(wxPaintEvent& event)
 	int w, h;
 	GetClientSize(&w, &h);
 
+	if (mScale == 0.0)
+	{
+		if (w > h)
+			mScale = 1.0 / w;
+		else
+			mScale = 1.0 / h;
+	}
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, (GLint) w, (GLint) h);
@@ -155,6 +163,17 @@ void editorCanvas::OnPaint(wxPaintEvent& event)
 
 	/* clear color and depth buffers */
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glTranslated (w/2, h/2, 0);
+
+	wxString status = _("(");
+	status << mPosX - w * mScale * 0.5 << _("|") << mPosY - h * mScale * 0.5;
+	status << _(") - (");
+	status << mPosX + w * mScale * 0.5 << _("|") << mPosY + h * mScale * 0.5;
+	status << _(")");
+	mFrame->SetStatusText(status,1);
+
+	glScaled (1.0/mScale, -1.0/mScale, 1);
+	glTranslated (-mPosX, -mPosY, 0);
 
 	wxCoord image_width = 200;
 	wxCoord image_height = 200;
@@ -163,18 +182,17 @@ void editorCanvas::OnPaint(wxPaintEvent& event)
 		EditorModule *module = EditorModuleManager::getInstance().getModule(mModule);
 		if (module)
 		{
+			editorNode node(0, 0, 0, module->getModule());
+
 			GLuint texture = module->getTexture();
-			glTranslated (mTranslateX, mTranslateY, 0);
-			//glTranslated (w/2, h/2, 0);
-			glScaled (mScale, mScale, 1);
 			glColor3f (1, 1, 1);
 			glBindTexture(GL_TEXTURE_2D, texture);
 			glBegin(GL_QUADS);
 			{
-				glTexCoord2f(0, 1); glVertex2i(-image_width/2, -image_height/2);
-				glTexCoord2f(1, 1); glVertex2i(image_width/2, -image_height/2);
-				glTexCoord2f(1, 0); glVertex2i(image_width/2, image_height/2);
-				glTexCoord2f(0, 0); glVertex2i(-image_width/2, image_height/2);
+				glTexCoord2f(0, 1); glVertex2d(0, 0);
+				glTexCoord2f(1, 1); glVertex2d(1, 0);
+				glTexCoord2f(1, 0); glVertex2d(1, 1);
+				glTexCoord2f(0, 0); glVertex2d(0, 1);
 			}
 			glEnd();
 		}

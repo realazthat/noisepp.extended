@@ -37,33 +37,15 @@ double Timer_getSeconds ()
 }
 
 /// 2D pipeline job generating a line
-class LineJob2D : public noisepp::PipelineJob
+class LineJob2D : public noisepp::LineJob2D
 {
 	private:
-		noisepp::Pipeline2D *mPipe;
-		noisepp::PipelineElement2D *mElement;
-		double x, y;
-		int n;
-		double xDelta;
-		double *buffer;
 		bool mProgress;
 
 	public:
 		LineJob2D (noisepp::Pipeline2D *pipe, noisepp::PipelineElement2D *element, double x, double y, int n, double xDelta, double *buffer, bool progress) :
-			mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), buffer(buffer), mProgress(progress)
+			noisepp::LineJob2D(pipe, element, x, y, n, xDelta, buffer), mProgress(progress)
 		{}
-		void execute (noisepp::Cache *cache)
-		{
-			for (int i=0;i<n;++i)
-			{
-				// cleans the cache
-				mPipe->cleanCache (cache);
-				// calculates the value
-				buffer[i] = mElement->getValue(x, y, cache);
-				// move on
-				x += xDelta;
-			}
-		}
 		void finish ()
 		{
 			if (mProgress)
@@ -75,33 +57,15 @@ class LineJob2D : public noisepp::PipelineJob
 };
 
 /// 3D pipeline job generating a line
-class LineJob3D : public noisepp::PipelineJob
+class LineJob3D : public noisepp::LineJob3D
 {
 	private:
-		noisepp::Pipeline3D *mPipe;
-		noisepp::PipelineElement3D *mElement;
-		double x, y, z;
-		int n;
-		double xDelta;
-		double *buffer;
 		bool mProgress;
 
 	public:
 		LineJob3D (noisepp::Pipeline3D *pipe, noisepp::PipelineElement3D *element, double x, double y, double z, int n, double xDelta, double *buffer, bool progress) :
-			mPipe(pipe), mElement(element), x(x), y(y), z(z), n(n), xDelta(xDelta), buffer(buffer), mProgress(progress)
+			noisepp::LineJob3D(pipe, element, x, y, z, n, xDelta, buffer), mProgress(progress)
 		{}
-		void execute (noisepp::Cache *cache)
-		{
-			for (int i=0;i<n;++i)
-			{
-				// cleans the cache
-				mPipe->cleanCache (cache);
-				// calculates the value
-				buffer[i] = mElement->getValue(x, y, z, cache);
-				// move on
-				x += xDelta;
-			}
-		}
 		void finish ()
 		{
 			if (mProgress)

@@ -40,6 +40,8 @@
 #include <algorithm>
 #include <map>
 #include <queue>
+#include <stdexcept>
+#include <string>
 
 #if NOISEPP_ENABLE_THREADS
 #include "Thread.h"

@@ -98,8 +98,8 @@ namespace noisepp
 		public:
 			CurveElementBase (const Pipeline<PipelineElement> *pipe, ElementID element, CurveControlPoint *points, int count) : mElement(element), mControlPoints(points), mControlPointCount(count)
 			{
-				assert (points);
-				assert (count >= 4);
+				NoiseAssert (points != NULL, points);
+				NoiseAssert (count >= 4, count);
 				mElementPtr = pipe->getElement (mElement);
 			}
 			virtual ~CurveElementBase ()
@@ -186,10 +186,10 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
-				assert (count >= 4);
+				NoiseAssert (count >= 4, count);
 				CurveControlPoint *points = new CurveControlPoint[count];
 				for (int i=0;i<count;++i)
 				{
@@ -200,10 +200,10 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
-				assert (count >= 4);
+				NoiseAssert (count >= 4, count);
 				CurveControlPoint *points = new CurveControlPoint[count];
 				for (int i=0;i<count;++i)
 				{
@@ -214,10 +214,10 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
-				assert (count >= 4);
+				NoiseAssert (count >= 4, count);
 				CurveControlPoint *points = new CurveControlPoint[count];
 				for (int i=0;i<count;++i)
 				{

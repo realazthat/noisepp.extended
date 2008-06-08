@@ -95,7 +95,7 @@ namespace noisepp
 			/// Returns the element with the specified ID.
 			NOISEPP_INLINE Element *getElement (ElementID i) const
 			{
-				assert (i < mElements.size());
+				NoiseAssertRange (i, mElements.size());
 				return mElements[i];
 			}
 			/// Returns the total number of elements.
@@ -137,8 +137,8 @@ namespace noisepp
 			/// This is used internally by modules.
 			ElementID addElement (const void *parent, Element *element)
 			{
-				assert (element);
-				assert (parent);
+				NoiseAssert (element != NULL, element);
+				NoiseAssert (parent != NULL, parent);
 				std::map<const void*, ElementID>::iterator it = mElementIDs.find(parent);
 				if (it != mElementIDs.end())
 				{
@@ -153,7 +153,7 @@ namespace noisepp
 			/// Adds a job to the queue.
 			virtual void addJob (PipelineJob *job)
 			{
-				assert (job);
+				NoiseAssert (job != NULL, job);
 				mJobs.push (job);
 			}
 			/// executes the jobs in queue

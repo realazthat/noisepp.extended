@@ -64,7 +64,7 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	wxSplitterWindow *spl1 = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_BORDER | wxCLIP_CHILDREN);
 	spl1->SetMinimumPaneSize (250);
 	wxPanel *leftWin = new wxPanel(spl1, wxID_ANY);
-	mCanvas = new editorCanvas(spl1, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	mCanvas = new editorCanvas(this, spl1, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	wxBookCtrl *leftBook = new wxBookCtrl(leftWin, wxID_ANY);
 	wxPanel *modulePage = new wxPanel(leftBook, wxID_ANY);
@@ -106,7 +106,7 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	SetMinSize(wxSize(1024,768));
 
 	// create a status bar
-	CreateStatusBar(2);
+	CreateStatusBar(3);
 	wxString cores;
 	int nCores = noisepp::utils::System::getNumberOfCPUs();
 	if (nCores > 1)
@@ -115,7 +115,7 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	}
 	else
 		cores = wxT("1 CPU");
-	SetStatusText(cores,1);
+	SetStatusText(cores,2);
 
 	Centre ();
 

@@ -70,6 +70,8 @@
 		<Unit filename="editorModuleFactory.h" />
 		<Unit filename="editorModuleManager.cpp" />
 		<Unit filename="editorModuleManager.h" />
+		<Unit filename="editorNode.cpp" />
+		<Unit filename="editorNode.h" />
 		<Unit filename="modules/EditorAbsoluteModule.cpp" />
 		<Unit filename="modules/EditorAbsoluteModule.h" />
 		<Unit filename="modules/EditorAdditionModule.cpp" />

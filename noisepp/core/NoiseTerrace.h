@@ -88,8 +88,8 @@ namespace noisepp
 		public:
 			TerraceElementBase (const Pipeline<PipelineElement> *pipe, ElementID element, Real *points, int count, bool invert) : mElement(element), mControlPoints(points), mControlPointCount(count), mInvert(invert)
 			{
-				assert (points);
-				assert (count >= 2);
+				NoiseAssert (points != NULL, points);
+				NoiseAssert (count >= 2, count);
 				mElementPtr = pipe->getElement (mElement);
 			}
 			virtual ~TerraceElementBase ()
@@ -184,10 +184,10 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
-				assert (count >= 2);
+				NoiseAssert (count >= 2, count);
 				Real *points = new Real[count];
 				for (int i=0;i<count;++i)
 				{
@@ -198,10 +198,10 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
-				assert (count >= 2);
+				NoiseAssert (count >= 2, count);
 				Real *points = new Real[count];
 				for (int i=0;i<count;++i)
 				{
@@ -212,10 +212,10 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				assert (getSourceModule (0));
+				checkModules ();
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
-				assert (count >= 2);
+				NoiseAssert (count >= 2, count);
 				Real *points = new Real[count];
 				for (int i=0;i<count;++i)
 				{
