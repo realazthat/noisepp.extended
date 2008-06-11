@@ -78,15 +78,6 @@ namespace noisepp
 			const Module **mSourceModules;
 			/// Number of source modules.
 			size_t mSourceModuleCount;
-			/// Throws an exception if there are unset source modules
-			inline void checkModules () const
-			{
-				for (size_t n=0;n<mSourceModuleCount;++n)
-				{
-					if (!mSourceModules[n])
-						throw NoModuleException();
-				}
-			}
 
 		public:
 			/// @param sourceModuleCount The number of source modules.
@@ -138,23 +129,15 @@ namespace noisepp
 			/// Returns the specified source module.
 			const Module *getSourceModule (size_t id) const
 			{
+				NoiseAssertRange (id, mSourceModuleCount);
 				return mSourceModules[id];
 			}
 			/// Adds the module to the specified pipeline.
-			virtual ElementID addToPipeline (Pipeline1D *pipe) const
-			{
-				throw NotImplementedException();
-			}
+			virtual ElementID addToPipeline (Pipeline1D *pipe) const = 0;
 			/// Adds the module to the specified pipeline.
-			virtual ElementID addToPipeline (Pipeline2D *pipe) const
-			{
-				throw NotImplementedException();
-			}
+			virtual ElementID addToPipeline (Pipeline2D *pipe) const = 0;
 			/// Adds the module to the specified pipeline.
-			virtual ElementID addToPipeline (Pipeline3D *pipe) const
-			{
-				throw NotImplementedException();
-			}
+			virtual ElementID addToPipeline (Pipeline3D *pipe) const = 0;
 			/// Adds the module to the specified pipeline.
 			ElementID addToPipe (Pipeline1D &pipe) const
 			{
@@ -188,6 +171,13 @@ namespace noisepp
 #endif
 	};
 
+	#define NoiseModuleCheckSourceModules \
+		for (size_t n=0;n<mSourceModuleCount;++n) \
+		{ \
+			if (!mSourceModules[n]) \
+				NoiseThrowNoModuleException; \
+		}
+
 	/// Template class for a module with one source module
 	template <class Element1D, class Element2D, class Element3D>
 	class SingleSourceModule : public Module
@@ -200,21 +190,21 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new Element1D(pipe, first));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new Element2D(pipe, first));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new Element3D(pipe, first));
 			}
@@ -232,7 +222,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				return pipe->addElement (this, new Element1D(pipe, first, second));
@@ -240,7 +230,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				return pipe->addElement (this, new Element2D(pipe, first, second));
@@ -248,7 +238,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				return pipe->addElement (this, new Element3D(pipe, first, second));
@@ -288,7 +278,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				ElementID third = getSourceModule(2)->addToPipeline(pipe);
@@ -297,7 +287,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				ElementID third = getSourceModule(2)->addToPipeline(pipe);
@@ -306,7 +296,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				ElementID second = getSourceModule(1)->addToPipeline(pipe);
 				ElementID third = getSourceModule(2)->addToPipeline(pipe);

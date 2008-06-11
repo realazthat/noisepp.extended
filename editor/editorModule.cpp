@@ -84,7 +84,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	if (!mData)
 	{
 		mData = new double[w*h];
-		noisepp::Pipeline2D *pipeline2D = noisepp::utils::System::createOptimalPipeline2D ();
+		/*noisepp::Pipeline2D *pipeline2D = noisepp::utils::System::createOptimalPipeline2D ();
 
 		noisepp::ElementID id = getModule().addToPipeline (pipeline2D);
 		noisepp::PipelineElement2D *element = pipeline2D->getElement(id);
@@ -99,7 +99,21 @@ void EditorModule::generate (double x, double y, double width, double height, in
 		}
 
 		pipeline2D->executeJobs ();
-		delete pipeline2D;
+		delete pipeline2D;*/
+		try
+		{
+			noisepp::utils::PlaneBuilder2D builder;
+			builder.setDestination(mData);
+			builder.setModule (&getModule());
+			builder.setSize (w, h);
+			builder.setBounds(0, 0, width, height);
+			builder.setSeamless();
+			builder.build ();
+		}
+		catch (std::exception &e)
+		{
+			std::cout << "exception: " << e.what() << std::endl;
+		}
 	}
 
 	unsigned char *pixels = (unsigned char *)malloc(w*h*3);

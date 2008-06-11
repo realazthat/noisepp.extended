@@ -145,21 +145,21 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScalePointElement1D(pipe, first, mScaleX));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScalePointElement2D(pipe, first, mScaleX, mScaleY));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ScalePointElement3D(pipe, first, mScaleX, mScaleY, mScaleZ));
 			}

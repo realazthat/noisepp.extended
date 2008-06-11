@@ -120,21 +120,21 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ExponentElement1D(pipe, first, mExponent));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ExponentElement2D(pipe, first, mExponent));
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				return pipe->addElement (this, new ExponentElement3D(pipe, first, mExponent));
 			}

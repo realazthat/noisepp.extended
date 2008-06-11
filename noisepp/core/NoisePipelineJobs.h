@@ -26,57 +26,71 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef NOISEBUILDERS_H
-#define NOISEBUILDERS_H
+#ifndef NOISEPIPELINEJOBS_H
+#define NOISEPIPELINEJOBS_H
 
-#include "NoisePrerequisites.h"
-#include "NoisePipelineJobs.h"
-#include "NoiseModule.h"
+#include "NoisePipeline.h"
 
 namespace noisepp
 {
-namespace utils
-{
 
-class Builder
-{
-	protected:
-		Real *mDest;
-		int mWidth, mHeight;
-		Module *mModule;
-
-		void checkParameters ();
-
-	public:
-		Builder ();
-		void setSize (int width, int height);
-		void setDestination (Real *dest);
-		void setModule (Module *module);
-		virtual void build () = 0;
-		virtual ~Builder ();
-};
-
-class PlaneBuilder2D : public Builder
+class LineJob2D : public PipelineJob
 {
 	private:
-		Real mLowerBoundX, mLowerBoundY;
-		Real mUpperBoundX, mUpperBoundY;
-		bool mSeamless;
+		Pipeline2D *mPipe;
+		PipelineElement2D *mElement;
+		Real x, y;
+		int n;
+		Real xDelta;
+		Real *buffer;
 
 	public:
-		PlaneBuilder2D ();
-		virtual void build ();
+		LineJob2D (Pipeline2D *pipe, PipelineElement2D *element, Real x, Real y, int n, Real xDelta, Real *buffer) :
+			mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), buffer(buffer)
+		{
+		}
+		void execute (Cache *cache)
+		{
+			for (int i=0;i<n;++i)
+			{
+				// cleans the cache
+				mPipe->cleanCache (cache);
+				// calculates the value
+				buffer[i] = mElement->getValue(x, y, cache);
+				// move on
+				x += xDelta;
+			}
+		}
+};
 
-		void setBounds (Real lowerBoundX, Real lowerBoundY, Real upperBoundX, Real upperBoundY);
-		Real getLowerBoundX () const;
-		Real getLowerBoundY () const;
-		Real getUpperBoundX () const;
-		Real getUpperBoundY () const;
-		void setSeamless (bool v=true);
-		bool isSeamless () const;
+class LineJob3D : public PipelineJob
+{
+	private:
+		Pipeline3D *mPipe;
+		PipelineElement3D *mElement;
+		Real x, y, z;
+		int n;
+		Real xDelta;
+		Real *buffer;
+
+	public:
+		LineJob3D (noisepp::Pipeline3D *pipe, noisepp::PipelineElement3D *element, Real x, Real y, Real z, int n, Real xDelta, Real *buffer) :
+			mPipe(pipe), mElement(element), x(x), y(y), z(z), n(n), xDelta(xDelta), buffer(buffer)
+		{}
+		void execute (noisepp::Cache *cache)
+		{
+			for (int i=0;i<n;++i)
+			{
+				// cleans the cache
+				mPipe->cleanCache (cache);
+				// calculates the value
+				buffer[i] = mElement->getValue(x, y, z, cache);
+				// move on
+				x += xDelta;
+			}
+		}
 };
 
 };
-};
 
-#endif // NOISEBUILDERS_H
+#endif // NOISEPIPELINEJOBS_H

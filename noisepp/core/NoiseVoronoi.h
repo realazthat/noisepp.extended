@@ -225,6 +225,11 @@ namespace noisepp
 				return mEnableDistance;
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
+			ElementID addToPipeline (Pipeline1D *pipe) const
+			{
+				NoiseThrowNotImplementedException;
+			}
+			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
 				return pipe->addElement (this, new VoronoiElement2D(mFrequency, mSeed+pipe->getSeed(), mDisplacement, mEnableDistance));

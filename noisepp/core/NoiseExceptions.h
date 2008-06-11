@@ -34,7 +34,7 @@ class Exception : public std::exception
 class NotImplementedException : public Exception
 {
 	public:
-		NotImplementedException() : Exception("function not implemented")
+		NotImplementedException(const std::string &func) : Exception("function not implemented: '" + func + "'")
 		{}
 };
 
@@ -42,7 +42,7 @@ class NotImplementedException : public Exception
 class NoModuleException : public Exception
 {
 	public:
-		NoModuleException() : Exception("no source module specified")
+		NoModuleException(const std::string &func) : Exception("source module is not set in '" + func + "'")
 		{}
 };
 
@@ -50,7 +50,7 @@ class NoModuleException : public Exception
 class ParamInvalidException : public Exception
 {
 	public:
-		ParamInvalidException(const std::string &paramName, const std::string &desc, const std::string &func) : Exception("invalid parameter for " + paramName + " in " + ( desc.empty() ? func : func + ": " + desc ))
+		ParamInvalidException(const std::string &paramName, const std::string &desc, const std::string &func) : Exception("invalid parameter for '" + paramName + "' in '" + ( desc.empty() ? func + "'" : func + "': " + desc ))
 		{}
 };
 
@@ -58,14 +58,18 @@ class ParamInvalidException : public Exception
 class OutOfRangeException : public Exception
 {
 	public:
-		OutOfRangeException(const std::string &paramName, const std::string &func) : Exception("parameter " + paramName + " is out of range in " + func)
+		OutOfRangeException(const std::string &paramName, const std::string &func) : Exception("parameter '" + paramName + "' is out of range in '" + func + "'")
 		{}
 };
 
 #define NoiseAssert(eval, name) if (!(eval)) \
-	throw ParamInvalidException(#name, std::string("assertion ") + #eval + std::string(" failed"), NOISEPP_CURRENT_FUNCTION);
+	throw ParamInvalidException(#name, std::string("assertion '") + #eval + std::string("' failed"), NOISEPP_CURRENT_FUNCTION);
 #define NoiseAssertRange(param, range) if (param >= range) \
 	throw OutOfRangeException(#param, NOISEPP_CURRENT_FUNCTION);
+#define NoiseThrowNotImplementedException \
+	throw NotImplementedException (NOISEPP_CURRENT_FUNCTION)
+#define NoiseThrowNoModuleException \
+	throw NoModuleException (NOISEPP_CURRENT_FUNCTION)
 
 };
 

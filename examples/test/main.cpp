@@ -89,7 +89,7 @@ double calcMaxDifference (double *left, double *right, int n)
 	return dif;
 }
 
-int main ()
+int test ()
 {
 	double x, y;
 	double xdelta = 0.1;
@@ -106,7 +106,7 @@ int main ()
 	noise::module::Perlin libnoisePerlin;
 #endif
 
-	// the Noise++ modules
+	// the Noise++ module
 	noisepp::PerlinModule noiseppPerlin;
 
 	// create default pipelines and fill them with our modules
@@ -354,4 +354,19 @@ int main ()
 #endif
 
 	return 0;
+}
+
+int main ()
+{
+	int ret = 0;
+	try
+	{
+		ret = test();
+	}
+	catch (noisepp::Exception &e)
+	{
+		cerr << "exception thrown: " << e.getDescription() << endl;
+		ret = 1;
+	}
+	return ret;
 }

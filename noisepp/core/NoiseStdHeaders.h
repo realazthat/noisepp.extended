@@ -38,6 +38,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <memory>
 #include <map>
 #include <queue>
 #include <stdexcept>

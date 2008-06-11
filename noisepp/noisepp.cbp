@@ -51,6 +51,7 @@
 		<Unit filename="core/NoiseConfig.h" />
 		<Unit filename="core/NoiseConstant.h" />
 		<Unit filename="core/NoiseCurve.h" />
+		<Unit filename="core/NoiseExceptions.h" />
 		<Unit filename="core/NoiseExponent.h" />
 		<Unit filename="core/NoiseGenerator.h" />
 		<Unit filename="core/NoiseInvert.h" />

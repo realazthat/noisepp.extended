@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="noisepp/noisepp.cbp" active="1" />
-		<Project filename="examples/test/test.cbp">
+		<Project filename="noisepp/noisepp.cbp" />
+		<Project filename="examples/test/test.cbp" active="1">
 			<Depends filename="noisepp/noisepp.cbp" />
 		</Project>
 		<Project filename="editor/editor.cbp">

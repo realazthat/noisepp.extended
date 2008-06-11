@@ -186,7 +186,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline1D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
 				NoiseAssert (count >= 4, count);
@@ -200,7 +200,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline2D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
 				NoiseAssert (count >= 4, count);
@@ -214,7 +214,7 @@ namespace noisepp
 			/// @copydoc noisepp::Module::addToPipeline()
 			ElementID addToPipeline (Pipeline3D *pipe) const
 			{
-				checkModules ();
+				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
 				int count = mControlPoints.size ();
 				NoiseAssert (count >= 4, count);
