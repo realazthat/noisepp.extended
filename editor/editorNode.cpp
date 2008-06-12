@@ -38,16 +38,33 @@ void *editorNode::threadEntry (void *node)
 {
 	editorNode *n = static_cast<editorNode*>(node);
 	assert (n);
-	n->threadFunc();
+	try
+	{
+		n->threadFunc();
+	}
+	catch (std::exception &e)
+	{
+		std::cout << "exception thrown: " << e.what() << std::endl;
+	}
 	return NULL;
 }
 
 void editorNode::threadFunc ()
 {
 	int res = nodeMinRes;
+
+	double extent = (1<<mLevel);
+	double lowerX = mX * extent;
+	double lowerY = mY * extent;
+	noisepp::utils::PlaneBuilder2D builder;
+	builder.setBounds (lowerX, lowerY, lowerX+extent, lowerY+extent);
+
 	for (int l=0;l<nodeDetailLevels;++l)
 	{
 		double *data = new double[res*res];
+		builder.setDestination(data);
+		builder.setSize(res, res);
+		builder.build (mPipeline, mElement);
 
 		threadpp::Mutex::Lock lk(mMutex);
 		if (mData)
@@ -61,18 +78,18 @@ void editorNode::threadFunc ()
 
 editorNode::~editorNode()
 {
+	if (mThread)
+	{
+		mThread->join ();
+		delete mThread;
+		mThread = 0;
+	}
 	if (mElement)
 		mElement = 0;
 	if (mPipeline)
 	{
 		delete mPipeline;
 		mPipeline = 0;
-	}
-	if (mThread)
-	{
-		mThread->join ();
-		delete mThread;
-		mThread = 0;
 	}
 	if (mData)
 	{

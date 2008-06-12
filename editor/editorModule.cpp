@@ -84,22 +84,6 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	if (!mData)
 	{
 		mData = new double[w*h];
-		/*noisepp::Pipeline2D *pipeline2D = noisepp::utils::System::createOptimalPipeline2D ();
-
-		noisepp::ElementID id = getModule().addToPipeline (pipeline2D);
-		noisepp::PipelineElement2D *element = pipeline2D->getElement(id);
-
-		double xDelta = width / double(w);
-		double yDelta = height / double(h);
-
-		for (int yi=0;yi<h;++yi)
-		{
-			pipeline2D->addJob (new noisepp::LineJob2D (pipeline2D, element, x, y, w, xDelta, mData+yi*w));
-			y += yDelta;
-		}
-
-		pipeline2D->executeJobs ();
-		delete pipeline2D;*/
 		try
 		{
 			noisepp::utils::PlaneBuilder2D builder;
@@ -107,7 +91,6 @@ void EditorModule::generate (double x, double y, double width, double height, in
 			builder.setModule (&getModule());
 			builder.setSize (w, h);
 			builder.setBounds(0, 0, width, height);
-			builder.setSeamless();
 			builder.build ();
 		}
 		catch (std::exception &e)

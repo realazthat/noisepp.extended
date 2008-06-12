@@ -209,10 +209,6 @@ namespace noisepp
 	*/
 	typedef Pipeline<PipelineElement3D> Pipeline3D;
 
-	typedef std::auto_ptr<Pipeline1D> PipelinePtr1D;
-	typedef std::auto_ptr<Pipeline2D> PipelinePtr2D;
-	typedef std::auto_ptr<Pipeline3D> PipelinePtr3D;
-
 	class PipelineElement1D
 	{
 		protected:

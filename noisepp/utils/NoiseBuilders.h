@@ -65,6 +65,7 @@ class PlaneBuilder2D : public Builder
 
 	public:
 		PlaneBuilder2D ();
+		void build (Pipeline2D *pipeline, PipelineElement2D *element);
 		virtual void build ();
 
 		void setBounds (Real lowerBoundX, Real lowerBoundY, Real upperBoundX, Real upperBoundY);

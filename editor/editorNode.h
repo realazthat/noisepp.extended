@@ -22,6 +22,7 @@
 #include <wx/glcanvas.h>
 
 #include "Noise.h"
+#include "NoiseUtils.h"
 
 class editorNode
 {

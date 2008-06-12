@@ -61,7 +61,6 @@ void Builder::checkParameters ()
 	NoiseAssert(mDest != NULL, mDest);
 	NoiseAssert(mWidth > 0, mWidth);
 	NoiseAssert(mHeight > 0, mHeight);
-	NoiseAssert(mModule != NULL, mModule);
 }
 
 Builder::~Builder ()
@@ -118,13 +117,24 @@ PlaneBuilder2D::PlaneBuilder2D () : mLowerBoundX(0), mLowerBoundY(0), mUpperBoun
 
 void PlaneBuilder2D::build ()
 {
+	build(0, 0);
+}
+
+void PlaneBuilder2D::build (Pipeline2D *pipeline, PipelineElement2D *element)
+{
 	checkParameters ();
 	NoiseAssert(mLowerBoundX < mUpperBoundX, (mLowerBoundX, mUpperBoundX));
 	NoiseAssert(mLowerBoundY < mUpperBoundY, (mLowerBoundY, mUpperBoundY));
 
-	PipelinePtr2D pipeline(System::createOptimalPipeline2D());
-	ElementID id = mModule->addToPipe(*pipeline);
-	PipelineElement2D *element = pipeline->getElement(id);
+	bool destroyPipe = false;
+	if (!pipeline)
+	{
+		NoiseAssert(mModule != NULL, mModule);
+		pipeline = System::createOptimalPipeline2D();
+		ElementID id = mModule->addToPipeline(pipeline);
+		element = pipeline->getElement(id);
+		destroyPipe = true;
+	}
 
 	Real xExtent = (mUpperBoundX - mLowerBoundX);
 	Real yExtent = (mUpperBoundY - mLowerBoundY);
@@ -135,7 +145,7 @@ void PlaneBuilder2D::build ()
 	{
 		for (int y=0;y<mHeight;++y)
 		{
-			pipeline->addJob (new LineJob2D(pipeline.get(), element, mLowerBoundX, yp, mWidth, xDelta, mDest+(y*mWidth)));
+			pipeline->addJob (new LineJob2D(pipeline, element, mLowerBoundX, yp, mWidth, xDelta, mDest+(y*mWidth)));
 			yp += yDelta;
 		}
 	}
@@ -144,11 +154,17 @@ void PlaneBuilder2D::build ()
 		for (int y=0;y<mHeight;++y)
 		{
 			Real yBlend = Real(1) - ((yp-mLowerBoundY) / yExtent);
-			pipeline->addJob (new SeamlessPlaneLineJob2D(pipeline.get(), element, mLowerBoundX, yp, mWidth, xDelta, xExtent, yExtent, yBlend, mDest+(y*mWidth)));
+			pipeline->addJob (new SeamlessPlaneLineJob2D(pipeline, element, mLowerBoundX, yp, mWidth, xDelta, xExtent, yExtent, yBlend, mDest+(y*mWidth)));
 			yp += yDelta;
 		}
 	}
 	pipeline->executeJobs ();
+
+	if (destroyPipe)
+	{
+		delete pipeline;
+		pipeline = 0;
+	}
 }
 
 void PlaneBuilder2D::setBounds (Real lowerBoundX, Real lowerBoundY, Real upperBoundX, Real upperBoundY)
