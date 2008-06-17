@@ -23,6 +23,7 @@
 #ifndef THREADPP_STDHEADERS_H
 #define THREADPP_STDHEADERS_H
 
+#include <cassert>
 #include <vector>
 #include <limits>
 
