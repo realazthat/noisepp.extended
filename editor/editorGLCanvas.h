@@ -15,23 +15,37 @@
 // along with the Noise++ Editor.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef EDITORCANVAS_H
-#define EDITORCANVAS_H
+#ifndef EDITORGLCANVAS_H
+#define EDITORGLCANVAS_H
 
 #include <wx/wx.h>
-#include <wx/window.h>
+#include <wx/glcanvas.h>
 
-class editorCanvas : public wxScrolledWindow
+#include "editorNode.h"
+
+class editorGLCanvas : public wxGLCanvas
 {
 	public:
-		editorCanvas(wxWindow *parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxHSCROLL | wxVSCROLL | wxFULL_REPAINT_ON_RESIZE);
-		virtual ~editorCanvas();
+		editorGLCanvas(wxFrame *frame, wxWindow *parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+		virtual ~editorGLCanvas();
 		void setModule (const wxString &module = wxEmptyString);
 	protected:
 	private:
+		wxFrame *mFrame;
 		wxString mModule;
 		void OnPaint(wxPaintEvent& event);
+		void OnSize(wxSizeEvent& event);
+		void OnMouseWheel(wxMouseEvent& event);
+		void OnMouseMove(wxMouseEvent& event);
+		void OnMouseClick(wxMouseEvent& event);
 		void drawModule(wxPaintDC &dc, int center_x, int center_y, wxCoord w, wxCoord h, const wxString &name, wxBitmap *bitmap);
+		bool mInit;
+
+		void init ();
+
+		double mScale;
+		double mPosX, mPosY;
+		long mDownX, mDownY;
 };
 
-#endif // EDITORCANVAS_H
+#endif // editorGLCanvas_H

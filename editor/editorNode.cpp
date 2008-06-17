@@ -25,7 +25,7 @@ const int nodeMinRes = 32;
 const int nodeDetailLevels = 5;
 
 editorNode::editorNode(int level, int x, int y, noisepp::Module &module) :
-	mLevel(level), mX(x), mY(y), mPipeline(0), mElement(0), mThread(0), mCurLevel(-1), mMaxLevel(-1), mData(0)
+	mLevel(level), mX(x), mY(y), mPipeline(0), mElement(0), mThread(0), mCurLevel(-1), mMaxLevel(-1), mData(0), mDone(false)
 {
 	mPipeline = noisepp::utils::System::createOptimalPipeline2D ();
 	noisepp::ElementID id = module.addToPipeline (mPipeline);
@@ -74,6 +74,35 @@ void editorNode::threadFunc ()
 		lk.unlock ();
 		res *= 2;
 	}
+
+	/*noisepp::utils::Image img;
+	img.create (res, res);
+
+	noisepp::utils::GradientRenderer gradients;
+	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.2f));
+	gradients.addGradient (-0.8, noisepp::utils::ColourValue(0.0f, 0.0f, 0.6f));
+	gradients.addGradient ( 0.0, noisepp::utils::ColourValue(1.0f, 0.0f, 0.0f));
+	gradients.addGradient ( 0.6, noisepp::utils::ColourValue(1.0f, 1.0f, 0.0f));
+	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));
+	gradients.renderImage (img, mData);
+
+	glGenTextures (1, &mTexture);
+	glBindTexture(GL_TEXTURE_2D, mTexture);
+	if (GLEW_SGIS_generate_mipmap)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	}
+	else
+	{
+		gluBuild2DMipmaps(GL_TEXTURE_2D, 3, w, h, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	}
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);*/
+
+	mDone = true;
 }
 
 editorNode::~editorNode()

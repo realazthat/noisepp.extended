@@ -18,17 +18,37 @@
 #ifndef EDITORNODE_H
 #define EDITORNODE_H
 
+#include <GL/SmartPointers.h>
+
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 
 #include "Noise.h"
 #include "NoiseUtils.h"
 
+struct NodeCoords
+{
+	int x, y;
+	NodeCoords (int x=0, int y=0) : x(x), y(y) {}
+	bool operator< (const NodeCoords &c)
+	{
+		if (x != c.x)
+			return x < c.x;
+		else
+			return y < c.y;
+	}
+};
+
 class editorNode
 {
 	public:
 		editorNode(int level, int x, int y, noisepp::Module &module);
 		virtual ~editorNode();
+
+		bool isDone () const
+		{
+			return mDone;
+		}
 	protected:
 	private:
 		static void *threadEntry (void *node);
@@ -46,6 +66,9 @@ class editorNode
 		int mCurLevel;
 		int mMaxLevel;
 		double *mData;
+
+		bool mDone;
+		GL::TexturePtr mTexture;
 };
 
 #endif // EDITORNODE_H

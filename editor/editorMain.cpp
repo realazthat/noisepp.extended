@@ -64,7 +64,8 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	wxSplitterWindow *spl1 = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_BORDER | wxCLIP_CHILDREN);
 	spl1->SetMinimumPaneSize (250);
 	wxPanel *leftWin = new wxPanel(spl1, wxID_ANY);
-	mCanvas = new editorCanvas(this, spl1, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	mCanvas = new editorCanvas(spl1, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	//mCanvas = new editorGLCanvas(this, spl1, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	wxBookCtrl *leftBook = new wxBookCtrl(leftWin, wxID_ANY);
 	wxPanel *modulePage = new wxPanel(leftBook, wxID_ANY);
@@ -383,7 +384,7 @@ void editorFrame::OnModuleGen(wxCommandEvent& event)
 			{
 				module->getSourceModule(i)->generate (0, 0, 1, 1, 200, 200);
 			}
-			module->generate (0, 0, 1, 1, 1024, 1024);
+			module->generate (0, 0, 1, 1, 200, 200);
 			mCanvas->Refresh ();
 		}
 	}
@@ -444,7 +445,7 @@ void editorFrame::OnModuleProperyGridChange(wxPropertyGridEvent& event)
 		mGenerateBtn->Enable (valid);
 		if (valid)
 		{
-			module->generate (0, 0, 1, 1, 1024, 1024);
+			module->generate (0, 0, 1, 1, 200, 200);
 			mCanvas->Refresh ();
 		}
 	}

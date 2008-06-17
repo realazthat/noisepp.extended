@@ -52,6 +52,7 @@
 			<Add option="`wx-config --libs gl,core,base,adv`" />
 			<Add library="noisepp" />
 		</Linker>
+		<Unit filename="GL/SmartPointers.h" />
 		<Unit filename="GL/glew.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -62,6 +63,8 @@
 		<Unit filename="editorApp.h" />
 		<Unit filename="editorCanvas.cpp" />
 		<Unit filename="editorCanvas.h" />
+		<Unit filename="editorGLCanvas.cpp" />
+		<Unit filename="editorGLCanvas.h" />
 		<Unit filename="editorMain.cpp" />
 		<Unit filename="editorMain.h" />
 		<Unit filename="editorModule.cpp" />

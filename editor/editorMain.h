@@ -32,6 +32,7 @@
 #include "editorApp.h"
 #include "editorModuleManager.h"
 #include "editorCanvas.h"
+#include "editorGLCanvas.h"
 
 class editorFrame: public wxFrame
 {
@@ -44,6 +45,7 @@ class editorFrame: public wxFrame
 		wxMenuItem *mSaveMenuItem;
 		wxMenuItem *mExportMenuItem;
 		editorCanvas *mCanvas;
+		//editorGLCanvas *mCanvas;
 		wxButton *mAddBtn;
 		wxButton *mRenameBtn;
 		wxButton *mRemoveBtn;

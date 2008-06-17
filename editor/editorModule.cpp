@@ -126,7 +126,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 
 	mImage = new wxImage (w, h, pixels);
 	mBitmap = new wxBitmap (*mImage);
-	glGenTextures (1, &mTexture);
+	/*glGenTextures (1, &mTexture);
 	glBindTexture(GL_TEXTURE_2D, mTexture);
 	if (GLEW_SGIS_generate_mipmap)
 	{
@@ -140,7 +140,7 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);*/
 }
 
 void EditorModule::appendQualityProperty (wxPropertyGrid *pg, int quality)
