@@ -7,7 +7,7 @@
 #include <windows.h>
 #endif
 
-#define COMPARE_WITH_LIBNOISE
+//#define COMPARE_WITH_LIBNOISE
 #define DO_CPU_WARMUP
 
 #ifdef COMPARE_WITH_LIBNOISE
