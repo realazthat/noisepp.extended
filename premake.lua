@@ -1,4 +1,5 @@
 project.name = "noisepp"
+project.configs = { "Release", "Debug" }
 if options["target"] then
 	project.path = "build/"..options["target"]
 end
