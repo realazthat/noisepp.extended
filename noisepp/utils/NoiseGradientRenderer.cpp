@@ -67,7 +67,7 @@ void GradientRenderer::renderImage (Image &image, const Real *data)
 			{
 				const Gradient &left = mGradients[n-1];
 				const Gradient &right = mGradients[n];
-				const float a = (value - left.value) / (right.value - left.value);
+				const float a = (float)((value - left.value) / (right.value - left.value));
 				color = left.color * (1.0f-a) + right.color * a;
 			}
 		}

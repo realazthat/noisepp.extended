@@ -186,7 +186,7 @@ namespace noisepp
 			{
 				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				int count = mControlPoints.size ();
+				int count = (int)mControlPoints.size ();
 				NoiseAssert (count >= 2, count);
 				Real *points = new Real[count];
 				for (int i=0;i<count;++i)
@@ -200,7 +200,7 @@ namespace noisepp
 			{
 				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				int count = mControlPoints.size ();
+				int count = (int)mControlPoints.size ();
 				NoiseAssert (count >= 2, count);
 				Real *points = new Real[count];
 				for (int i=0;i<count;++i)
@@ -214,7 +214,7 @@ namespace noisepp
 			{
 				NoiseModuleCheckSourceModules;
 				ElementID first = getSourceModule(0)->addToPipeline(pipe);
-				int count = mControlPoints.size ();
+				int count = (int)mControlPoints.size ();
 				NoiseAssert (count >= 2, count);
 				Real *points = new Real[count];
 				for (int i=0;i<count;++i)

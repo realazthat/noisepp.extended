@@ -86,7 +86,7 @@ void ConstantModule::read (utils::InStream &s)
 
 void CurveModule::write (utils::OutStream &s) const
 {
-	int count = mControlPoints.size ();
+	int count = (int)mControlPoints.size ();
 	s.writeInt (count);
 	for (int i=0;i<count;++i)
 	{
@@ -186,7 +186,7 @@ void SelectModule::read (utils::InStream &s)
 void TerraceModule::write (utils::OutStream &s) const
 {
 	s.writeInt (mInvert);
-	int count = mControlPoints.size ();
+	int count = (int)mControlPoints.size ();
 	s.writeInt (count);
 	for (int i=0;i<count;++i)
 	{

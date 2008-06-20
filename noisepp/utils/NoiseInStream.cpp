@@ -70,7 +70,7 @@ void FileInStream::close ()
 
 void FileInStream::read (void *buffer, size_t len)
 {
-	mFile.read ((char*)buffer, len);
+	mFile.read ((char*)buffer, (std::streamsize)len);
 	if (mFile.bad())
 		throw std::runtime_error ("Unexpected EOF");
 }
@@ -82,7 +82,7 @@ size_t FileInStream::tell ()
 
 void FileInStream::seek (size_t pos)
 {
-	mFile.seekg (pos);
+	mFile.seekg ((std::streamoff)pos);
 }
 
 MemoryInStream::MemoryInStream () : mBuffer(NULL), mPosition(0), mSize(0)

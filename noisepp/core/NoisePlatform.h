@@ -40,6 +40,8 @@
 
 #if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
 #    define NOISEPP_INLINE __attribute__((always_inline)) inline
+#elif defined(_MSC_VER) && (_MSC_VER >= 1200)
+#    define NOISEPP_INLINE __forceinline
 #else
 #    define NOISEPP_INLINE inline
 #endif
