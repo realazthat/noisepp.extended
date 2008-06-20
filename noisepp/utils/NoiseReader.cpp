@@ -42,7 +42,7 @@ Reader::Reader (InStream &stream) : mStream(stream), mModuleCount(0)
 	unsigned char ver;
 	stream.read (ver);
 	if (ver != NOISE_FILE_VERSION)
-		throw std::runtime_error ("Input file has wrong version");
+		throw ReaderException ("Input file has wrong version");
 	stream.read (mModuleCount);
 	for (unsigned short i=0;i<mModuleCount;++i)
 	{
@@ -132,7 +132,7 @@ void Reader::readModule ()
 			break;
 	}
 	if (!module)
-		throw std::runtime_error ("Invalid module type ID");
+		throw ReaderException ("Invalid module type ID");
 	assert (module->getType() == typeID);
 	module->read (mStream);
 	mModules.push_back (module);
@@ -147,7 +147,7 @@ void Reader::readModuleRel (Module *module)
 		mStream.read (id);
 		Module *child = getModule(id);
 		if (!child)
-			throw std::runtime_error ("Wrong child attribute");
+			throw ReaderException ("Wrong child attribute");
 		module->setSourceModule(i, child);
 	}
 }

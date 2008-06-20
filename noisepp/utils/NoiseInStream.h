@@ -41,15 +41,22 @@ namespace noisepp
 namespace utils
 {
 
+/// Basic input stream class.
 class InStream
 {
 	public:
+		/// Constructor.
 		InStream();
+		/// Read len bytes to buffer.
 		virtual void read (void *buffer, size_t len) = 0;
+		/// Returns the current position.
 		virtual size_t tell () = 0;
+		/// Jumps to the specified position.
 		virtual void seek (size_t pos) = 0;
+		/// Destructor.
 		virtual ~InStream();
 
+		/// Read from stream and flip endian if required.
 		template <class T>
 		void read (T &t)
 		{
@@ -57,13 +64,15 @@ class InStream
 			EndianUtils::flipEndian (&t, sizeof(T));
 		}
 
+		/// Read an integer from stream.
 		int readInt ()
 		{
 			int i;
 			read (i);
 			return i;
 		}
-
+		
+		/// Read a double from stream.
 		double readDouble ()
 		{
 			double d;
@@ -74,39 +83,61 @@ class InStream
 	private:
 };
 
+/// Stream for reading from files.
 class FileInStream : public InStream
 {
 	private:
 		std::ifstream mFile;
 	public:
+		/// Constructor.
 		FileInStream();
+		/// Constructor.
+		/// @param filename The name of the input file.
 		FileInStream(const std::string &filename);
+		/// Open the specified file for writing.
+		/// Returns true on success, and false otherwise.
 		bool open (const std::string &filename);
+		/// Check if a file is open.
+		/// Returns true if the stream is currently associated with a file, and false otherwise.
 		bool isOpen () const;
+		/// Close the current file.
 		void close ();
+		/// @copydoc noisepp::utils::InStream::read(void *, size_t)
 		virtual void read (void *buffer, size_t len);
+		/// @copydoc noisepp::utils::InStream::tell()
 		virtual size_t tell ();
+		/// @copydoc noisepp::utils::InStream::seek()
 		virtual void seek (size_t pos);
 };
 
+/// Stream for reading from memory.
 class MemoryInStream : public InStream
 {
 	private:
 		char *mBuffer;
 		size_t mPosition, mSize;
 	public:
+		/// Constructor.
 		MemoryInStream ();
+		/// Open the specified buffer for reading.
+		/// @param buffer The buffer.
+		/// @param size The size of the buffer.
 		void open (char *buffer, size_t size);
+		/// Returns a pointer to the buffer.
 		char *getBuffer ()
 		{
 			return mBuffer;
 		}
+		/// Returns the buffer size.
 		size_t getBufferSize () const
 		{
 			return mSize;
 		}
+		/// @copydoc noisepp::utils::InStream::read(void *, size_t)
 		virtual void read (void *buffer, size_t len);
+		/// @copydoc noisepp::utils::InStream::tell()
 		virtual size_t tell ();
+		/// @copydoc noisepp::utils::InStream::seek()
 		virtual void seek (size_t pos);
 };
 

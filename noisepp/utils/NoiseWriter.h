@@ -40,6 +40,7 @@ namespace noisepp
 namespace utils
 {
 
+/// Class for writing a pipeline (set of modules) to a stream or file.
 class Writer
 {
 	private:
@@ -55,13 +56,18 @@ class Writer
 		void writeModule (const Module *module);
 		void writeModuleRel (const Module *module);
 	public:
+		/// Constructor.
+		/// @param stream A reference to the stream the output will be written to.
 		Writer (OutStream &stream);
+		/// Adds a module and returns its ID
 		unsigned short addModule (const Module *module);
+		/// Adds a module and returns its ID
 		unsigned short addModule (const Module &module)
 		{ return addModule (&module); }
-
+		/// Returns the ID of the specified module (the module must be added before)
 		unsigned short getModuleID (const Module *module);
 
+		/// Writes the final pipeline to the stream specified in the constructor.
 		void writePipeline ();
 };
 

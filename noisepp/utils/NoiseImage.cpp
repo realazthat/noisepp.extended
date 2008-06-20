@@ -40,8 +40,8 @@ Image::Image() : mData(0), mWidth(0), mHeight(0)
 
 void Image::create (int width, int height)
 {
-	assert (width > 0);
-	assert (height > 0);
+	NoiseAssert (width > 0, width);
+	NoiseAssert (height > 0, height);
 	mWidth = width;
 	mHeight = height;
 
@@ -61,9 +61,9 @@ void Image::clear ()
 
 void Image::saveBMP (const char *filename)
 {
-	assert (mData);
-	assert (mWidth > 0);
-	assert (mHeight > 0);
+	NoiseAssert (mData != NULL, mData);
+	NoiseAssert (mWidth > 0, mWidth);
+	NoiseAssert (mHeight > 0, mHeight);
 	FileOutStream stream(filename);
 	// BMP Header
 	stream.write ("BM", 2);

@@ -40,13 +40,15 @@ Writer::Writer (OutStream &stream) : mStream(stream), mModuleCount(0)
 
 unsigned short Writer::getModuleID (const Module *module)
 {
-	assert (module);
-	return mModules[module];
+	NoiseAssert (module != NULL, module);
+	ModuleMap::iterator it = mModules.find(module);
+	NoiseAssert (it != mModules.end(), module);
+	return it->second;
 }
 
 unsigned short Writer::addModule (const Module *module)
 {
-	assert (module);
+	NoiseAssert (module != NULL, module);
 	ModuleMap::iterator it = mModules.find (module);
 	if (it == mModules.end())
 	{
@@ -69,7 +71,7 @@ unsigned short Writer::addModule (const Module *module)
 
 void Writer::writeModule (const Module *module)
 {
-	assert (module);
+	NoiseAssert (module != NULL, module);
 	unsigned short typeID = module->getType();
 	mStream.write (typeID);
 	module->write (mStream);
@@ -77,7 +79,7 @@ void Writer::writeModule (const Module *module)
 
 void Writer::writeModuleRel (const Module *module)
 {
-	assert (module);
+	NoiseAssert (module != NULL, module);
 	for (size_t i=0;i<module->getSourceModuleCount();++i)
 	{
 		const Module *child = module->getSourceModule(i);
@@ -88,8 +90,9 @@ void Writer::writeModuleRel (const Module *module)
 
 void Writer::writePipeline ()
 {
-	assert (!mModuleVec.empty());
-	assert (mModuleCount == mModules.size() && mModuleCount == mModuleVec.size());
+	NoiseAssert (!mModuleVec.empty(), mModuleVec);
+	NoiseAssert (mModuleCount == mModules.size(), mModuleCount);
+	NoiseAssert (mModuleCount == mModuleVec.size(), mModuleCount);
 
 	unsigned char ver = NOISE_FILE_VERSION;
 	mStream.write (ver);

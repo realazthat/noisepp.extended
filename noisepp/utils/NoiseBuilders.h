@@ -38,24 +38,44 @@ namespace noisepp
 namespace utils
 {
 
+/// Base builder class.
+/// A builder is a helper class that makes it easy to generate geometrical objects like a plane.
+/// You just have to specify the output size, destination and geometric specific options(like the geom size).
+/// Now you can set the source module and the build function will create the pipeline and element for you using
+/// the optimal system settings or create them manually and pass them to the build function.
 class Builder
 {
 	protected:
+		/// Destination.
 		Real *mDest;
-		int mWidth, mHeight;
+		/// Output width.
+		int mWidth;
+		/// Output height.
+		int mHeight;
+		/// Source module.
 		Module *mModule;
-
+		
+		/// Check the parameters.
 		void checkParameters ();
 
 	public:
+		/// Constructor.
 		Builder ();
+		/// Sets the output size.
+		/// @param width The output width.
+		/// @param height The output height.
 		void setSize (int width, int height);
+		/// Sets the output destination.
 		void setDestination (Real *dest);
+		/// Sets the source module.
 		void setModule (Module *module);
+		/// Build.
 		virtual void build () = 0;
+		/// Destructor.
 		virtual ~Builder ();
 };
 
+/// Builder class for a 2D plane
 class PlaneBuilder2D : public Builder
 {
 	private:
@@ -64,16 +84,30 @@ class PlaneBuilder2D : public Builder
 		bool mSeamless;
 
 	public:
+		/// Constructor.
 		PlaneBuilder2D ();
+		/// Build using the specified pipeline and element.
 		void build (Pipeline2D *pipeline, PipelineElement2D *element);
+		/// @copydoc noisepp::utils::Builder::build()
 		virtual void build ();
 
+		/// Sets the plane bounds.
+		/// @param lowerBoundX The x-coordinate of the lower bound.
+		/// @param lowerBoundY The y-coordinate of the lower bound.
+		/// @param upperBoundX The x-coordinate of the upper bound.
+		/// @param upperBoundY The y-coordinate of the upper bound.
 		void setBounds (Real lowerBoundX, Real lowerBoundY, Real upperBoundX, Real upperBoundY);
+		/// Returns the x-coordinate of the lower bound.
 		Real getLowerBoundX () const;
+		/// Returns the y-coordinate of the lower bound.
 		Real getLowerBoundY () const;
+		/// Returns the x-coordinate of the upper bound.
 		Real getUpperBoundX () const;
+		/// Returns the y-coordinate of the upper bound.
 		Real getUpperBoundY () const;
+		/// Enables or disables building a seamless plane.
 		void setSeamless (bool v=true);
+		/// Returns if building a seamless plane is enabled.
 		bool isSeamless () const;
 };
 

@@ -34,6 +34,7 @@ class Exception : public std::exception
 class NotImplementedException : public Exception
 {
 	public:
+		/// Constructor.
 		NotImplementedException(const std::string &func) : Exception("function not implemented: '" + func + "'")
 		{}
 };
@@ -42,6 +43,7 @@ class NotImplementedException : public Exception
 class NoModuleException : public Exception
 {
 	public:
+		/// Constructor.
 		NoModuleException(const std::string &func) : Exception("source module is not set in '" + func + "'")
 		{}
 };
@@ -50,6 +52,7 @@ class NoModuleException : public Exception
 class ParamInvalidException : public Exception
 {
 	public:
+		/// Constructor.
 		ParamInvalidException(const std::string &paramName, const std::string &desc, const std::string &func) : Exception("invalid parameter for '" + paramName + "' in '" + ( desc.empty() ? func + "'" : func + "': " + desc ))
 		{}
 };
@@ -58,7 +61,17 @@ class ParamInvalidException : public Exception
 class OutOfRangeException : public Exception
 {
 	public:
+		/// Constructor.
 		OutOfRangeException(const std::string &paramName, const std::string &func) : Exception("parameter '" + paramName + "' is out of range in '" + func + "'")
+		{}
+};
+
+/// Thrown in case of an error while reading a pipeline from a stream.
+class ReaderException : public Exception
+{
+	public:
+		/// Constructor.
+		ReaderException(const std::string &desc) : Exception(desc)
 		{}
 };
 

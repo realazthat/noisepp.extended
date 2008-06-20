@@ -36,12 +36,17 @@ namespace noisepp
 namespace utils
 {
 
+/// Class providing some system specific functions.
 class System
 {
 	public:
+		/// Returns the number of CPU cores avaible on the running system.
 		static int getNumberOfCPUs();
+		/// Creates an optimal 1D pipeline using as many threads as there are CPU cores avaible.
 		static Pipeline1D *createOptimalPipeline1D ();
+		/// Creates an optimal 2D pipeline using as many threads as there are CPU cores avaible.
 		static Pipeline2D *createOptimalPipeline2D ();
+		/// Creates an optimal 3D pipeline using as many threads as there are CPU cores avaible.
 		static Pipeline3D *createOptimalPipeline3D ();
 	protected:
 	private:

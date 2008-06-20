@@ -34,17 +34,27 @@ namespace noisepp
 namespace utils
 {
 
+/// Class representing a colour value.
 class ColourValue
 {
 	public:
+		/// Constructor.
 		explicit ColourValue(float r=0.0f, float g=0.0f, float b=0.0f);
-
+		
+		/// Writes the RGB value to a buffer.
 		void writeRGB (unsigned char *& buffer);
+		
+		/// Red value.
+		float r;
+		/// Green value.
+		float g;
+		/// Blue value.
+		float b;
 
-		float r, g, b;
-
+		/// Converts an normalized floating point(range 0.0 to 1.0) colour value to an unsigned byte(range 0 to 255).
 		static unsigned char toUChar (float f);
 
+		/// Adds two colour values together.
 		inline ColourValue operator+ (const ColourValue& c) const
 		{
 			ColourValue result;
@@ -53,6 +63,7 @@ class ColourValue
 			result.b = b + c.b;
 			return result;
 		}
+		/// Substract operator.
 		inline ColourValue operator- (const ColourValue& c) const
 		{
 			ColourValue result;
@@ -61,6 +72,7 @@ class ColourValue
 			result.b = b - c.b;
 			return result;
 		}
+		/// Mutliplication operator.
 		inline ColourValue operator* (const ColourValue& c) const
 		{
 			ColourValue result;
@@ -69,6 +81,7 @@ class ColourValue
 			result.b = b * c.b;
 			return result;
 		}
+		/// Division operator.
 		inline ColourValue operator/ (const ColourValue& c) const
 		{
 			ColourValue result;
@@ -77,6 +90,7 @@ class ColourValue
 			result.b = b / c.b;
 			return result;
 		}
+		/// Mutliplication operator.
 		inline ColourValue operator* (float f) const
 		{
 			ColourValue result;
@@ -85,6 +99,7 @@ class ColourValue
 			result.b = b * f;
 			return result;
 		}
+		/// Division operator.
 		inline ColourValue operator/ (float f) const
 		{
 			ColourValue result;
@@ -93,6 +108,7 @@ class ColourValue
 			result.b = b / f;
 			return result;
 		}
+		/// Addition operator.
 		inline ColourValue &operator += (const ColourValue& c)
 		{
 			r += c.r;
@@ -100,6 +116,7 @@ class ColourValue
 			b += c.b;
 			return *this;
 		}
+		/// Substract operator.
 		inline ColourValue &operator -= (const ColourValue& c)
 		{
 			r -= c.r;
@@ -107,6 +124,7 @@ class ColourValue
 			b -= c.b;
 			return *this;
 		}
+		/// Multiplication operator.
 		inline ColourValue &operator *= (const ColourValue& c)
 		{
 			r *= c.r;
@@ -114,6 +132,7 @@ class ColourValue
 			b *= c.b;
 			return *this;
 		}
+		/// Division operator.
 		inline ColourValue &operator /= (const ColourValue& c)
 		{
 			r /= c.r;
@@ -121,6 +140,7 @@ class ColourValue
 			b /= c.b;
 			return *this;
 		}
+		/// Multiplication operator.
 		inline ColourValue &operator *= (float f)
 		{
 			r *= f;
@@ -128,6 +148,7 @@ class ColourValue
 			b *= f;
 			return *this;
 		}
+		/// Division operator.
 		inline ColourValue &operator /= (float f)
 		{
 			r /= f;

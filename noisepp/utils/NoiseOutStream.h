@@ -41,25 +41,34 @@ namespace noisepp
 namespace utils
 {
 
+/// Basic output stream class.
 class OutStream
 {
 	public:
+		/// Constructor.
 		OutStream();
+		/// Write len bytes from buffer.
 		virtual void write (const void *buffer, size_t len) = 0;
+		/// Returns the current position.
 		virtual size_t tell () = 0;
+		/// Jumps to the specified position.
 		virtual void seek (size_t pos) = 0;
+		/// Destructor.
 		virtual ~OutStream();
 
+		/// Write to stream and flip endian if required.
 		template <class T>
 		void write (T t)
 		{
 			EndianUtils::flipEndian (&t, sizeof(T));
 			write (&t, sizeof(T));
 		}
+		/// Write an integer.
 		void writeInt (int t)
 		{
 			write (t);
 		}
+		/// Write a double.
 		void writeDouble (double t)
 		{
 			write (t);
@@ -68,52 +77,75 @@ class OutStream
 	private:
 };
 
+/// Stream for writing to files.
 class FileOutStream : public OutStream
 {
 	private:
 		std::ofstream mFile;
 	public:
+		/// Constructor.
 		FileOutStream();
+		/// Constructor.
+		/// @param filename The name of the output file.
 		FileOutStream(const std::string &filename);
+		/// Open the specified file for writing.
+		/// Returns true on success.
 		bool open (const std::string &filename);
+		/// Check if a file is open.
+		/// Returns true if the stream is currently associated with a file, and false otherwise.
 		bool isOpen () const;
+		/// Close the current file.
 		void close ();
+		/// @copydoc noisepp::utils::OutStream::write(T)
 		template <class T>
 		void write (T t)
 		{
 			EndianUtils::flipEndian (&t, sizeof(T));
 			write (&t, sizeof(T));
 		}
+		/// @copydoc noisepp::utils::OutStream::write(const void *, size_t)
 		virtual void write (const void *buffer, size_t len);
+		/// @copydoc noisepp::utils::OutStream::tell()
 		virtual size_t tell ();
+		/// @copydoc noisepp::utils::OutStream::seek()
 		virtual void seek (size_t pos);
 };
 
+/// Stream for writing to memory.
 class MemoryOutStream : public OutStream
 {
 	private:
 		char *mBuffer;
 		size_t mPosition, mSize, mRealSize;
 	public:
+		/// Constructor.
 		MemoryOutStream ();
+		/// Clears the buffer.
 		void clear ();
+		/// Returns a pointer to the buffer.
 		char *getBuffer ()
 		{
 			return mBuffer;
 		}
+		/// Returns the buffer size.
 		size_t getBufferSize () const
 		{
 			return mSize;
 		}
+		/// @copydoc noisepp::utils::OutStream::write(const void *, size_t)
 		template <class T>
 		void write (T t)
 		{
 			EndianUtils::flipEndian (&t, sizeof(T));
 			write (&t, sizeof(T));
 		}
+		/// Destructor.
 		virtual ~MemoryOutStream ();
+		/// @copydoc noisepp::utils::OutStream::write(const void *, size_t)
 		virtual void write (const void *buffer, size_t len);
+		/// @copydoc noisepp::utils::OutStream::tell()
 		virtual size_t tell ();
+		/// @copydoc noisepp::utils::OutStream::seek()
 		virtual void seek (size_t pos);
 };
 

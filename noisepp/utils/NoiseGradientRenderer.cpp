@@ -48,7 +48,7 @@ void GradientRenderer::addGradient (Real value, const ColourValue &color)
 
 void GradientRenderer::renderImage (Image &image, const Real *data)
 {
-	assert (mGradients.size() >= 2);
+	NoiseAssert (mGradients.size() >= 2, mGradients);
 	unsigned char *buffer = image.getPixelData ();
 	int pixels = image.getWidth()*image.getHeight();
 	for (int i=0;i<pixels;++i)

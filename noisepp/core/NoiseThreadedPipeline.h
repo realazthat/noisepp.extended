@@ -93,7 +93,7 @@ namespace noisepp
 
 		public:
 			/// Constructor.
-			/// @param n The number of threads
+			/// @param numberOfThreads The number of threads
 			ThreadedPipeline (size_t numberOfThreads) : mThreadsDone(false), mWorkingThreads(0)
 			{
 				NoiseAssert (numberOfThreads > 0, numberOfThreads);

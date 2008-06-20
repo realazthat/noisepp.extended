@@ -38,12 +38,19 @@ namespace noisepp
 namespace utils
 {
 
+/// Gradient color renderer.
 class GradientRenderer
 {
 	public:
+		/// Constructor.
 		GradientRenderer();
+		/// Adds a gradient point.
+		/// @param value Position of the gradient point.
+		/// @param color Color value of the gradient point.
 		void addGradient (Real value, const ColourValue &color);
+		/// Renders the data to an image.
 		void renderImage (Image &image, const Real *data);
+		/// Destructor.
 		~GradientRenderer();
 	protected:
 	private:
