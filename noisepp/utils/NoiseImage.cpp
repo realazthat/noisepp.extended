@@ -59,12 +59,14 @@ void Image::clear ()
 	mHeight = 0;
 }
 
-void Image::saveBMP (const char *filename)
+bool Image::saveBMP (const char *filename)
 {
 	NoiseAssert (mData != NULL, mData);
 	NoiseAssert (mWidth > 0, mWidth);
 	NoiseAssert (mHeight > 0, mHeight);
 	FileOutStream stream(filename);
+	if (!stream.isOpen())
+		return false;
 	// BMP Header
 	stream.write ("BM", 2);
 	unsigned size = 14 + 40 + mWidth * mHeight * 3;
@@ -113,6 +115,7 @@ void Image::saveBMP (const char *filename)
 	}
 
 	stream.close ();
+	return true;
 }
 
 Image::~Image()

@@ -36,7 +36,7 @@ namespace noisepp
 namespace utils
 {
 
-Builder::Builder () : mDest(0), mWidth(0), mHeight(0), mModule(0)
+Builder::Builder () : mDest(0), mWidth(0), mHeight(0), mModule(0), mCallback(0)
 {
 }
 
@@ -63,9 +63,38 @@ void Builder::checkParameters ()
 	NoiseAssert(mHeight > 0, mHeight);
 }
 
+void Builder::setCallback (BuilderCallback *callback)
+{
+	if (mCallback)
+		delete mCallback;
+	mCallback = callback;
+}
+
 Builder::~Builder ()
 {
+	if (mCallback)
+	{
+		delete mCallback;
+		mCallback = 0;
+	}
 }
+
+class ProgressLineJob2D : public LineJob2D
+{
+	private:
+		BuilderCallback *callback;
+
+	public:
+		ProgressLineJob2D (Pipeline2D *pipe, PipelineElement2D *element, Real x, Real y, int n, Real xDelta, Real *buffer, BuilderCallback *callback) : LineJob2D(pipe, element, x, y, n, xDelta, buffer), callback(callback)
+		{}
+		void finish ()
+		{
+			if (callback)
+			{
+				callback->callback ();
+			}
+		}
+};
 
 class SeamlessPlaneLineJob2D : public PipelineJob
 {
@@ -78,10 +107,11 @@ class SeamlessPlaneLineJob2D : public PipelineJob
 		Real xExtent, yExtent;
 		Real yBlend;
 		Real *buffer;
+		BuilderCallback *callback;
 
 	public:
-		SeamlessPlaneLineJob2D (Pipeline2D *pipe, PipelineElement2D *element, Real x, Real y, int n, Real xDelta, Real xExtent, Real yExtent, Real yBlend, Real *buffer) :
-			mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), xExtent(xExtent), yExtent(yExtent), yBlend(yBlend), buffer(buffer)
+		SeamlessPlaneLineJob2D (Pipeline2D *pipe, PipelineElement2D *element, Real x, Real y, int n, Real xDelta, Real xExtent, Real yExtent, Real yBlend, Real *buffer, BuilderCallback *callback) :
+			mPipe(pipe), mElement(element), x(x), y(y), n(n), xDelta(xDelta), xExtent(xExtent), yExtent(yExtent), yBlend(yBlend), buffer(buffer), callback(callback)
 		{
 		}
 		void execute (Cache *cache)
@@ -107,6 +137,13 @@ class SeamlessPlaneLineJob2D : public PipelineJob
 
 				// move on
 				x += xDelta;
+			}
+		}
+		void finish ()
+		{
+			if (callback)
+			{
+				callback->callback ();
 			}
 		}
 };
@@ -145,7 +182,7 @@ void PlaneBuilder2D::build (Pipeline2D *pipeline, PipelineElement2D *element)
 	{
 		for (int y=0;y<mHeight;++y)
 		{
-			pipeline->addJob (new LineJob2D(pipeline, element, mLowerBoundX, yp, mWidth, xDelta, mDest+(y*mWidth)));
+			pipeline->addJob (new ProgressLineJob2D(pipeline, element, mLowerBoundX, yp, mWidth, xDelta, mDest+(y*mWidth), mCallback));
 			yp += yDelta;
 		}
 	}
@@ -154,7 +191,7 @@ void PlaneBuilder2D::build (Pipeline2D *pipeline, PipelineElement2D *element)
 		for (int y=0;y<mHeight;++y)
 		{
 			Real yBlend = Real(1) - ((yp-mLowerBoundY) / yExtent);
-			pipeline->addJob (new SeamlessPlaneLineJob2D(pipeline, element, mLowerBoundX, yp, mWidth, xDelta, xExtent, yExtent, yBlend, mDest+(y*mWidth)));
+			pipeline->addJob (new SeamlessPlaneLineJob2D(pipeline, element, mLowerBoundX, yp, mWidth, xDelta, xExtent, yExtent, yBlend, mDest+(y*mWidth), mCallback));
 			yp += yDelta;
 		}
 	}
@@ -165,6 +202,11 @@ void PlaneBuilder2D::build (Pipeline2D *pipeline, PipelineElement2D *element)
 		delete pipeline;
 		pipeline = 0;
 	}
+}
+
+int PlaneBuilder2D::getProgressMaximum () const
+{
+	return mHeight;
 }
 
 void PlaneBuilder2D::setBounds (Real lowerBoundX, Real lowerBoundY, Real upperBoundX, Real upperBoundY)

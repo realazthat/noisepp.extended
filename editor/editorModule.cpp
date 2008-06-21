@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <wx/wx.h>
+#include <wx/progdlg.h>
 #include "editorModule.h"
 #include "editorModuleManager.h"
 #include "NoiseUtils.h"
@@ -105,13 +106,13 @@ void EditorModule::generate (double x, double y, double width, double height, in
 	img.create (w, h);
 
 	noisepp::utils::GradientRenderer gradients;
-	/*gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.0f));
-	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));*/
-	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.2f));
+	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.0f));
+	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));
+	/*gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.2f));
 	gradients.addGradient (-0.8, noisepp::utils::ColourValue(0.0f, 0.0f, 0.6f));
 	gradients.addGradient ( 0.0, noisepp::utils::ColourValue(1.0f, 0.0f, 0.0f));
 	gradients.addGradient ( 0.6, noisepp::utils::ColourValue(1.0f, 1.0f, 0.0f));
-	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));
+	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));*/
 	/*gradients.addGradient (-1.0000, noisepp::utils::ColourValue (  0,   0, 128)/255.f); // deeps
 	gradients.addGradient (-0.2500, noisepp::utils::ColourValue (  0,   0, 255)/255.f); // shallow
 	gradients.addGradient ( 0.0000, noisepp::utils::ColourValue (  0, 128, 255)/255.f); // shore
@@ -238,6 +239,60 @@ bool EditorModule::exportToFile (const char *name)
 
 	f.close ();
 
+	return true;
+}
+
+class BuilderProgressDlgCallback : public noisepp::utils::BuilderCallback
+{
+	private:
+		wxProgressDialog &dlg;
+
+	public:
+		BuilderProgressDlgCallback (wxProgressDialog &dlg) : dlg(dlg)
+		{}
+		void progress (int cur)
+		{
+			dlg.Update(cur);
+		}
+};
+
+bool EditorModule::exportToBMP (const char *name, int width, int height)
+{
+	double *data = new double[width*height];
+	try
+	{
+		noisepp::utils::PlaneBuilder2D builder;
+		builder.setDestination(data);
+		builder.setModule (&getModule());
+		builder.setSize (width, height);
+		builder.setBounds(0, 0, 1.0, 1.0);
+		wxProgressDialog progressDlg(wxT("Building ..."), wxT("Please wait while building ..."), builder.getProgressMaximum());
+		progressDlg.Show (true);
+		builder.setCallback(new BuilderProgressDlgCallback(progressDlg));
+		builder.build ();
+	}
+	catch (std::exception &e)
+	{
+		std::cout << "exception: " << e.what() << std::endl;
+		delete[] data;
+		return false;
+	}
+
+	noisepp::utils::Image img;
+	img.create (width, height);
+
+	noisepp::utils::GradientRenderer gradients;
+	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.0f));
+	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));
+	gradients.renderImage (img, data);
+
+	if (!img.saveBMP (name))
+	{
+		delete[] data;
+		return false;
+	}
+
+	delete[] data;
 	return true;
 }
 

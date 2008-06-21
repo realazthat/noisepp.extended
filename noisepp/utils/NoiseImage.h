@@ -48,7 +48,7 @@ class Image
 		void create (int width, int height);
 		/// Clears the image data.
 		void clear ();
-		
+
 		/// Returns a pointer to the pixel data.
 		unsigned char *getPixelData () const
 		{
@@ -79,7 +79,7 @@ class Image
 		/// Destructor.
 		~Image();
 		/// Writes the image to the specified bitmap file.
-		void saveBMP (const char *filename);
+		bool saveBMP (const char *filename);
 	protected:
 	private:
 		unsigned char *mData;

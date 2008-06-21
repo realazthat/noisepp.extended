@@ -33,6 +33,7 @@
 #include "editorModuleManager.h"
 #include "editorCanvas.h"
 #include "editorGLCanvas.h"
+#include "editorSizeDlg.h"
 
 class editorFrame: public wxFrame
 {
@@ -44,6 +45,9 @@ class editorFrame: public wxFrame
 		wxPropertyGrid *mModuleProps;
 		wxMenuItem *mSaveMenuItem;
 		wxMenuItem *mExportMenuItem;
+
+		wxMenu *mExportMenu;
+
 		editorCanvas *mCanvas;
 		//editorGLCanvas *mCanvas;
 		wxButton *mAddBtn;
@@ -77,7 +81,8 @@ class editorFrame: public wxFrame
 			idModuleList,
 			idModuleProperties,
 			idModuleGenBtn,
-			idMenuExport
+			idMenuExportPipeline,
+			idMenuExportAsBMP
 		};
 		void OnClose(wxCloseEvent& event);
 		void OnNew(wxCommandEvent& event);
@@ -90,13 +95,15 @@ class editorFrame: public wxFrame
 		void OnModuleRen(wxCommandEvent& event);
 		void OnModuleDel(wxCommandEvent& event);
 		void OnModuleGen(wxCommandEvent& event);
-		void OnExport(wxCommandEvent& event);
+		void OnExportPipeline(wxCommandEvent& event);
+		void OnExportAsBMP(wxCommandEvent& event);
 		void updateModuleSelection();
 		void OnModuleSelect(wxCommandEvent& event)
 		{
 			updateModuleSelection();
 		}
 		void OnModuleProperyGridChange(wxPropertyGridEvent& event);
+		EditorModule *forceModuleSelected ();
 		DECLARE_EVENT_TABLE()
 };
 

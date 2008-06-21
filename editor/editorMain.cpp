@@ -28,7 +28,8 @@ BEGIN_EVENT_TABLE(editorFrame, wxFrame)
 	EVT_MENU(idMenuOpen, editorFrame::OnOpen)
 	EVT_MENU(idMenuSave, editorFrame::OnSave)
 	EVT_MENU(idMenuSaveAs, editorFrame::OnSaveAs)
-	EVT_MENU(idMenuExport, editorFrame::OnExport)
+	EVT_MENU(idMenuExportPipeline, editorFrame::OnExportPipeline)
+	EVT_MENU(idMenuExportAsBMP, editorFrame::OnExportAsBMP)
 	EVT_MENU(idMenuQuit, editorFrame::OnQuit)
 	EVT_MENU(idMenuAbout, editorFrame::OnAbout)
 	EVT_BUTTON(idModuleAddBtn, editorFrame::OnModuleAdd)
@@ -52,7 +53,12 @@ editorFrame::editorFrame(wxFrame *frame, const wxString& title)
 	mSaveMenuItem = fileMenu->Append(idMenuSave, _("&Save"), _("Save the project"));
 	fileMenu->Append(idMenuSaveAs, _("Save &as..."), _("Save the project under different name"));
 	fileMenu->AppendSeparator();
-	fileMenu->Append(idMenuExport, _("&Export"), _("Export the pipeline"));
+	fileMenu->Append(idMenuExportPipeline, _("Export &pipeline"), _("Export the pipeline"));
+
+	mExportMenu = new wxMenu;
+	mExportMenu->Append(idMenuExportAsBMP, _("Bitmap"), _("Export the output of the selected module as Bitmap"));
+	fileMenu->AppendSubMenu(mExportMenu, wxT("&Export as ..."));
+
 	fileMenu->AppendSeparator();
 	fileMenu->Append(idMenuQuit, _("&Quit\tAlt-F4"), _("Quit the Noise++ Editor"));
 	mbar->Append(fileMenu, _("&File"));
@@ -451,9 +457,20 @@ void editorFrame::OnModuleProperyGridChange(wxPropertyGridEvent& event)
 	}
 }
 
-void editorFrame::OnExport(wxCommandEvent& event)
+EditorModule *editorFrame::forceModuleSelected ()
 {
 	EditorModule *module = EditorModuleManager::getInstance().getModule(mModuleList->GetStringSelection());
+	if (!module)
+	{
+		wxMessageDialog dial (this, wxT("No module selected"), wxT("Error"), wxOK | wxICON_ERROR);
+		dial.ShowModal();
+	}
+	return module;
+}
+
+void editorFrame::OnExportPipeline(wxCommandEvent& event)
+{
+	EditorModule *module = forceModuleSelected();
 	if (module)
 	{
 		wxFileDialog dialog (this, _("Export pipeline as ..."), _(""), _(""), _("Noise++ pipeline (*.pipeline)|*.pipeline"), wxFD_SAVE);
@@ -462,14 +479,42 @@ void editorFrame::OnExport(wxCommandEvent& event)
 			wxString path = dialog.GetPath ();
 			if (!module->exportToFile(path.mb_str()))
 			{
-				wxMessageDialog dial (this, wxT("Can't file for writing"), wxT("Error"), wxOK | wxICON_ERROR);
+				wxMessageDialog dial (this, wxT("Can't open file for writing"), wxT("Error"), wxOK | wxICON_ERROR);
 				dial.ShowModal();
 			}
 		}
 	}
-	else
+}
+
+void editorFrame::OnExportAsBMP(wxCommandEvent& event)
+{
+	EditorModule *module = forceModuleSelected();
+	if (module)
 	{
-		wxMessageDialog dial (this, wxT("No module selected"), wxT("Error"), wxOK | wxICON_ERROR);
-		dial.ShowModal();
+		editorSizeDlg dlg (this, _("Bitmap resolution"), 512, 512);
+		if (dlg.ShowModal() == wxID_OK)
+		{
+			const int maxres = (1<<15);
+			int width = dlg.getWidth();
+			int height = dlg.getHeight();
+			if (width > 0 && width <= maxres && height > 0 && height <= maxres)
+			{
+				wxFileDialog dialog (this, _("Export as Bitmap ..."), _(""), _(""), _("Bitmap (*.bmp)|*.bmp"), wxFD_SAVE);
+				if (dialog.ShowModal() == wxID_OK)
+				{
+					wxString path = dialog.GetPath ();
+					if (!module->exportToBMP(path.mb_str(), width, height))
+					{
+						wxMessageDialog dial (this, wxT("Can't open file for writing"), wxT("Error"), wxOK | wxICON_ERROR);
+						dial.ShowModal();
+					}
+				}
+			}
+			else
+			{
+				wxMessageDialog dial (this, wxT("Invalid size parameters"), wxT("Error"), wxOK | wxICON_ERROR);
+				dial.ShowModal();
+			}
+		}
 	}
 }

@@ -38,6 +38,29 @@ namespace noisepp
 namespace utils
 {
 
+/// Builder callback class.
+/// Overwrite the progress() function to get the current progress (ranges from 0.0 to 1.0)
+class BuilderCallback
+{
+	private:
+		int cur;
+
+	public:
+		/// Constructor.
+		BuilderCallback () : cur(0)
+		{}
+		/// The callback function
+		void callback ()
+		{
+			progress(++cur);
+		}
+		/// Overwrite this function to get the current progress (ranges from 0.0 to 1.0)
+		virtual void progress (int cur) = 0;
+		/// Destructor.
+		virtual ~BuilderCallback ()
+		{}
+};
+
 /// Base builder class.
 /// A builder is a helper class that makes it easy to generate geometrical objects like a plane.
 /// You just have to specify the output size, destination and geometric specific options(like the geom size).
@@ -54,9 +77,12 @@ class Builder
 		int mHeight;
 		/// Source module.
 		Module *mModule;
-		
+
 		/// Check the parameters.
 		void checkParameters ();
+
+		/// Callback
+		BuilderCallback *mCallback;
 
 	public:
 		/// Constructor.
@@ -69,8 +95,12 @@ class Builder
 		void setDestination (Real *dest);
 		/// Sets the source module.
 		void setModule (Module *module);
+		/// Sets a callback
+		void setCallback (BuilderCallback *callback);
 		/// Build.
 		virtual void build () = 0;
+		/// Get progress maximum
+		virtual int getProgressMaximum () const = 0;
 		/// Destructor.
 		virtual ~Builder ();
 };
@@ -90,6 +120,8 @@ class PlaneBuilder2D : public Builder
 		void build (Pipeline2D *pipeline, PipelineElement2D *element);
 		/// @copydoc noisepp::utils::Builder::build()
 		virtual void build ();
+		/// @copydoc noisepp::utils::Builder::getProgressMaximum()
+		int getProgressMaximum () const;
 
 		/// Sets the plane bounds.
 		/// @param lowerBoundX The x-coordinate of the lower bound.

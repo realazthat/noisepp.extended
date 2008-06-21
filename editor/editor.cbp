@@ -75,6 +75,8 @@
 		<Unit filename="editorModuleManager.h" />
 		<Unit filename="editorNode.cpp" />
 		<Unit filename="editorNode.h" />
+		<Unit filename="editorSizeDlg.cpp" />
+		<Unit filename="editorSizeDlg.h" />
 		<Unit filename="modules/EditorAbsoluteModule.cpp" />
 		<Unit filename="modules/EditorAbsoluteModule.h" />
 		<Unit filename="modules/EditorAdditionModule.cpp" />

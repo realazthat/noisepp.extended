@@ -70,6 +70,7 @@ class EditorModule
 		EditorModule *getSourceModule (int i) const;
 
 		bool exportToFile (const char *name);
+		bool exportToBMP (const char *name, int width, int height);
 
 		void changeProperty (wxPropertyGrid *pg, wxPropertyGridEvent& event);
 
