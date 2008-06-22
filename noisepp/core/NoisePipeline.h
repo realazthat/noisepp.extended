@@ -33,6 +33,8 @@
 
 namespace noisepp
 {
+	class Module;
+
 	/// Cache structure for faster pipeline processing.
 	struct Cache
 	{
@@ -84,7 +86,7 @@ namespace noisepp
 			/// Element vector.
 			std::vector<Element*> mElements;
 			/// Map holding the module pointers.
-			std::map<const void*, ElementID> mElementIDs;
+			std::map<const Module*, ElementID> mElementIDs;
 			/// The job queue.
 			PipelineJobQueue mJobs;
 
@@ -136,11 +138,11 @@ namespace noisepp
 			}
 			/// Adds the specified element to the pipeline.
 			/// This is used internally by modules.
-			ElementID addElement (const void *parent, Element *element)
+			ElementID addElement (const Module *parent, Element *element)
 			{
 				NoiseAssert (element != NULL, element);
 				NoiseAssert (parent != NULL, parent);
-				std::map<const void*, ElementID>::iterator it = mElementIDs.find(parent);
+				std::map<const Module*, ElementID>::iterator it = mElementIDs.find(parent);
 				if (it != mElementIDs.end())
 				{
 					delete element;
@@ -150,6 +152,22 @@ namespace noisepp
 				mElementIDs.insert (std::make_pair(parent, id));
 				mElements.push_back(element);
 				return id;
+			}
+			/// Returns the ID of the element belonging to the specified module or ELEMENTID_INVALID if not found.
+			ElementID getElementID (const Module *module)
+			{
+				std::map<const Module*, ElementID>::iterator it = mElementIDs.find(module);
+				if (it != mElementIDs.end())
+					return it->second;
+				return ELEMENTID_INVALID;
+			}
+			/// Returns a pointer to the element belonging to the specified module or NULL if not found
+			Element *getElementPtr (const Module *module)
+			{
+				std::map<const Module*, ElementID>::iterator it = mElementIDs.find(module);
+				if (it != mElementIDs.end())
+					return getElement(it->second);
+				return 0;
 			}
 			/// Adds a job to the queue.
 			virtual void addJob (PipelineJob *job)

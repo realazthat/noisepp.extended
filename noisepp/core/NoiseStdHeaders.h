@@ -43,6 +43,7 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
+#include <limits>
 
 #if NOISEPP_ENABLE_THREADS
 #include "Thread.h"

@@ -43,6 +43,7 @@ namespace noisepp
 	#endif
 
 	typedef size_t ElementID;
+	const ElementID ELEMENTID_INVALID = (std::numeric_limits<ElementID>::max)();
 
 	class PipelineElement1D;
 	class PipelineElement2D;
