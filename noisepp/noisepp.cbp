@@ -96,6 +96,8 @@
 		<Unit filename="utils/NoiseImage.h" />
 		<Unit filename="utils/NoiseInStream.cpp" />
 		<Unit filename="utils/NoiseInStream.h" />
+		<Unit filename="utils/NoiseJobQueue.cpp" />
+		<Unit filename="utils/NoiseJobQueue.h" />
 		<Unit filename="utils/NoiseModules.cpp" />
 		<Unit filename="utils/NoiseOutStream.cpp" />
 		<Unit filename="utils/NoiseOutStream.h" />

@@ -116,8 +116,10 @@ namespace noisepp
 					{
 						PipelineJob *job = mJobsDone.front ();
 						mJobsDone.pop ();
+						lk.unlock ();
 						job->finish ();
 						delete job;
+						lk.lock ();
 					}
 				}
 			}
@@ -128,6 +130,7 @@ namespace noisepp
 				threadpp::Mutex::Lock lk(mMutex);
 				Pipeline<Element>::mJobs.push (job);
 			}
+			/// Destructor.
 			virtual ~ThreadedPipeline ()
 			{
 				mThreadsDone = true;

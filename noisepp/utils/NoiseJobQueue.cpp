@@ -26,78 +26,114 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#include "NoisePrerequisites.h"
-#include "NoiseSystem.h"
-
-#if NOISEPP_ENABLE_THREADS
-#	include "NoiseThreadedPipeline.h"
-#endif
-
-#if NOISEPP_PLATFORM == NOISEPP_PLATFORM_UNIX
-#	include <unistd.h>
-#elif NOISEPP_PLATFORM == NOISEPP_PLATFORM_WINDOWS
-#	define WIN32_LEAN_AND_MEAN
-#	include <windows.h>
-#endif
+#include "NoiseJobQueue.h"
 
 namespace noisepp
 {
 namespace utils
 {
 
-int System::mNumberOfCPUs = System::calculateNumberOfCPUs();
-
-int System::calculateNumberOfCPUs()
+void JobQueue::addJob (Job *job)
 {
-#if NOISEPP_PLATFORM == NOISEPP_PLATFORM_UNIX
-	return sysconf(_SC_NPROCESSORS_ONLN);
-#elif NOISEPP_PLATFORM == NOISEPP_PLATFORM_WINDOWS
-	SYSTEM_INFO siSysInfo;
-	GetSystemInfo(&siSysInfo);
-	return siSysInfo.dwNumberOfProcessors;
-#endif
+	NoiseAssert (job != NULL, job);
+	mJobs.push (job);
 }
 
-int System::getNumberOfCPUs()
+void JobQueue::executeJobs ()
 {
-	return mNumberOfCPUs;
+	Job *job = 0;
+	while (!mJobs.empty())
+	{
+		job = mJobs.front ();
+		mJobs.pop ();
+		job->execute();
+		job->finish();
+		delete job;
+		job = 0;
+	}
 }
 
-Pipeline1D *System::createOptimalPipeline1D ()
+JobQueue::~JobQueue ()
 {
+	while (!mJobs.empty())
+	{
+		delete mJobs.front ();
+		mJobs.pop ();
+	}
+}
+
 #if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedPipeline1D (mNumberOfCPUs);
-#endif
-	return new Pipeline1D;
+void ThreadedJobQueue::threadFunction ()
+{
+	threadpp::Mutex::Lock lk(mMutex);
+	while (!mThreadsDone)
+	{
+		if (mJobs.empty())
+			mCond.wait(lk);
+		if (!mJobs.empty())
+		{
+			Job *job = mJobs.front ();
+			mJobs.pop ();
+			++mWorkingThreads;
+			lk.unlock ();
+			job->execute();
+			lk.lock ();
+			--mWorkingThreads;
+			mJobsDone.push (job);
+			mMainCond.notifyOne ();
+		}
+	}
 }
 
-Pipeline2D *System::createOptimalPipeline2D ()
+void *ThreadedJobQueue::threadEntry (void *queue)
 {
-#if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedPipeline2D (mNumberOfCPUs);
-#endif
-	return new Pipeline2D;
+	(static_cast<ThreadedJobQueue*>(queue))->threadFunction ();
+	return NULL;
 }
 
-Pipeline3D *System::createOptimalPipeline3D ()
+ThreadedJobQueue::ThreadedJobQueue (size_t numberOfThreads) : mThreadsDone(false), mWorkingThreads(0)
 {
-#if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedPipeline3D (mNumberOfCPUs);
-#endif
-	return new Pipeline3D;
+	NoiseAssert (numberOfThreads > 0, numberOfThreads);
+	for (size_t i=0;i<numberOfThreads;++i)
+	{
+		mThreads.createThread (threadEntry, this);
+	}
 }
 
-JobQueue *System::createOptimalJobQueue ()
+void ThreadedJobQueue::executeJobs ()
 {
-#if NOISEPP_ENABLE_THREADS
-	if (mNumberOfCPUs > 1)
-		return new ThreadedJobQueue (mNumberOfCPUs);
-#endif
-	return new JobQueue;
+	mCond.notifyAll();
+	threadpp::Mutex::Lock lk(mMutex);
+	while (!mJobs.empty() || mWorkingThreads > 0)
+	{
+		if (!mJobs.empty() || mWorkingThreads > 0)
+			mMainCond.wait(lk);
+		while (!mJobsDone.empty())
+		{
+			Job *job = mJobsDone.front ();
+			mJobsDone.pop ();
+			lk.unlock ();
+			job->finish ();
+			delete job;
+			lk.lock ();
+		}
+	}
 }
+
+void ThreadedJobQueue::addJob (Job *job)
+{
+	NoiseAssert (job != NULL, job);
+	threadpp::Mutex::Lock lk(mMutex);
+	mJobs.push (job);
+}
+
+ThreadedJobQueue::~ThreadedJobQueue ()
+{
+	mThreadsDone = true;
+	mCond.notifyAll();
+	mThreads.join ();
+}
+#endif
 
 };
 };

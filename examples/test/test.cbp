@@ -39,7 +39,6 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add option="-DCOMPARE_WITH_LIBNOISE" />
 			<Add directory="../../noisepp/core" />
 			<Add directory="../../noisepp/threadpp" />
 			<Add directory="../../noisepp/utils" />

@@ -26,69 +26,79 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-#ifndef GRADIENTRENDERER_H
-#define GRADIENTRENDERER_H
+#ifndef NOISEJOBQUEUE_H
+#define NOISEJOBQUEUE_H
 
 #include "NoisePrerequisites.h"
-#include "NoiseColourValue.h"
-#include "NoiseImage.h"
-#include "NoiseBuilders.h"
-#include "NoiseJobQueue.h"
 
 namespace noisepp
 {
 namespace utils
 {
 
-/// Gradient color renderer.
-class GradientRenderer
+/// A job which can be added to a job queue for multi-threaded execution.
+class Job
 {
 	public:
-		/// Constructor.
-		GradientRenderer();
-		/// Adds a gradient point.
-		/// @param value Position of the gradient point.
-		/// @param color Color value of the gradient point.
-		void addGradient (Real value, const ColourValue &color);
-		/// Renders the data to an image.
-		/// @param image The image to render to.
-		/// @param data The source data.
-		/// @param jobQueue A pointer to a JobQueue. The JobQueue will be deleted after usage. Passing NULL will use an system optimal queue.
-		void renderImage (Image &image, const Real *data, JobQueue *jobQueue=0);
-		/// Sets a callback
-		void setCallback (BuilderCallback *callback);
 		/// Destructor.
-		~GradientRenderer();
+		virtual ~Job () {}
+		/// This function is called when the job is executed. You must overwrite this.
+		/// Don't do anything thread unsafe in there!
+		virtual void execute () = 0;
+		/// This function is called when the job is finished. It is always called in the main thread,
+		/// so you can update a progress bar here or whatever.
+		virtual void finish () {}
+};
+
+/// A job queue.
+/// You can add jobs to this queue which will be executed when you call the executeJobs() function.
+class JobQueue
+{
 	protected:
+		/// The job queue
+		std::queue<Job*> mJobs;
+
+	public:
+		/// Adds a job to the queue.
+		virtual void addJob (Job *job);
+		/// executes the jobs in queue
+		virtual void executeJobs ();
+		/// Destructor.
+		virtual ~JobQueue ();
+};
+
+#if NOISEPP_ENABLE_THREADS
+/// A threaded job queue.
+/// You can add jobs to this queue which will be executed in several threads when you call the executeJobs() function.
+class ThreadedJobQueue : public JobQueue
+{
 	private:
-		struct Gradient
-		{
-			Real value;
-			ColourValue color;
-			bool operator< (const Gradient &g) const
-			{
-				return (value < g.value);
-			}
-		};
-		typedef std::vector<Gradient> GradientVector;
-		GradientVector mGradients;
-		BuilderCallback *mCallback;
-		class GradientRendererJob : public Job
-		{
-			private:
-				GradientRenderer *renderer;
-				int width;
-				const Real *data;
-				unsigned char *buffer;
+		/// A queue for done jobs
+		std::queue<Job*> mJobsDone;
 
-			public:
-				GradientRendererJob(GradientRenderer *renderer, int width, const Real *data, unsigned char *buffer);
-				void execute ();
-				void finish ();
-		};
+		threadpp::ThreadGroup mThreads;
+		threadpp::Mutex mMutex;
+		threadpp::Condition mCond, mMainCond;
+
+		bool mThreadsDone;
+		unsigned mWorkingThreads;
+
+		void threadFunction ();
+		static void *threadEntry (void *queue);
+	public:
+		/// Constructor.
+		/// @param numberOfThreads The number of threads
+		ThreadedJobQueue (size_t numberOfThreads);
+		/// @copydoc noisepp::utils::JobQueue::executeJobs()
+		virtual void executeJobs ();
+		/// @copydoc noisepp::utils::JobQueue::addJob()
+		virtual void addJob (Job *job);
+		/// Destructor.
+		virtual ~ThreadedJobQueue ();
 };
+#endif
 
 };
 };
 
-#endif // GRADIENTRENDERER_H
+#endif // NOISEJOBQUEUE_H

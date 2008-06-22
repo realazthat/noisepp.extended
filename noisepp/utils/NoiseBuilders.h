@@ -54,6 +54,11 @@ class BuilderCallback
 		{
 			progress(++cur);
 		}
+		/// Resets the progress
+		void reset ()
+		{
+			cur = 0;
+		}
 		/// Overwrite this function to get the current progress (ranges from 0.0 to 1.0)
 		virtual void progress (int cur) = 0;
 		/// Destructor.

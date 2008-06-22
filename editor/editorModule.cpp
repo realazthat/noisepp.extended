@@ -246,13 +246,18 @@ class BuilderProgressDlgCallback : public noisepp::utils::BuilderCallback
 {
 	private:
 		wxProgressDialog &dlg;
+		int max;
+		int mod;
 
 	public:
-		BuilderProgressDlgCallback (wxProgressDialog &dlg) : dlg(dlg)
-		{}
+		BuilderProgressDlgCallback (wxProgressDialog &dlg, int max) : dlg(dlg), max(max)
+		{
+			mod = 1000;
+		}
 		void progress (int cur)
 		{
-			dlg.Update(cur);
+			if (cur % mod == 0 || cur == max)
+				dlg.Update(cur);
 		}
 };
 
@@ -268,7 +273,7 @@ bool EditorModule::exportToBMP (const char *name, int width, int height)
 		builder.setBounds(0, 0, 1.0, 1.0);
 		wxProgressDialog progressDlg(wxT("Building ..."), wxT("Please wait while building ..."), builder.getProgressMaximum());
 		progressDlg.Show (true);
-		builder.setCallback(new BuilderProgressDlgCallback(progressDlg));
+		builder.setCallback(new BuilderProgressDlgCallback(progressDlg, builder.getProgressMaximum()));
 		builder.build ();
 	}
 	catch (std::exception &e)
@@ -284,6 +289,9 @@ bool EditorModule::exportToBMP (const char *name, int width, int height)
 	noisepp::utils::GradientRenderer gradients;
 	gradients.addGradient (-1.0, noisepp::utils::ColourValue(0.0f, 0.0f, 0.0f));
 	gradients.addGradient ( 1.0, noisepp::utils::ColourValue(1.0f, 1.0f, 1.0f));
+	wxProgressDialog progressDlg(wxT("Coloring ..."), wxT("Please wait while coloring ..."), height);
+	progressDlg.Show (true);
+	gradients.setCallback(new BuilderProgressDlgCallback(progressDlg, height));
 	gradients.renderImage (img, data);
 
 	if (!img.saveBMP (name))

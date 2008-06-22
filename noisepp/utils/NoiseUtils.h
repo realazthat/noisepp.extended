@@ -43,6 +43,7 @@
 #include "NoiseColourValue.h"
 #include "NoiseImage.h"
 #include "NoiseSystem.h"
+#include "NoiseJobQueue.h"
 #include "NoiseGradientRenderer.h"
 #include "NoiseBuilders.h"
 

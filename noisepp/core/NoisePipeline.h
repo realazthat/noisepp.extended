@@ -54,6 +54,7 @@ namespace noisepp
 	class PipelineJob
 	{
 		public:
+			/// Destructor.
 			virtual ~PipelineJob () {}
 			/// This function is called when the job is executed. You must overwrite this.
 			/// Don't do anything thread unsafe in there!
@@ -181,6 +182,11 @@ namespace noisepp
 				}
 				mElements.clear ();
 				mElementIDs.clear ();
+				while (!mJobs.empty())
+				{
+					delete mJobs.front ();
+					mJobs.pop ();
+				}
 			}
 	};
 

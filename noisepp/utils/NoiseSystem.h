@@ -30,6 +30,7 @@
 #define NOISESYSTEM_H
 
 #include "NoisePipeline.h"
+#include "NoiseJobQueue.h"
 
 namespace noisepp
 {
@@ -48,6 +49,8 @@ class System
 		static Pipeline2D *createOptimalPipeline2D ();
 		/// Creates an optimal 3D pipeline using as many threads as there are CPU cores avaible.
 		static Pipeline3D *createOptimalPipeline3D ();
+		/// Creates an optimal job queue using as many threads as there are CPU cores avaible.
+		static JobQueue *createOptimalJobQueue ();
 	protected:
 	private:
 		static int mNumberOfCPUs;
