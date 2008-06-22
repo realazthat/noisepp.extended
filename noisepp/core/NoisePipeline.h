@@ -154,20 +154,30 @@ namespace noisepp
 				return id;
 			}
 			/// Returns the ID of the element belonging to the specified module or ELEMENTID_INVALID if not found.
-			ElementID getElementID (const Module *module)
+			ElementID getElementID (const Module *module) const
 			{
-				std::map<const Module*, ElementID>::iterator it = mElementIDs.find(module);
+				std::map<const Module*, ElementID>::const_iterator it = mElementIDs.find(module);
 				if (it != mElementIDs.end())
 					return it->second;
 				return ELEMENTID_INVALID;
 			}
-			/// Returns a pointer to the element belonging to the specified module or NULL if not found
-			Element *getElementPtr (const Module *module)
+			/// @copydoc noisepp::Pipeline::getElementID(const noisepp::Module *) const
+			inline ElementID getElementID (const Module &module) const
 			{
-				std::map<const Module*, ElementID>::iterator it = mElementIDs.find(module);
+				return getElementID(&module);
+			}
+			/// Returns a pointer to the element belonging to the specified module or NULL if not found
+			Element *getElementPtr (const Module *module) const
+			{
+				std::map<const Module*, ElementID>::const_iterator it = mElementIDs.find(module);
 				if (it != mElementIDs.end())
 					return getElement(it->second);
 				return 0;
+			}
+			/// @copydoc noisepp::Pipeline::getElementPtr(const noisepp::Module *) const
+			inline Element *getElementPtr (const Module &module) const
+			{
+				return getElementPtr(&module);
 			}
 			/// Adds a job to the queue.
 			virtual void addJob (PipelineJob *job)
