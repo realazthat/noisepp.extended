@@ -1,7 +1,7 @@
 #ifndef SMARTPOINTERS_H
 #define SMARTPOINTERS_H
 
-#include <GL/gl.h>
+#include <GL/glew.h>
 #include <ThreadMutex.h>
 
 #include <cassert>
@@ -24,18 +24,6 @@ class SharedPtr
 		explicit SharedPtr(GLuint ptr) : mMutex(0), mPtr(ptr), mUseCount(new unsigned int(1))
 		{
 			mMutex = new threadpp::Mutex;
-		}
-		SharedPtr (SharedPtr &r) : mMutex(0), mPtr(0), mUseCount(0)
-		{
-			if (r.mMutex)
-			{
-				threadpp::Mutex::Lock lk(*r.mMutex);
-				mMutex = r.mMutex;
-				mPtr = r.mPtr;
-				mUseCount = r.mUseCount;
-				if(mUseCount)
-					++(*mUseCount);
-			}
 		}
 		SharedPtr (const SharedPtr &r) : mMutex(0), mPtr(0), mUseCount(0)
 		{

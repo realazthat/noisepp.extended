@@ -17,7 +17,7 @@
 
 #include "editorSizeDlg.h"
 
-editorSizeDlg::editorSizeDlg(wxWindow* parent, const wxString& title, int w, int h) : wxDialog(parent, -1, title, wxDefaultPosition, wxSize(180, 110))
+editorSizeDlg::editorSizeDlg(wxWindow* parent, const wxString& title, int w, int h) : wxDialog(parent, -1, title, wxDefaultPosition, wxSize(180, 150))
 {
 	mWidth << w;
 	mHeight << h;

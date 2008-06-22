@@ -18,6 +18,7 @@
 #ifndef EDITORNODE_H
 #define EDITORNODE_H
 
+#include <GL/glew.h>
 #include <GL/SmartPointers.h>
 
 #include <wx/wx.h>

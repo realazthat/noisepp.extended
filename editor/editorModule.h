@@ -18,6 +18,7 @@
 #ifndef EDITORMODULE_H
 #define EDITORMODULE_H
 
+#include <GL/glew.h>
 #include <string>
 #include <Noise.h>
 #include <wx/propgrid/propgrid.h>
