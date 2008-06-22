@@ -10,9 +10,6 @@
 //    * Redistributions in binary form must reproduce the above copyright notice,
 //      this list of conditions and the following disclaimer in the documentation
 //      and/or other materials provided with the distribution.
-//    * Neither the name of the Noise++ Library's copyright owner nor the names
-//      of its contributors may be used to endorse or promote products derived
-//      from this software without specific prior written permission.
 //
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
@@ -100,6 +97,11 @@ class Builder
 		void setDestination (Real *dest);
 		/// Sets the source module.
 		void setModule (Module *module);
+		/// Sets the source module.
+		inline void setModule (Module &module)
+		{
+			setModule (&module);
+		}
 		/// Sets a callback
 		void setCallback (BuilderCallback *callback);
 		/// Build.
