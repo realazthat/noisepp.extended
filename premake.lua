@@ -5,6 +5,12 @@ if options["target"] then
 end
 
 dopackage("noisepp")
+dopackage("examples/tutorial1")
+dopackage("examples/tutorial2")
+dopackage("examples/tutorial3")
+dopackage("examples/tutorial4")
+dopackage("examples/tutorial5")
+dopackage("examples/tutorial6")
 dopackage("examples/toimage")
 dopackage("examples/test")
 
