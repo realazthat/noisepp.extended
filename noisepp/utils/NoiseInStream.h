@@ -96,7 +96,7 @@ class FileInStream : public InStream
 		bool open (const std::string &filename);
 		/// Check if a file is open.
 		/// Returns true if the stream is currently associated with a file, and false otherwise.
-		bool isOpen () const;
+		bool isOpen ();
 		/// Close the current file.
 		void close ();
 		/// @copydoc noisepp::utils::InStream::read(void *, size_t)

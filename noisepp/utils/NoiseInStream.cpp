@@ -55,7 +55,7 @@ bool FileInStream::open (const std::string &filename)
 	return mFile.is_open ();
 }
 
-bool FileInStream::isOpen () const
+bool FileInStream::isOpen ()
 {
 	return mFile.is_open ();
 }
