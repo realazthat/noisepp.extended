@@ -1,3 +1,17 @@
+/*
+before optimation:
+calculating test value at (1.2|0.2)
+Noise++ (2D): 0.413553
+Noise++ (3D): 0.413553
+prepare for generating 10 million points ... go!
+generating using Pipeline3D .......... done
+time: 3.38359 sec
+2.95544 million pixels per second
+generating using Pipeline2D .......... done
+time: 1.76692 sec
+5.65956 million pixels per second
+*/
+
 #include <iostream>
 #include <iomanip>
 #include <time.h>
@@ -21,7 +35,7 @@
 
 using namespace std;
 
-const int MILLION_POINTS = 100;
+const int MILLION_POINTS = 10;
 
 double Timer_getSeconds ()
 {
@@ -89,7 +103,7 @@ double calcMaxDifference (double *left, double *right, int n)
 	return dif;
 }
 
-int test ()
+void test (noisepp::Module &module, bool compare)
 {
 	double x, y;
 	double xdelta = 0.1;
@@ -97,7 +111,9 @@ int test ()
 
 	// generate output arrays
 #ifdef COMPARE_WITH_LIBNOISE
-	double *libnoise_results = new double[1000000];
+	double *libnoise_results = 0;
+	if (compare)
+		libnoise_results = new double[1000000];
 #endif
 	double *noisepp_results = new double[1000000];
 
@@ -106,14 +122,11 @@ int test ()
 	noise::module::Perlin libnoisePerlin;
 #endif
 
-	// the Noise++ module
-	noisepp::PerlinModule noiseppPerlin;
-
 	// create default pipelines and fill them with our modules
 	noisepp::Pipeline2D pipeline2D;
-	noisepp::ElementID noiseID = noiseppPerlin.addToPipe (pipeline2D);
+	noisepp::ElementID noiseID = module.addToPipe (pipeline2D);
 	noisepp::Pipeline3D pipeline3D;
-	noisepp::ElementID noiseID3D = noiseppPerlin.addToPipe (pipeline3D);
+	noisepp::ElementID noiseID3D = module.addToPipe (pipeline3D);
 
 	// create threaded pipelines and fill them with modules
 #if NOISEPP_ENABLE_THREADS
@@ -128,9 +141,9 @@ int test ()
 		cout << "Your system does not have a multi-core CPU ... skipping generation with threaded pipeline." << endl;
 
 	noisepp::ThreadedPipeline2D pipeline2D_mt(threadCount);
-	noisepp::ElementID noiseID2D_mt = noiseppPerlin.addToPipe (pipeline2D_mt);
+	noisepp::ElementID noiseID2D_mt = module.addToPipe (pipeline2D_mt);
 	noisepp::ThreadedPipeline3D pipeline3D_mt(threadCount);
-	noisepp::ElementID noiseID3D_mt = noiseppPerlin.addToPipe (pipeline3D_mt);
+	noisepp::ElementID noiseID3D_mt = module.addToPipe (pipeline3D_mt);
 #endif
 
 	// creates the cache
@@ -171,32 +184,36 @@ int test ()
 	double seconds;
 	double mpix = MILLION_POINTS;
 #ifdef COMPARE_WITH_LIBNOISE
-	cout << "generating using libnoise ";
-	cout.flush ();
-	double lnoiseStart = Timer_getSeconds();
-	for (int i=0;i<MILLION_POINTS;++i)
+	double libnoiseTime;
+	if (compare)
 	{
-		cout << ".";
+		cout << "generating using libnoise ";
 		cout.flush ();
-		double *res = libnoise_results;
-		y = 0;
-		for (int yy=0;yy<1000;++yy)
+		double lnoiseStart = Timer_getSeconds();
+		for (int i=0;i<MILLION_POINTS;++i)
 		{
-			x = 0;
-			for (int xx=0;xx<1000;++xx)
+			cout << ".";
+			cout.flush ();
+			double *res = libnoise_results;
+			y = 0;
+			for (int yy=0;yy<1000;++yy)
 			{
-				*res++ = libnoisePerlin.GetValue (x, y, 0);
-				x += xdelta;
+				x = 0;
+				for (int xx=0;xx<1000;++xx)
+				{
+					*res++ = libnoisePerlin.GetValue (x, y, 0);
+					x += xdelta;
+				}
+				y += ydelta;
 			}
-			y += ydelta;
 		}
+		cout << " done" << endl;
+		// calculate stats
+		seconds = Timer_getSeconds()-lnoiseStart;
+		libnoiseTime = seconds * 100.0;
+		cout << "time: " << seconds << " sec" << endl;
+		cout << mpix / seconds << " million pixels per second" << endl;
 	}
-	cout << " done" << endl;
-	// calculate stats
-	seconds = Timer_getSeconds()-lnoiseStart;
-	double libnoiseTime = seconds * 100.0;
-	cout << "time: " << seconds << " sec" << endl;
-	cout << mpix / seconds << " million pixels per second" << endl;
 #endif
 
 	// get the pointers to the pipeline elements
@@ -238,9 +255,12 @@ int test ()
 	cout << "time: " << seconds << " sec" << endl;
 	cout << mpix / seconds << " million pixels per second";
 #ifdef COMPARE_WITH_LIBNOISE
-	cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
-	if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
-		cout << "WARNING: different result!" << endl;
+	if (compare)
+	{
+		cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
+		if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+			cout << "WARNING: different result!" << endl;
+	}
 #endif
 	cout << endl;
 
@@ -272,9 +292,12 @@ int test ()
 	cout << "time: " << seconds << " sec" << endl;
 	cout << mpix / seconds << " million pixels per second";
 #ifdef COMPARE_WITH_LIBNOISE
-	cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
-	if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
-		cout << "WARNING: different result!" << endl;
+	if (compare)
+	{
+		cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
+		if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+			cout << "WARNING: different result!" << endl;
+	}
 #endif
 	cout << endl;
 
@@ -303,9 +326,12 @@ int test ()
 		cout << "time: " << seconds << " sec" << endl;
 		cout << mpix / seconds << " million pixels per second";
 #ifdef COMPARE_WITH_LIBNOISE
-		cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
-		if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
-			cout << "WARNING: different result!" << endl;
+		if (compare)
+		{
+			cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
+			if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+				cout << "WARNING: different result!" << endl;
+		}
 #endif
 		cout << endl;
 
@@ -331,29 +357,28 @@ int test ()
 		cout << "time: " << seconds << " sec" << endl;
 		cout << mpix / seconds << " million pixels per second";
 #ifdef COMPARE_WITH_LIBNOISE
-		cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
-		if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
-			cout << "WARNING: different result!" << endl;
+		if (compare)
+		{
+			cout << " (" << libnoiseTime / seconds - 100.0 << "% faster than libnoise)";
+			if (calcMaxDifference(noisepp_results, libnoise_results, 1000*1000) > 1.0e-07)
+				cout << "WARNING: different result!" << endl;
+		}
 #endif
 		cout << endl;
 	}
 #endif
 
 #ifdef COMPARE_WITH_LIBNOISE
-	delete[] libnoise_results;
+	if (compare)
+	{
+		delete[] libnoise_results;
+	}
 #endif
 	delete[] noisepp_results;
 
 	// frees the cache
 	pipeline2D.freeCache(cache);
 	pipeline3D.freeCache(cache3D);
-
-#if NOISEPP_PLATFORM == NOISEPP_PLATFORM_WINDOWS
-	cout << "Press any key ..." << endl;
-	cin.get();
-#endif
-
-	return 0;
 }
 
 int main ()
@@ -361,12 +386,25 @@ int main ()
 	int ret = 0;
 	try
 	{
-		ret = test();
+		// the Noise++ module
+		noisepp::PerlinModule noiseppPerlin;
+		// run the test with default perlin noise settings (which are compatible to libnoise, so do also compare results)
+		cout << "--- RUNNING TEST WITH A PERLIN NOISE MODULE USING DEFAULT SETTINGS ---" << endl;
+		test(noiseppPerlin, true);
+		// now set the module to use fast noise
+		noiseppPerlin.setQuality(noisepp::NOISE_QUALITY_FAST_STD);
+		// and run the test again but without comparision
+		cout << "--- NOW RUNNING TEST WITH A PERLIN NOISE MODULE USING FAST NOISE ---" << endl;
+		test(noiseppPerlin, false);
 	}
 	catch (noisepp::Exception &e)
 	{
 		cerr << "exception thrown: " << e.getDescription() << endl;
 		ret = 1;
 	}
+#if NOISEPP_PLATFORM == NOISEPP_PLATFORM_WINDOWS
+	cout << "Press any key ..." << endl;
+	cin.get();
+#endif
 	return ret;
 }

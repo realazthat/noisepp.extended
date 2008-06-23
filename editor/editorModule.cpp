@@ -150,11 +150,17 @@ void EditorModule::appendQualityProperty (wxPropertyGrid *pg, int quality)
 	qualityArr.Add(wxT("Low"));
 	qualityArr.Add(wxT("Default"));
 	qualityArr.Add(wxT("High"));
+	qualityArr.Add(wxT("Fast - Low"));
+	qualityArr.Add(wxT("Fast - Default"));
+	qualityArr.Add(wxT("Fast - High"));
 
 	wxArrayInt arrIds;
 	arrIds.Add(noisepp::NOISE_QUALITY_LOW);
 	arrIds.Add(noisepp::NOISE_QUALITY_STD);
 	arrIds.Add(noisepp::NOISE_QUALITY_HIGH);
+	arrIds.Add(noisepp::NOISE_QUALITY_FAST_LOW);
+	arrIds.Add(noisepp::NOISE_QUALITY_FAST_STD);
+	arrIds.Add(noisepp::NOISE_QUALITY_FAST_HIGH);
 
 	pg->Append( wxEnumProperty(wxT("Quality"), wxPG_LABEL, qualityArr, arrIds, quality) );
 }

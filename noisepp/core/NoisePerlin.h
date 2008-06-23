@@ -156,8 +156,14 @@ namespace noisepp
 					return Generator1D::calcGradientCoherentNoiseStd (x, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
 					return Generator1D::calcGradientCoherentNoiseHigh (x, seed, mScale);
-				else
+				else if (mQuality == NOISE_QUALITY_LOW)
 					return Generator1D::calcGradientCoherentNoiseLow (x, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_FAST_STD)
+					return Generator1D::calcGradientCoherentFastNoiseStd (x, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_FAST_HIGH)
+					return Generator1D::calcGradientCoherentFastNoiseHigh (x, seed, mScale);
+				else
+					return Generator1D::calcGradientCoherentFastNoiseLow (x, seed, mScale);
 			}
 		public:
 			PerlinElement1D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
@@ -219,8 +225,14 @@ namespace noisepp
 					return Generator2D::calcGradientCoherentNoiseStd (x, y, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
 					return Generator2D::calcGradientCoherentNoiseHigh (x, y, seed, mScale);
-				else
+				else if (mQuality == NOISE_QUALITY_LOW)
 					return Generator2D::calcGradientCoherentNoiseLow (x, y, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_FAST_STD)
+					return Generator2D::calcGradientCoherentFastNoiseStd (x, y, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_FAST_HIGH)
+					return Generator2D::calcGradientCoherentFastNoiseHigh (x, y, seed, mScale);
+				else
+					return Generator2D::calcGradientCoherentFastNoiseLow (x, y, seed, mScale);
 			}
 		public:
 			PerlinElement2D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
@@ -283,8 +295,14 @@ namespace noisepp
 					return Generator3D::calcGradientCoherentNoiseStd (x, y, z, seed, mScale);
 				else if (mQuality == NOISE_QUALITY_HIGH)
 					return Generator3D::calcGradientCoherentNoiseHigh (x, y, z, seed, mScale);
-				else
+				else if (mQuality == NOISE_QUALITY_LOW)
 					return Generator3D::calcGradientCoherentNoiseLow (x, y, z, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_FAST_STD)
+					return Generator3D::calcGradientCoherentFastNoiseStd (x, y, z, seed, mScale);
+				else if (mQuality == NOISE_QUALITY_FAST_HIGH)
+					return Generator3D::calcGradientCoherentFastNoiseHigh (x, y, z, seed, mScale);
+				else
+					return Generator3D::calcGradientCoherentFastNoiseLow (x, y, z, seed, mScale);
 			}
 		public:
 			PerlinElement3D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
