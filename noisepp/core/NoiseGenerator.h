@@ -392,7 +392,7 @@ namespace noisepp
 
 				const Real xs = x - Real(x0);
 				const Real ys = y - Real(y0);
-				const Real zs = z - Real(y0);
+				const Real zs = z - Real(z0);
 
 				return interpGradientCoherentNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed, scale);
 			}
@@ -425,7 +425,7 @@ namespace noisepp
 
 				const Real xs = x - Real(x0);
 				const Real ys = y - Real(y0);
-				const Real zs = z - Real(y0);
+				const Real zs = z - Real(z0);
 
 				return interpGradientCoherentFastNoise(x, y, z, x0, x1, y0, y1, z0, z1, xs, ys, zs, seed, scale);
 			}
