@@ -30,7 +30,7 @@
 #error "Please set NOISEPP_ENABLE_UTILS to 1"
 #endif
 
-#define NOISE_FILE_VERSION 0
+#define NOISE_FILE_VERSION 1
 
 #include "NoiseEndianUtils.h"
 #include "NoiseInStream.h"

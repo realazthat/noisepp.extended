@@ -62,6 +62,8 @@ namespace noisepp
 	const int NOISE_SEED_FACTOR = 1013;
 	const int NOISE_SHIFT = 8;
 
+	const Real FAST_NOISE_SCALE_FACTOR = 0.5;
+
 	class Generator1D
 	{
 		private:

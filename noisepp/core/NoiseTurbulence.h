@@ -178,6 +178,13 @@ namespace noisepp
 				mPerlinY.setFrequency (v);
 				mPerlinZ.setFrequency (v);
 			}
+			/// Sets the quality.
+			void setQuality (int v)
+			{
+				mPerlinX.setQuality (v);
+				mPerlinY.setQuality (v);
+				mPerlinZ.setQuality (v);
+			}
 			/// Returns the power.
 			Real getPower () const
 			{
@@ -197,6 +204,11 @@ namespace noisepp
 			Real getFrequency () const
 			{
 				return mPerlinX.getFrequency ();
+			}
+			/// Returns the quality.
+			int getQuality () const
+			{
+				return mPerlinX.getQuality ();
 			}
 			/// @copydoc noisepp::Module::addToPipeline()
 			virtual ElementID addToPipeline (Pipeline1D *pipe) const

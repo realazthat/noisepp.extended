@@ -222,6 +222,7 @@ void TurbulenceModule::write (utils::OutStream &s) const
 	s.writeInt (getRoughness());
 	s.writeInt (getSeed());
 	s.writeDouble (getFrequency());
+	s.writeInt (getQuality());
 }
 
 void TurbulenceModule::read (utils::InStream &s)
@@ -230,6 +231,7 @@ void TurbulenceModule::read (utils::InStream &s)
 	setRoughness (s.readInt());
 	setSeed (s.readInt());
 	setFrequency (s.readDouble());
+	setQuality (s.readInt());
 }
 
 void VoronoiModule::write (utils::OutStream &s) const

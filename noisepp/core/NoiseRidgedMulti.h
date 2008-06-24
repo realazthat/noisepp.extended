@@ -67,6 +67,8 @@ namespace noisepp
 		public:
 			RidgedMultiElement1D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
 			{
+				if (quality > NOISE_QUALITY_HIGH)
+					mScale *= FAST_NOISE_SCALE_FACTOR;
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
 				Real scale = frequency;
@@ -147,6 +149,8 @@ namespace noisepp
 		public:
 			RidgedMultiElement2D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
 			{
+				if (quality > NOISE_QUALITY_HIGH)
+					mScale *= FAST_NOISE_SCALE_FACTOR;
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
 				Real scale = frequency;
@@ -228,6 +232,8 @@ namespace noisepp
 		public:
 			RidgedMultiElement3D (size_t octaves, Real frequency, Real lacunarity, Real exponent, Real offset, Real gain, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mOffset(offset), mGain(gain), mScale(nscale)
 			{
+				if (quality > NOISE_QUALITY_HIGH)
+					mScale *= FAST_NOISE_SCALE_FACTOR;
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
 				Real scale = frequency;

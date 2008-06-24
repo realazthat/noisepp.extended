@@ -32,6 +32,7 @@ void EditorTurbulenceModule::fillPropertyGrid (wxPropertyGrid *pg)
 	pg->Append( wxFloatProperty(wxT("Frequency"), wxPG_LABEL, mModule.getFrequency()) );
 	pg->Append( wxIntProperty(wxT("Roughness"), wxPG_LABEL, mModule.getRoughness()) );
 	pg->Append( wxIntProperty(wxT("Seed"), wxPG_LABEL, mModule.getSeed()) );
+	appendQualityProperty (pg, mModule.getQuality());
 }
 
 void EditorTurbulenceModule::onPropertyChange (wxPropertyGrid *pg, const wxString &name)
@@ -60,6 +61,11 @@ void EditorTurbulenceModule::onPropertyChange (wxPropertyGrid *pg, const wxStrin
 	{
 		int val = pg->GetPropertyValueAsInt (name);
 		mModule.setSeed (val);
+	}
+	else if (name == _("Quality"))
+	{
+		int val = pg->GetPropertyValueAsInt (name);
+		mModule.setQuality (val);
 	}
 }
 
@@ -103,6 +109,10 @@ void EditorTurbulenceModule::writeProperties (TiXmlElement *element)
 	prop = new TiXmlElement ("Seed");
 	prop->SetAttribute ("value", mModule.getSeed());
 	element->LinkEndChild (prop);
+
+	prop = new TiXmlElement ("Quality");
+	prop->SetAttribute ("value", mModule.getQuality());
+	element->LinkEndChild (prop);
 }
 
 bool EditorTurbulenceModule::readProperties (TiXmlElement *element)
@@ -133,6 +143,14 @@ bool EditorTurbulenceModule::readProperties (TiXmlElement *element)
 	if (prop == NULL || prop->QueryIntAttribute ("value", &ival) != TIXML_SUCCESS)
 		return false;
 	mModule.setSeed (ival);
+
+	prop = element->FirstChildElement ("Quality");
+	if (prop != NULL)
+	{
+		if (prop->QueryIntAttribute ("value", &ival) != TIXML_SUCCESS)
+			return false;
+		mModule.setQuality (ival);
+	}
 
 	return true;
 }

@@ -168,6 +168,8 @@ namespace noisepp
 		public:
 			PerlinElement1D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
 			{
+				if (quality > NOISE_QUALITY_HIGH)
+					mScale *= FAST_NOISE_SCALE_FACTOR;
 				mOctaves = new Octave[mOctaveCount];
 				Real curPersistence = 1.0;
 				int seed;
@@ -237,6 +239,8 @@ namespace noisepp
 		public:
 			PerlinElement2D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
 			{
+				if (quality > NOISE_QUALITY_HIGH)
+					mScale *= FAST_NOISE_SCALE_FACTOR;
 				mOctaves = new Octave[mOctaveCount];
 				Real curPersistence = 1.0;
 				int seed;
@@ -307,6 +311,8 @@ namespace noisepp
 		public:
 			PerlinElement3D (size_t octaves, Real frequency, Real lacunarity, Real persistence, int mainSeed, int quality, Real nscale) : mOctaveCount(octaves), mQuality(quality), mScale(nscale)
 			{
+				if (quality > NOISE_QUALITY_HIGH)
+					mScale *= FAST_NOISE_SCALE_FACTOR;
 				mOctaves = new Octave[mOctaveCount];
 				Real curPersistence = 1.0;
 				int seed;
