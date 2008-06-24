@@ -70,14 +70,16 @@ namespace noisepp
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
 				Real scale = frequency;
+				Real sw_freq = 1.0;
 				for (size_t o=0;o<mOctaveCount;++o)
 				{
 					seed = (mainSeed + int(o)) & 0x7fffffff;
-					mOctaves[o].spectralWeight = pow(scale, -exponent);
+					mOctaves[o].spectralWeight = pow(sw_freq, -exponent);
 					mOctaves[o].scale = scale;
 					mOctaves[o].seed = seed;
 
 					scale *= lacunarity;
+					sw_freq *= lacunarity;
 				}
 			}
 			virtual ~RidgedMultiElement1D ()
@@ -148,14 +150,16 @@ namespace noisepp
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
 				Real scale = frequency;
+				Real sw_freq = 1.0;
 				for (size_t o=0;o<mOctaveCount;++o)
 				{
 					seed = (mainSeed + int(o)) & 0x7fffffff;
-					mOctaves[o].spectralWeight = pow(scale, -exponent);
+					mOctaves[o].spectralWeight = pow(sw_freq, -exponent);
 					mOctaves[o].scale = scale;
 					mOctaves[o].seed = seed;
 
 					scale *= lacunarity;
+					sw_freq *= lacunarity;
 				}
 			}
 			virtual ~RidgedMultiElement2D ()
@@ -227,14 +231,16 @@ namespace noisepp
 				mOctaves = new Octave[mOctaveCount];
 				int seed;
 				Real scale = frequency;
+				Real sw_freq = 1.0;
 				for (size_t o=0;o<mOctaveCount;++o)
 				{
 					seed = (mainSeed + int(o)) & 0x7fffffff;
-					mOctaves[o].spectralWeight = pow(scale, -exponent);
+					mOctaves[o].spectralWeight = pow(sw_freq, -exponent);
 					mOctaves[o].scale = scale;
 					mOctaves[o].seed = seed;
 
 					scale *= lacunarity;
+					sw_freq *= lacunarity;
 				}
 			}
 			virtual ~RidgedMultiElement3D ()

@@ -184,7 +184,7 @@ void test (noisepp::Module &module, bool compare)
 	double seconds;
 	double mpix = MILLION_POINTS;
 #ifdef COMPARE_WITH_LIBNOISE
-	double libnoiseTime;
+	double libnoiseTime = 0;
 	if (compare)
 	{
 		cout << "generating using libnoise ";
